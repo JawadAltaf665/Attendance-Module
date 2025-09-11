@@ -11,6 +11,8 @@
     "outDir": "../dist/out-tsc",
     "sourceMap": true,
     "target": "es2015",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "typeRoots": [
       "../node_modules/@types"
     ],
@@ -20,7 +22,7 @@
       "@app/*": [ "./app/*" ],
       "@shared/*": [ "./shared/*" ],
       "@node_modules/*": [ "../node_modules/*" ],
-      "@angular/*": ["../node_modules/@angular/*"],
+      "@angular/*": [ "../node_modules/@angular/*" ]
     }
   },
   "files": [

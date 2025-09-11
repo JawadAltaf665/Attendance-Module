@@ -1,0 +1,19 @@
+{
+  "runtime": "Net80",
+  "documentGenerator": {
+    "fromSwagger": {
+      "url": "https://localhost:44311/swagger/v1/swagger.json",
+      "output": null
+    }
+  },
+  "codeGenerators": {
+    "openApiToTypeScriptClient": {
+      "className": "{controller}Service",
+      "template": "Axios",
+      "typeScriptVersion": 4.0,
+      "output": "src/app/proxy/api-proxies.ts"
+    }
+  }
+}
+
+private attendanceService: AttendanceService

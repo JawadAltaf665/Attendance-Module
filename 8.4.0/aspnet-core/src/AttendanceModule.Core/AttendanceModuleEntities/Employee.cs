@@ -1,4 +1,5 @@
-﻿using Abp.Domain.Entities.Auditing;
+﻿using Abp.Domain.Entities;
+using Abp.Domain.Entities.Auditing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AttendanceModule.AttendanceModuleEntities
 {
-    public class Employee: AuditedAggregateRoot<int>
+    public class Employee: AuditedAggregateRoot<int>, IMustHaveTenant
     {
         public int TenantId { get; set; }
         public int? UserId { get; set; } 
@@ -17,5 +18,10 @@ namespace AttendanceModule.AttendanceModuleEntities
         public string Email { get; set; }
         public string Timezone { get; set; } = "UTC";
         public bool IsActive { get; set; } = true;
+
+
+        public ICollection<Roster> Rosters { get; set; } = new List<Roster>();
+        public ICollection<AttendanceEvent> AttendanceEvents { get; set; } = new List<AttendanceEvent>();
+        public ICollection<LeaveRequest> LeaveRequests { get; set; } = new List<LeaveRequest>();
     }
 }

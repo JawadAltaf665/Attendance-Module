@@ -21,4 +21,11 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src\app\admin\attendance\" />
+    <Folder Include="src\app\admin\leave\" />
+    <Folder Include="src\app\admin\roster\" />
+    <Folder Include="src\app\admin\shift\" />
+    <Folder Include="src\app\admin\report\" />
+  </ItemGroup>
 </Project>

@@ -46,6 +46,18 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
             new MenuItem(this.l('About'), '/app/about', 'fas fa-info-circle'),
             new MenuItem(this.l('HomePage'), '/app/home', 'fas fa-home'),
             new MenuItem(
+                this.l('Clock Events'),
+                '/app/attendance',
+                'fas fa-clock',
+                'Pages.Attendance'
+            ),
+            new MenuItem(
+                this.l('Leave'),
+                '/app/leave-pto',
+                'fas fa-calendar-alt', // leave icon
+                'Pages.Leaves'
+            ),
+            new MenuItem(
                 this.l('Roles'),
                 '/app/roles',
                 'fas fa-theater-masks',

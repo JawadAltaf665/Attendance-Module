@@ -142,7 +142,12 @@
               "src/assets/freeze-ui/freeze-ui.css",
               "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
               "node_modules/admin-lte-css-only/css/adminlte.min.css",
-              "src/shared/core.less"
+              "src/shared/core.less",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/bootstrap-icons/font/bootstrap-icons.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
+              "src/styles.css"
             ],
             "scripts": [
               "node_modules/moment/min/moment.min.js",
@@ -182,5 +187,11 @@
     "@schematics/angular:directive": {
       "prefix": "app"
     }
+  },
+  "cli": {
+    "analytics": "2f126c41-54f7-4cb6-bf42-223edbd78ec4"
+  },
+  "options": {
+    "proxyConfig": "proxy.conf.json"
   }
 }

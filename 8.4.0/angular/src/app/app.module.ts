@@ -38,6 +38,9 @@ import { SidebarComponent } from './layout/sidebar.component';
 import { SidebarLogoComponent } from './layout/sidebar-logo.component';
 import { SidebarUserPanelComponent } from './layout/sidebar-user-panel.component';
 import { SidebarMenuComponent } from './layout/sidebar-menu.component';
+import { ClockInOutComponent } from './admin/attendance/clock-in-out/clock-in-out.component';
+import { Service } from './proxy/api-proxies';
+import { LeaveManagementComponent } from './admin/leave/leave-management/leave-management.component';
 
 @NgModule({
     declarations: [
@@ -67,7 +70,9 @@ import { SidebarMenuComponent } from './layout/sidebar-menu.component';
         SidebarComponent,
         SidebarLogoComponent,
         SidebarUserPanelComponent,
-        SidebarMenuComponent
+        SidebarMenuComponent,
+        ClockInOutComponent,
+        LeaveManagementComponent
     ],
     imports: [
         CommonModule,
@@ -84,6 +89,8 @@ import { SidebarMenuComponent } from './layout/sidebar-menu.component';
         SharedModule,
         NgxPaginationModule,
     ],
-    providers: []
+    providers: [
+        Service
+    ]
 })
 export class AppModule {}

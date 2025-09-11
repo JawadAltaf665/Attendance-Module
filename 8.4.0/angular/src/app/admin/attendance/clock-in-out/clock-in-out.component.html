@@ -1,0 +1,155 @@
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border shadow-sm p-3 bg-primary text-white">
+                <h4 class="mb-1"><i class="fas fa-user-clock me-2"></i> {{ 'MyTime' | localize }}</h4>
+                <small class="text-light">
+                    {{ 'TrackYourWorkHoursAndManageYourTime' | localize }}
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="card border rounded shadow-sm p-4">
+                <div class="card rounded shadow-sm bg-light mb-3 p-4">
+
+                    <div class="d-flex align-items-center mb-3 bg-gradient-primary text-white rounded p-3">
+                        <i class="fas fa-clock display-6 me-3"></i>
+                        <div>
+                            <div class="fw-bold fs-4">{{ currentTime | date:'fullDate' }}</div>
+                            <div class="fw-bold display-4">{{ currentTime | date:'hh:mm:ss a' }}</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3" *ngIf="!isClockedIn">
+                        <h6 class="fw-semibold">{{ 'ReadyToStartYourWorkday' | localize }}</h6>
+                        <small class="text-muted">{{ 'ClickBelowToClockInAndBeginTrackingYourTime' | localize }}</small>
+                    </div>
+
+                    <div class="card border shadow-sm mb-3 p-4 bg-light" *ngIf="isClockedIn">
+                        <div class="mb-3">
+                            <h6 class="fw-semibold text-success">{{ 'CurrentlyClockedIn' | localize }}</h6>
+                            <div class="d-flex align-items-center">
+                                <small class="text-muted me-3">{{ 'Started' | localize }}: {{ clockInTime | date:'h:mm a' }}</small>
+                                <div>
+                                    <span class="badge bg-success">{{ 'Duration' | localize }}: {{ sessionDuration }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="workNotes" class="form-label fw-semibold">{{ 'WorkNotesOptional' | localize }}</label>
+                        <textarea id="workNotes" [(ngModel)]="workNotes" rows="2" class="form-control"
+                                  placeholder="{{ 'WhatWillYouBeWorkingOnToday' | localize }}"></textarea>
+                    </div>
+
+                    <!-- Clock In / Clock Out buttons -->
+                    <div class="d-flex">
+                        <button *ngIf="!isClockedIn"
+                                class="btn btn-success w-100 py-3"
+                                [disabled]="isLoading"
+                                (click)="clockIn()">
+                            <div *ngIf="!isLoading; else loading">
+                                <i class="fas fa-play-circle me-1"></i> {{ 'ClockIn' | localize }}
+                            </div>
+                        </button>
+
+                        <button *ngIf="isClockedIn"
+                                class="btn btn-danger w-100 py-3"
+                                [disabled]="isLoading"
+                                (click)="clockOut()">
+                            <div *ngIf="!isLoading; else loading">
+                                <i class="fas fa-stop-circle me-1"></i> {{ 'ClockOut' | localize }}
+                            </div>
+                        </button>
+                    </div>
+
+                    <ng-template #loading>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <div class="spinner-border" role="status"></div>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card border rounded shadow-sm mb-3 p-4">
+                <h6 class="fw-bold"><i class="fas fa-map-marker-alt me-2 text-primary"></i> {{ 'Location Status' | localize }}</h6>
+                <div class="text-danger fw-semibold mt-2">{{ 'Location Pending' | localize }}</div>
+                <small class="text-muted">{{ 'PleaseEnableLocationAccessForAccurateTimeTracking' | localize }}</small>
+            </div>
+
+            <div class="card border rounded shadow-sm mb-3 p-4">
+                <h6 class="fw-bold"><i class="fas fa-calendar-alt me-2 text-primary"></i> {{ 'Todays Schedule' | localize }}</h6>
+                <small class="text-muted">
+                    {{ todaySchedule?.scheduleType || ('NoScheduleAssigned' | localize) }}
+                    <span *ngIf="todaySchedule?.startTime">
+                        ({{ todaySchedule?.startTime }} - {{ todaySchedule?.endTime }})
+                    </span>
+                </small>
+            </div>
+
+            <div class="card border rounded shadow-sm p-4">
+                <h6 class="fw-bold"><i class="fas fa-stopwatch me-2 text-primary"></i> {{ 'This Week' | localize }}</h6>
+                <div class="card rounded shadow-sm bg-light mb-3 p-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>{{ 'Hours Worked' | localize }}</span>
+                        <span class="fw-bold">{{ weeklySummary?.hoursWorked }}h</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>{{ 'Over time' | localize }}</span>
+                        <span class="text-danger fw-bold">{{ weeklySummary?.overtime }}h</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>{{ 'Target' | localize }}</span>
+                        <span class="fw-bold">{{ weeklySummary?.target }}h</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-lg-12">
+            <div class="card border rounded shadow-sm p-4 bg-light">
+                <h5 class="fw-bold mb-3"><i class="fas fa-calendar-day me-2 text-primary"></i> {{ 'Todays Summary' | localize }}</h5>
+
+                <div class="row text-center mb-4">
+                    <div class="col-md-6">
+                        <h4 class="fw-bold text-primary">
+                            {{ todaySummary?.totalHours }}h</h4>
+                        <small>{{ 'TotalHours' | localize }}</small>
+                    </div>
+                    <div class="col-md-6">
+                        <h4 class="fw-bold text-danger">0.0h</h4>
+                        <small>{{ 'Overtime' | localize }}</small>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div>
+                    <h6 class="fw-bold mb-3"><i class="fas fa-user-clock me-2 text-success"></i> {{ 'Todays Sessions' | localize }}</h6>
+
+                    <ul class="list-group">
+                        <li *ngFor="let session of todaySessions" class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>
+                                <i class="fas" [ngClass]="session.eventType === 'CLOCK_IN' ? 'fa-sign-in-alt text-success' : 'fa-sign-out-alt text-danger'"></i>
+                                {{ session.eventType === 'CLOCK_IN' ? ('ClockIn' | localize) : ('ClockOut' | localize) }}
+                            </span>
+                            <span class="fw-semibold">{{ session.eventTime | date:'hh:mm a' }}</span>
+                        </li>
+                    </ul>
+
+                    <div *ngIf="todaySessions.length === 0" class="text-muted small">
+                        {{ 'NoPunchesRecordedToday' | localize }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

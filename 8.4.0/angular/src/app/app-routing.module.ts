@@ -8,6 +8,8 @@ import { UsersComponent } from './users/users.component';
 import { TenantsComponent } from './tenants/tenants.component';
 import { RolesComponent } from 'app/roles/roles.component';
 import { ChangePasswordComponent } from './users/change-password/change-password.component';
+import { ClockInOutComponent } from './admin/attendance/clock-in-out/clock-in-out.component';
+import { LeaveManagementComponent } from './admin/leave/leave-management/leave-management.component';
 
 @NgModule({
     imports: [
@@ -21,7 +23,11 @@ import { ChangePasswordComponent } from './users/change-password/change-password
                     { path: 'roles', component: RolesComponent, data: { permission: 'Pages.Roles' }, canActivate: [AppRouteGuard] },
                     { path: 'tenants', component: TenantsComponent, data: { permission: 'Pages.Tenants' }, canActivate: [AppRouteGuard] },
                     { path: 'about', component: AboutComponent, canActivate: [AppRouteGuard] },
-                    { path: 'update-password', component: ChangePasswordComponent, canActivate: [AppRouteGuard] }
+                    { path: 'update-password', component: ChangePasswordComponent, canActivate: [AppRouteGuard] },
+                    { path: 'attendance', component: ClockInOutComponent, canActivate: [AppRouteGuard] },
+                    { path: 'leave-pto', component: LeaveManagementComponent, canActivate: [AppRouteGuard] }
+
+
                 ]
             }
         ])
