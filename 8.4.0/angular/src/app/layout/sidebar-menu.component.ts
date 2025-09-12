@@ -52,8 +52,14 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
                 'Pages.Attendance'
             ),
             new MenuItem(
+                this.l('Managar dashboard'),
+                '/app/managar-dashborad',
+                'fas fa-clock',
+                'Pages.Attendance'
+            ),
+            new MenuItem(
                 this.l('Leave'),
-                '/app/leave-pto',
+                '/app/leave',
                 'fas fa-calendar-alt', // leave icon
                 'Pages.Leaves'
             ),

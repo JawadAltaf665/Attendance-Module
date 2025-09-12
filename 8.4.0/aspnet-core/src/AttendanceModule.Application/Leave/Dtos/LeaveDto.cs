@@ -9,6 +9,7 @@ namespace AttendanceModule.Leave.Dtos
 {
     public class LeaveDto: AuditedEntityDto<int>
     {
+        public int TenantId { get; set; }
         public string LeaveType { get; set; } // VACATION, SICK, UNPAID
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

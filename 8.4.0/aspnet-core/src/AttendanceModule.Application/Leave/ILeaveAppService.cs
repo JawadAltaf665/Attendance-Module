@@ -12,8 +12,8 @@ namespace AttendanceModule.Leave
     public interface ILeaveAppService : IApplicationService
     {
         // Employee
-        Task CreateLeaveAsync(CreateLeaveDto input);
-        Task<List<LeaveDto>> GetLeavesByEmployeeIdAsync(int employeeId);
+        Task<LeaveDto> CreateLeaveAsync(CreateLeaveDto input);
+        Task<List<LeaveDto>> GetMyLeavesAsync();
 
         // Manager
         Task<List<LeaveDto>> GetPendingLeavesAsync();

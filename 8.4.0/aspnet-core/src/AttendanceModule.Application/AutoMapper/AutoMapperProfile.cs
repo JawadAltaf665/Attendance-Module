@@ -26,7 +26,7 @@ namespace AttendanceModule.AutoMapper
 
             // Attendence Event
             CreateMap<AttendanceEvent, AttendanceEventDto>();
-            CreateMap<CreateAttendenceEventDto, AttendanceEvent>();
+            CreateMap<ClockEventDto, AttendanceEvent>();
 
             // Shift
             CreateMap<AttendanceModuleEntities.Shift, ShiftDto>();

@@ -11,8 +11,8 @@ namespace AttendanceModule.AttendanceEvents
 {
     public interface IAttendenceAppService: IApplicationService
     {
-        Task ClockInAsync(int employeeId);
-        Task ClockOutAsync(int employeeId);
+        Task ClockInAsync(ClockEventDto input);
+        Task ClockOutAsync(ClockEventDto input);
         Task<List<Dtos.AttendanceEventDto>> GetAllAttendenceEventsAsync();
         Task<List<AttendanceEventDto>> GetEmployeeAttendanceAsync(int employeeId, DateTime start, DateTime end);
         Task<List<AttendanceEventDto>> GetTodayAttendanceAsync(int employeeId);

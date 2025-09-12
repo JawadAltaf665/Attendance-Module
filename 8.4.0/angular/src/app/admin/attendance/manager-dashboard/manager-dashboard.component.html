@@ -1,0 +1,796 @@
+<!-- EMPLOYEE VIEW - Clock In/Out with basic features -->
+<!--<div class="container-fluid mt-4" *abpPermission="'Pages.Attendance.ClockInOut'">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border shadow-sm p-3 bg-primary text-white">
+                <h4 class="mb-1"><i class="fas fa-user-clock me-2"></i> {{ 'MyTime' | localize }}</h4>
+                <small class="text-light">
+                    {{ 'Track Your Work Hours And Manage Your Time' | localize }}
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">-->
+        <!-- Clock In/Out Section -->
+        <!--<div class="col-lg-8 mb-4">
+            <div class="card border rounded shadow-sm p-4">
+                <div class="card rounded shadow-sm bg-light mb-3 p-4">
+
+                    <div class="d-flex align-items-center mb-3 bg-gradient-primary text-white rounded p-3">
+                        <i class="fas fa-clock display-6 me-3"></i>
+                        <div>
+                            <div class="fw-bold fs-6">{{ currentTime | date:'fullDate' }}</div>
+                            <div class="fw-bold display-6">{{ currentTime | date:'hh:mm:ss a' }}</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3" *ngIf="!isClockedIn">
+                        <h6 class="fw-semibold">{{ 'Ready To Start Your Workday' | localize }}</h6>
+                        <small class="text-muted">{{ 'Click Below To ClockIn And Begin Tracking Your Time' | localize }}</small>
+                    </div>
+
+                    <div class="card border shadow-sm mb-3 p-4 bg-light" *ngIf="isClockedIn">
+                        <div class="mb-3">
+                            <h6 class="fw-semibold text-success">{{ 'Currently ClockedIn' | localize }}</h6>
+                            <div class="d-flex align-items-center">
+                                <small class="text-muted me-3">{{ 'Started' | localize }}: {{ clockInTime | date:'h:mm a' }}</small>
+                                <div>
+                                    <span class="badge bg-success">{{ 'Duration' | localize }}: {{ sessionDuration }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="workNotes" class="form-label fw-semibold">{{ 'Work Notes Optional' | localize }}</label>
+                        <textarea id="workNotes" [(ngModel)]="workNotes" rows="2" class="form-control"
+                                  placeholder="{{ 'What Will You Be Working On Today' | localize }}"></textarea>
+                    </div>-->
+
+                    <!-- Clock In / Clock Out buttons -->
+                    <!--<div class="d-flex gap-2">
+                        <button *ngIf="!isClockedIn"
+                                class="btn btn-success flex-fill py-3"
+                                [disabled]="isLoading"
+                                (click)="clockIn()">
+                            <div *ngIf="!isLoading; else loading">
+                                <i class="fas fa-play-circle me-1"></i> {{ 'ClockIn' | localize }}
+                            </div>
+                        </button>
+
+                        <button *ngIf="isClockedIn"
+                                class="btn btn-danger flex-fill py-3"
+                                [disabled]="isLoading"
+                                (click)="clockOut()">
+                            <div *ngIf="!isLoading; else loading">
+                                <i class="fas fa-stop-circle me-1"></i> {{ 'ClockOut' | localize }}
+                            </div>
+                        </button>-->
+
+                        <!-- Break buttons for employees -->
+                        <!--<button *ngIf="isClockedIn && !isOnBreak"
+                                class="btn btn-warning px-4 py-3"
+                                [disabled]="isLoading"
+                                (click)="startBreak()">
+                            <i class="fas fa-pause-circle me-1"></i> {{ 'Break' | localize }}
+                        </button>
+
+                        <button *ngIf="isClockedIn && isOnBreak"
+                                class="btn btn-info px-4 py-3"
+                                [disabled]="isLoading"
+                                (click)="endBreak()">
+                            <i class="fas fa-play-circle me-1"></i> {{ 'End Break' | localize }}
+                        </button>
+                    </div>
+
+                    <ng-template #loading>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <div class="spinner-border" role="status"></div>
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+        </div>-->
+
+        <!-- Employee Sidebar Info -->
+        <!--<div class="col-lg-4">-->
+            <!-- Location Status -->
+            <!--<div class="card border rounded shadow-sm mb-3 p-4">
+                <h6 class="fw-bold"><i class="fas fa-map-marker-alt me-2 text-primary"></i> {{ 'Location Status' | localize }}</h6>
+                <div class="fw-semibold mt-2" [ngClass]="locationEnabled ? 'text-success' : 'text-danger'">
+                    {{ locationEnabled ? ('Location Enabled' | localize) : ('Location Pending' | localize) }}
+                </div>
+                <small class="text-muted">{{ 'PleaseEnableLocationAccessForAccurateTimeTracking' | localize }}</small>
+            </div>-->
+
+            <!-- Today's Schedule -->
+            <!--<div class="card border rounded shadow-sm mb-3 p-4">
+                <h6 class="fw-bold"><i class="fas fa-calendar-alt me-2 text-primary"></i> {{ 'Todays Schedule' | localize }}</h6>
+                <div *ngIf="todaySchedule; else noSchedule">
+                    <div class="text-primary fw-semibold">{{ todaySchedule.shiftName }}</div>
+                    <small class="text-muted">
+                        {{ todaySchedule.startTime | date:'h:mm a' }} - {{ todaySchedule.endTime | date:'h:mm a' }}
+                    </small>
+                </div>
+                <ng-template #noSchedule>
+                    <small class="text-muted">{{ 'NoScheduleAssigned' | localize }}</small>
+                </ng-template>
+            </div>-->
+
+            <!-- Leave Balances -->
+            <!--<div class="card border rounded shadow-sm mb-3 p-4">
+                <h6 class="fw-bold"><i class="fas fa-calendar-check me-2 text-primary"></i> {{ 'Leave Balances' | localize }}</h6>
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="text-success fw-bold">{{ leaveBalances?.vacation || 0 }}</div>
+                        <small class="text-muted">{{ 'Vacation' | localize }}</small>
+                    </div>
+                    <div class="col-6">
+                        <div class="text-info fw-bold">{{ leaveBalances?.sick || 0 }}</div>
+                        <small class="text-muted">{{ 'Sick Leave' | localize }}</small>
+                    </div>
+                </div>
+                <div class="mt-2">
+                    <button class="btn btn-outline-primary btn-sm w-100" (click)="requestLeave()">
+                        <i class="fas fa-plus me-1"></i> {{ 'Request Leave' | localize }}
+                    </button>
+                </div>
+            </div>-->
+
+            <!-- Weekly Summary -->
+            <!--<div class="card border rounded shadow-sm p-4">
+                <h6 class="fw-bold"><i class="fas fa-stopwatch me-2 text-primary"></i> {{ 'This Week' | localize }}</h6>
+                <div class="card rounded shadow-sm bg-light mb-3 p-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>{{ 'Hours Worked' | localize }}</span>
+                        <span class="fw-bold">{{ weeklySummary?.hoursWorked || 0 }}h</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>{{ 'Overtime' | localize }}</span>
+                        <span class="text-danger fw-bold">{{ weeklySummary?.overtime || 0 }}h</span>
+                    </div>
+                    <div class="d-flex justify-content-between">
+                        <span>{{ 'Target' | localize }}</span>
+                        <span class="fw-bold">{{ weeklySummary?.target || 40 }}h</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>-->
+
+    <!-- Today's Summary -->
+    <!--<div class="row mt-4">
+        <div class="col-lg-12">
+            <div class="card border rounded shadow-sm p-4 bg-light">
+                <h5 class="fw-bold mb-3"><i class="fas fa-calendar-day me-2 text-primary"></i> {{ 'Todays Summary' | localize }}</h5>
+
+                <div class="row text-center mb-4">
+                    <div class="col-md-3">
+                        <h4 class="fw-bold text-primary">{{ todaySummary?.totalHours || 0 }}h</h4>
+                        <small>{{ 'Total Hours' | localize }}</small>
+                    </div>
+                    <div class="col-md-3">
+                        <h4 class="fw-bold text-danger">{{ todaySummary?.overtime || 0 }}h</h4>
+                        <small>{{ 'Overtime' | localize }}</small>
+                    </div>
+                    <div class="col-md-3">
+                        <h4 class="fw-bold text-warning">{{ todaySummary?.breakTime || 0 }}m</h4>
+                        <small>{{ 'Break Time' | localize }}</small>
+                    </div>
+                    <div class="col-md-3">
+                        <h4 class="fw-bold text-info">{{ todaySummary?.status || 'Active' }}</h4>
+                        <small>{{ 'Status' | localize }}</small>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div>
+                    <h6 class="fw-bold mb-3"><i class="fas fa-user-clock me-2 text-success"></i> {{ 'Todays Sessions' | localize }}</h6>
+
+                    <div class="table-responsive">
+                        <table class="table table-sm" *ngIf="todaySessions?.length > 0">
+                            <thead>
+                                <tr>
+                                    <th>{{ 'Event' | localize }}</th>
+                                    <th>{{ 'Time' | localize }}</th>
+                                    <th>{{ 'Location' | localize }}</th>
+                                    <th>{{ 'Notes' | localize }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let session of todaySessions">
+                                    <td>
+                                        <i class="fas" [ngClass]="{
+                                            'fa-sign-in-alt text-success': session.eventType === 'CLOCK_IN',
+                                            'fa-sign-out-alt text-danger': session.eventType === 'CLOCK_OUT',
+                                            'fa-pause-circle text-warning': session.eventType === 'BREAK_START',
+                                            'fa-play-circle text-info': session.eventType === 'BREAK_END'
+                                        }"></i>
+                                        {{ getEventTypeLabel(session.eventType) | localize }}
+                                    </td>
+                                    <td class="fw-semibold">{{ session.eventTime | date:'hh:mm a' }}</td>
+                                    <td>
+                                        <span *ngIf="session.latitude && session.longitude" class="text-success">
+                                            <i class="fas fa-map-marker-alt"></i> {{ 'GPS' | localize }}
+                                        </span>
+                                        <span *ngIf="!session.latitude" class="text-muted">-</span>
+                                    </td>
+                                    <td>
+                                        <small class="text-muted">{{ session.notes || '-' }}</small>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div *ngIf="!todaySessions?.length" class="text-muted text-center py-4">
+                        <i class="fas fa-clock fa-2x mb-2"></i><br>
+                        {{ 'NoPunchesRecordedToday' | localize }}
+                    </div>
+                </div>-->
+
+                <!-- Quick Actions for Employee -->
+                <!--<div class="mt-4">
+                    <h6 class="fw-bold mb-3"><i class="fas fa-bolt me-2 text-warning"></i> {{ 'Quick Actions' | localize }}</h6>
+                    <div class="row">
+                        <div class="col-md-6 mb-2">
+                            <button class="btn btn-outline-primary w-100" (click)="viewAttendanceHistory()">
+                                <i class="fas fa-history me-1"></i> {{ 'View History' | localize }}
+                            </button>
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <button class="btn btn-outline-success w-100" (click)="requestShiftSwap()">
+                                <i class="fas fa-exchange-alt me-1"></i> {{ 'Shift Swap' | localize }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>-->
+
+<!-- Leave Request Modal (Employee) -->
+<!--<div class="modal fade" id="leaveRequestModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ 'Request Leave' | localize }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form [formGroup]="leaveRequestForm">
+                    <div class="mb-3">
+                        <label class="form-label">{{ 'Leave Type' | localize }}</label>
+                        <select class="form-select" formControlName="leaveType">
+                            <option value="VACATION">{{ 'Vacation' | localize }}</option>
+                            <option value="SICK">{{ 'Sick Leave' | localize }}</option>
+                            <option value="PERSONAL">{{ 'Personal' | localize }}</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">{{ 'Start Date' | localize }}</label>
+                        <input type="date" class="form-control" formControlName="startDate">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">{{ 'End Date' | localize }}</label>
+                        <input type="date" class="form-control" formControlName="endDate">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">{{ 'Reason' | localize }}</label>
+                        <textarea class="form-control" rows="3" formControlName="reason"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel' | localize }}</button>
+                <button type="button" class="btn btn-primary" (click)="submitLeaveRequest()">{{ 'Submit Request' | localize }}</button>
+            </div>
+        </div>
+    </div>
+</div>-->
+
+<!-- MANAGER VIEW - Team Management and Approvals -->
+<!--<div class="container-fluid mt-4" *abpPermission="'Pages.Attendance.View'">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border shadow-sm p-3 bg-success text-white">
+                <h4 class="mb-1"><i class="fas fa-users-cog me-2"></i> {{ 'Team Management' | localize }}</h4>
+                <small class="text-light">
+                    {{ 'Monitor Team Attendance And Manage Approvals' | localize }}
+                </small>
+            </div>
+        </div>
+    </div>-->
+
+    <!-- Manager Dashboard Stats -->
+    <!--<div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border rounded shadow-sm p-4 text-center">
+                <div class="text-primary">
+                    <i class="fas fa-user-check fa-2x mb-2"></i>
+                    <h3 class="fw-bold">{{ teamStats?.presentToday || 0 }}</h3>
+                    <small class="text-muted">{{ 'Present Today' | localize }}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border rounded shadow-sm p-4 text-center">
+                <div class="text-warning">
+                    <i class="fas fa-user-times fa-2x mb-2"></i>
+                    <h3 class="fw-bold">{{ teamStats?.absentToday || 0 }}</h3>
+                    <small class="text-muted">{{ 'Absent Today' | localize }}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border rounded shadow-sm p-4 text-center">
+                <div class="text-info">
+                    <i class="fas fa-clock fa-2x mb-2"></i>
+                    <h3 class="fw-bold">{{ teamStats?.lateToday || 0 }}</h3>
+                    <small class="text-muted">{{ 'Late Arrivals' | localize }}</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border rounded shadow-sm p-4 text-center">
+                <div class="text-danger">
+                    <i class="fas fa-exclamation-triangle fa-2x mb-2"></i>
+                    <h3 class="fw-bold text-white bg-danger rounded px-2">{{ pendingApprovals?.total || 0 }}</h3>
+                    <small class="text-muted">{{ 'Pending Approvals' | localize }}</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">-->
+        <!-- Team Attendance Today -->
+        <!--<div class="col-lg-8 mb-4">
+            <div class="card border rounded shadow-sm p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-users me-2 text-primary"></i> {{ 'Team Attendance Today' | localize }}
+                    </h5>
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-primary" [class.active]="viewMode === 'today'" (click)="setViewMode('today')">{{ 'Today' | localize }}</button>
+                        <button class="btn btn-outline-primary" [class.active]="viewMode === 'week'" (click)="setViewMode('week')">{{ 'This Week' | localize }}</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>{{ 'Employee' | localize }}</th>
+                                <th>{{ 'Status' | localize }}</th>
+                                <th>{{ 'Clock In' | localize }}</th>
+                                <th>{{ 'Clock Out' | localize }}</th>
+                                <th>{{ 'Hours' | localize }}</th>
+                                <th>{{ 'Actions' | localize }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let employee of teamAttendance">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm bg-primary text-white rounded-circle me-2 d-flex align-items-center justify-content-center">
+                                            {{ employee.firstName.charAt(0) }}{{ employee.lastName.charAt(0) }}
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold">{{ employee.firstName }} {{ employee.lastName }}</div>
+                                            <small class="text-muted">{{ employee.employeeNumber }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge" [ngClass]="{
+                                        'bg-success': employee.status === 'PRESENT',
+                                        'bg-warning': employee.status === 'LATE',
+                                        'bg-danger': employee.status === 'ABSENT',
+                                        'bg-info': employee.status === 'ON_BREAK'
+                                    }">
+                                        {{ employee.status | localize }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <span *ngIf="employee.clockInTime">{{ employee.clockInTime | date:'h:mm a' }}</span>
+                                    <span *ngIf="!employee.clockInTime" class="text-muted">-</span>
+                                </td>
+                                <td>
+                                    <span *ngIf="employee.clockOutTime">{{ employee.clockOutTime | date:'h:mm a' }}</span>
+                                    <span *ngIf="!employee.clockOutTime && employee.clockInTime" class="text-success">{{ 'Working' | localize }}</span>
+                                    <span *ngIf="!employee.clockOutTime && !employee.clockInTime" class="text-muted">-</span>
+                                </td>
+                                <td>
+                                    <span class="fw-semibold">{{ employee.totalHours || '0.0' }}h</span>
+                                    <span *ngIf="employee.overtimeHours > 0" class="text-danger ms-1">(+{{ employee.overtimeHours }}h)</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-primary" (click)="viewEmployeeDetails(employee.id)">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button class="btn btn-outline-warning" *ngIf="employee.hasExceptions" (click)="viewExceptions(employee.id)">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div *ngIf="!teamAttendance?.length" class="text-center py-4 text-muted">
+                    <i class="fas fa-users fa-2x mb-2"></i><br>
+                    {{ 'No Team Members Found' | localize }}
+                </div>
+            </div>
+        </div>-->
+
+        <!-- Pending Approvals Sidebar -->
+        <!--<div class="col-lg-4">-->
+            <!-- Leave Requests -->
+            <!--<div class="card border rounded shadow-sm mb-3 p-4">
+                <h6 class="fw-bold">
+                    <i class="fas fa-calendar-times me-2 text-warning"></i>
+                    {{ 'Pending Leave Requests' | localize }}
+                    <span class="badge bg-warning ms-1">{{ pendingLeaveRequests?.length || 0 }}</span>
+                </h6>
+
+                <div *ngFor="let request of pendingLeaveRequests | slice:0:3" class="border-bottom py-2">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="fw-semibold small">{{ request.employeeName }}</div>
+                            <div class="text-muted small">
+                                {{ request.leaveType | localize }} - {{ request.days }} {{ 'days' | localize }}
+                            </div>
+                            <div class="text-muted small">
+                                {{ request.startDate | date:'MMM dd' }} - {{ request.endDate | date:'MMM dd' }}
+                            </div>
+                        </div>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-success btn-sm" (click)="approveLeave(request.id)">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm" (click)="rejectLeave(request.id)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="!pendingLeaveRequests?.length" class="text-muted text-center py-3">
+                    <i class="fas fa-check-circle text-success"></i> {{ 'No Pending Requests' | localize }}
+                </div>
+
+                <div *ngIf="pendingLeaveRequests?.length > 3" class="mt-2">
+                    <button class="btn btn-outline-primary btn-sm w-100" (click)="viewAllLeaveRequests()">
+                        {{ 'View All' | localize }} ({{ pendingLeaveRequests.length }})
+                    </button>
+                </div>
+            </div>-->
+
+            <!-- Shift Swap Requests -->
+            <!--<div class="card border rounded shadow-sm mb-3 p-4">
+                <h6 class="fw-bold">
+                    <i class="fas fa-exchange-alt me-2 text-info"></i>
+                    {{ 'Shift Swap Requests' | localize }}
+                    <span class="badge bg-info ms-1">{{ pendingShiftSwaps?.length || 0 }}</span>
+                </h6>
+
+                <div *ngFor="let swap of pendingShiftSwaps | slice:0:3" class="border-bottom py-2">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="fw-semibold small">{{ swap.requesterName }} ↔ {{ swap.targetName }}</div>
+                            <div class="text-muted small">{{ swap.shiftDate | date:'MMM dd, yyyy' }}</div>
+                            <div class="text-muted small">{{ swap.shiftTime }}</div>
+                        </div>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-success btn-sm" (click)="approveShiftSwap(swap.id)">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm" (click)="rejectShiftSwap(swap.id)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="!pendingShiftSwaps?.length" class="text-muted text-center py-3">
+                    <i class="fas fa-check-circle text-success"></i> {{ 'No Pending Swaps' | localize }}
+                </div>
+            </div>-->
+
+            <!-- Overtime Requests -->
+            <!--<div class="card border rounded shadow-sm p-4">
+                <h6 class="fw-bold">
+                    <i class="fas fa-clock me-2 text-danger"></i>
+                    {{ 'Overtime Approvals' | localize }}
+                    <span class="badge bg-danger ms-1">{{ pendingOvertimeRequests?.length || 0 }}</span>
+                </h6>
+
+                <div *ngFor="let overtime of pendingOvertimeRequests | slice:0:3" class="border-bottom py-2">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="fw-semibold small">{{ overtime.employeeName }}</div>
+                            <div class="text-muted small">{{ overtime.date | date:'MMM dd, yyyy' }}</div>
+                            <div class="text-warning small fw-semibold">{{ overtime.hours }}h {{ 'overtime' | localize }}</div>
+                        </div>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-outline-success btn-sm" (click)="approveOvertime(overtime.id)">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm" (click)="rejectOvertime(overtime.id)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div *ngIf="!pendingOvertimeRequests?.length" class="text-muted text-center py-3">
+                    <i class="fas fa-check-circle text-success"></i> {{ 'No Pending Requests' | localize }}
+                </div>
+            </div>
+        </div>
+    </div>-->
+
+    <!-- Team Reports Section -->
+    <!--<div class="row mt-4">
+        <div class="col-12">
+            <div class="card border rounded shadow-sm p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold mb-0">
+                        <i class="fas fa-chart-bar me-2 text-primary"></i> {{ 'Team Reports & Analytics' | localize }}
+                    </h5>
+                    <div class="btn-group">
+                        <button class="btn btn-outline-primary" (click)="exportTeamReport('pdf')">
+                            <i class="fas fa-file-pdf me-1"></i> {{ 'Export PDF' | localize }}
+                        </button>
+                        <button class="btn btn-outline-success" (click)="exportTeamReport('excel')">
+                            <i class="fas fa-file-excel me-1"></i> {{ 'Export Excel' | localize }}
+                        </button>
+                    </div>
+                </div>-->
+
+                <!-- Report Filters -->
+                <!--<div class="row mb-4">
+                    <div class="col-md-3">
+                        <label class="form-label">{{ 'Date Range' | localize }}</label>
+                        <select class="form-select" [(ngModel)]="reportFilter.dateRange" (change)="loadTeamReports()">
+                            <option value="today">{{ 'Today' | localize }}</option>
+                            <option value="week">{{ 'This Week' | localize }}</option>
+                            <option value="month">{{ 'This Month' | localize }}</option>
+                            <option value="custom">{{ 'Custom Range' | localize }}</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3" *ngIf="reportFilter.dateRange === 'custom'">
+                        <label class="form-label">{{ 'Start Date' | localize }}</label>
+                        <input type="date" class="form-control" [(ngModel)]="reportFilter.startDate" (change)="loadTeamReports()">
+                    </div>
+                    <div class="col-md-3" *ngIf="reportFilter.dateRange === 'custom'">
+                        <label class="form-label">{{ 'End Date' | localize }}</label>
+                        <input type="date" class="form-control" [(ngModel)]="reportFilter.endDate" (change)="loadTeamReports()">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">{{ 'Employee' | localize }}</label>
+                        <select class="form-select" [(ngModel)]="reportFilter.employeeId" (change)="loadTeamReports()">
+                            <option value="">{{ 'All Employees' | localize }}</option>
+                            <option *ngFor="let emp of teamMembers" [value]="emp.id">{{ emp.firstName }} {{ emp.lastName }}</option>
+                        </select>
+                    </div>
+                </div>-->
+
+                <!-- Report Charts -->
+                <!--<div class="row mb-4">
+                    <div class="col-md-6">
+                        <div class="card bg-light p-3">
+                            <h6 class="fw-bold">{{ 'Attendance Trends' | localize }}</h6>
+                            <canvas id="attendanceChart" height="200"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card bg-light p-3">
+                            <h6 class="fw-bold">{{ 'Hours Distribution' | localize }}</h6>
+                            <canvas id="hoursChart" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>-->
+
+                <!-- Detailed Team Performance Table -->
+                <!--<div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>{{ 'Employee' | localize }}</th>
+                                <th>{{ 'Days Present' | localize }}</th>
+                                <th>{{ 'Total Hours' | localize }}</th>
+                                <th>{{ 'Overtime' | localize }}</th>
+                                <th>{{ 'Late Arrivals' | localize }}</th>
+                                <th>{{ 'Leave Days' | localize }}</th>
+                                <th>{{ 'Efficiency' | localize }}</th>
+                                <th>{{ 'Actions' | localize }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let report of teamReports">
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-sm bg-secondary text-white rounded-circle me-2 d-flex align-items-center justify-content-center">
+                                            {{ report.firstName.charAt(0) }}{{ report.lastName.charAt(0) }}
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold">{{ report.firstName }} {{ report.lastName }}</div>
+                                            <small class="text-muted">{{ report.employeeNumber }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="fw-semibold">{{ report.daysPresent }}</span>
+                                    <small class="text-muted">/ {{ report.totalWorkDays }}</small>
+                                </td>
+                                <td>
+                                    <span class="fw-semibold text-primary">{{ report.totalHours }}h</span>
+                                </td>
+                                <td>
+                                    <span class="fw-semibold" [ngClass]="report.overtimeHours > 0 ? 'text-warning' : 'text-muted'">
+                                        {{ report.overtimeHours }}h
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge" [ngClass]="report.lateArrivals > 3 ? 'bg-danger' : (report.lateArrivals > 0 ? 'bg-warning' : 'bg-success')">
+                                        {{ report.lateArrivals }}
+                                    </span>
+                                </td>
+                                <td>{{ report.leaveDays }}</td>
+                                <td>
+                                    <div class="progress" style="height: 20px;">
+                                        <div class="progress-bar"
+                                             [ngClass]="getEfficiencyClass(report.efficiency)"
+                                             [style.width.%]="report.efficiency">
+                                            {{ report.efficiency }}%
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <button class="btn btn-outline-info" (click)="viewDetailedReport(report.employeeId)">
+                                            <i class="fas fa-chart-line"></i>
+                                        </button>
+                                        <button class="btn btn-outline-warning" *ngIf="report.hasIssues" (click)="viewEmployeeIssues(report.employeeId)">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div *ngIf="!teamReports?.length" class="text-center py-4 text-muted">
+                    <i class="fas fa-chart-bar fa-2x mb-2"></i><br>
+                    {{ 'No Report Data Available' | localize }}
+                </div>-->
+
+                <!-- Summary Cards -->
+                <!--<div class="row mt-4">
+                    <div class="col-md-3">
+                        <div class="card bg-success text-white text-center p-3">
+                            <h4>{{ teamSummary?.averageAttendance || 0 }}%</h4>
+                            <small>{{ 'Average Attendance' | localize }}</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-info text-white text-center p-3">
+                            <h4>{{ teamSummary?.totalHours || 0 }}h</h4>
+                            <small>{{ 'Total Hours' | localize }}</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-warning text-white text-center p-3">
+                            <h4>{{ teamSummary?.overtimeHours || 0 }}h</h4>
+                            <small>{{ 'Total Overtime' | localize }}</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-danger text-white text-center p-3">
+                            <h4>{{ teamSummary?.lateCount || 0 }}</h4>
+                            <small>{{ 'Late Arrivals' | localize }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>-->
+
+<!-- Employee Detail Modal -->
+<!--<div class="modal fade" id="employeeDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ selectedEmployee?.firstName }} {{ selectedEmployee?.lastName }} - {{ 'Attendance Details' | localize }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <strong>{{ 'Employee Number' | localize }}:</strong> {{ selectedEmployee?.employeeNumber }}
+                    </div>
+                    <div class="col-md-6">
+                        <strong>{{ 'Department' | localize }}:</strong> {{ selectedEmployee?.department }}
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>{{ 'Date' | localize }}</th>
+                                <th>{{ 'Clock In' | localize }}</th>
+                                <th>{{ 'Clock Out' | localize }}</th>
+                                <th>{{ 'Break Time' | localize }}</th>
+                                <th>{{ 'Total Hours' | localize }}</th>
+                                <th>{{ 'Status' | localize }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let record of selectedEmployeeRecords">
+                                <td>{{ record.date | date:'MMM dd, yyyy' }}</td>
+                                <td>{{ record.clockIn | date:'h:mm a' }}</td>
+                                <td>{{ record.clockOut | date:'h:mm a' }}</td>
+                                <td>{{ record.breakTime }}m</td>
+                                <td>{{ record.totalHours }}h</td>
+                                <td>
+                                    <span class="badge" [ngClass]="getStatusClass(record.status)">
+                                        {{ record.status | localize }}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Close' | localize }}</button>
+                <button type="button" class="btn btn-primary" (click)="generateEmployeeReport()">{{ 'Generate Report' | localize }}</button>
+            </div>
+        </div>
+    </div>
+</div>-->
+
+<!-- Approval Confirmation Modal -->
+<!--<div class="modal fade" id="approvalModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ approvalData?.type | localize }} {{ 'Approval' | localize }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>{{ 'Are you sure you want to' | localize }} <strong>{{ approvalData?.action | localize }}</strong> {{ 'this request?' | localize }}</p>
+
+                <div *ngIf="approvalData?.details">
+                    <hr>
+                    <div class="small text-muted">
+                        <strong>{{ 'Details' | localize }}:</strong><br>
+                        <div [innerHTML]="approvalData.details"></div>
+                    </div>
+                </div>
+
+                <div class="mt-3" *ngIf="approvalData?.action === 'reject'">
+                    <label class="form-label">{{ 'Rejection Reason' | localize }}</label>
+                    <textarea class="form-control" [(ngModel)]="rejectionReason" rows="3" placeholder="{{ 'Please provide reason for rejection' | localize }}"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'Cancel' | localize }}</button>
+                <button type="button" class="btn" [ngClass]="approvalData?.action === 'approve' ? 'btn-success' : 'btn-danger'"
+                        (click)="confirmApproval()">
+                    {{ approvalData?.action | localize }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>-->

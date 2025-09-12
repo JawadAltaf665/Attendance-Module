@@ -1,1 +1,155 @@
-<p>leave-management works!</p>
+<div class="container-fluid mt-4">
+
+    <!-- ================= EMPLOYEE SECTION ================= -->
+    <div *ngIf="permission.isGranted('Pages.Leaves.Request')">
+        <!-- Header -->
+        <div class="card border shadow-sm p-3 bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="fw-bold">{{ 'My Leave' | localize }}</h3>
+                <button class="btn btn-success" (click)="openRequestModal()">
+                    <i class="fas fa-plus me-1"></i> {{ 'RequestTimeOff' | localize }}
+                </button>
+            </div>
+        </div>
+
+        <p class="text-muted">{{ 'Manage PTO Text' | localize }}</p>
+
+        <!-- Balances -->
+        <div class="row mb-4">
+            <div class="col-md-3" *ngFor="let b of balances">
+                <div class="card border rounded shadow-sm p-3 text-center">
+                    <i [class]="b.icon + ' fa-2x ' + b.color"></i>
+                    <h6 class="fw-bold mt-2">{{ b.type | localize }}</h6>
+                    <h4 class="fw-bold">{{ b.hours }}h</h4>
+                    <small class="text-muted">{{ 'AvailableBalance' | localize }}</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs mb-3">
+            <li class="nav-item">
+                <a class="nav-link" [class.active]="activeTab==='overview'" (click)="activeTab='overview'">
+                    {{ 'Overview' | localize }}
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" [class.active]="activeTab==='calendar'" (click)="activeTab='calendar'">
+                    {{ 'Calendar' | localize }}
+                </a>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Overview -->
+            <div *ngIf="activeTab==='overview'" class="mt-3">
+                <h5 class="fw-bold mb-3">{{ 'My Recent Leave Requests' | localize }}</h5>
+
+                <table class="table table-bordered mt-3" *ngIf="recentLeaves.length > 0; else noRequests">
+                    <thead class="table-light">
+                        <tr>
+                            <th>{{ 'LeaveType' | localize }}</th>
+                            <th>{{ 'StartDate' | localize }}</th>
+                            <th>{{ 'EndDate' | localize }}</th>
+                            <th>{{ 'Status' | localize }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let r of recentLeaves">
+                            <td>{{ r.leaveType | localize }}</td>
+                            <td>{{ r.startDate | date:'mediumDate' }}</td>
+                            <td>{{ r.endDate | date:'mediumDate' }}</td>
+                            <td>
+                                <span class="badge"
+                                      [ngClass]="{
+                        'bg-warning': r.status==='PENDING',
+                        'bg-success': r.status==='APPROVED',
+                        'bg-danger': r.status==='REJECTED'
+                      }">
+                                    {{ r.status }}
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <ng-template #noRequests>
+                    <div class="text-muted small text-center p-4">
+                        <i class="fas fa-calendar-times fa-2x mb-2"></i><br />
+                        {{ 'NoRecentLeaveRequests' | localize }}
+                    </div>
+                </ng-template>
+            </div>
+
+            <!-- Calendar -->
+            <div *ngIf="activeTab==='calendar'" class="mt-3">
+                <!--<app-leave-calendar [leaves]="recentLeaves"></app-leave-calendar>-->
+                <div class="card card-body text-center">
+                    Calendar Component Coming Soon!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MANAGER/ADMIN SECTION ================= -->
+    <div *ngIf="permission.isGranted('Pages.Leaves.Approve')" class="mt-5">
+        <h3 class="fw-bold mb-3">{{ 'Manager Section' | localize }}</h3>
+
+        <ul class="nav nav-tabs mb-3">
+            <li class="nav-item">
+                <a class="nav-link" [class.active]="activeTab==='requests'" (click)="activeTab='requests'">
+                    {{ 'Requests' | localize }}
+                </a>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <!-- Requests Table -->
+            <div *ngIf="activeTab==='requests'">
+                <!--<h5 class="fw-bold">{{ 'All Pending Requests' | localize }}</h5>-->
+
+                <table class="table table-bordered mt-3" *ngIf="pendingRequets.length > 0; else noManagerRequests">
+                    <thead class="table-light">
+                        <tr>
+                            <th>{{ 'LeaveType' | localize }}</th>
+                            <th>{{ 'StartDate' | localize }}</th>
+                            <th>{{ 'EndDate' | localize }}</th>
+                            <th>{{ 'Status' | localize }}</th>
+                            <th>{{ 'Action' | localize }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let r of pendingRequets">
+                            <td>{{ r.leaveType | localize }}</td>
+                            <td>{{ r.startDate | date:'mediumDate' }}</td>
+                            <td>{{ r.endDate | date:'mediumDate' }}</td>
+                            <td>
+                                <span class="badge bg-warning">
+                                    {{ r.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-success me-1" (click)="approve(r)">
+                                    <i class="fas fa-check"></i> {{ 'Approve' | localize }}
+                                </button>
+                                <button type="button" class="btn btn-sm btn-danger" (click)="reject(r)">
+                                    <i class="fas fa-times"></i> {{ 'Reject' | localize }}
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+
+                <ng-template #noManagerRequests>
+                    <div class="text-muted small text-center p-4">
+                        <i class="fas fa-calendar-times fa-2x mb-2"></i><br />
+                        {{ 'NoRequestsFound' | localize }}
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+
+</div>

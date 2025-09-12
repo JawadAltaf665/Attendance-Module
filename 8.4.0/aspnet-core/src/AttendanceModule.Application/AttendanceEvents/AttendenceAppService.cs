@@ -2,6 +2,7 @@
 using Abp.Application.Services.Dto;
 using Abp.Authorization;
 using Abp.Domain.Repositories;
+using Abp.Timing;
 using Abp.UI;
 using AttendanceModule.AttendanceEvents.Dtos;
 using AttendanceModule.AttendanceModuleEntities;
@@ -32,28 +33,36 @@ namespace AttendanceModule.AttendanceEvents
         }
 
         [AbpAuthorize(AttendencePermissions.Pages_Attendance_ClockInOut)]
-        public async Task ClockInAsync(int employeeId)
+        public async Task ClockInAsync(ClockEventDto input)
         {
             var clockIn = new AttendanceEvent
             {
-                EmployeeId = employeeId,
+                EmployeeId = input.EmployeeId,
                 EventType = "CLOCK_IN",
-                EventTime = DateTime.UtcNow,
-                TenantId = 1
+                EventTime = Clock.Now, // ABP ka helper (UTC save hota hai)
+                TenantId = AbpSession.TenantId ?? 1,
+                Latitude = input.Latitude,
+                Longitude = input.Longitude,
+                Notes = input.Notes,
+                Source = "Web"
             };
 
             await _attendenceRepository.InsertAsync(clockIn);
         }
 
         [AbpAuthorize(AttendencePermissions.Pages_Attendance_ClockInOut)]
-        public async Task ClockOutAsync(int employeeId)
+        public async Task ClockOutAsync(ClockEventDto input)
         {
             var clockOut = new AttendanceEvent
             {
-                EmployeeId = employeeId,
+                EmployeeId = input.EmployeeId,
                 EventType = "CLOCK_OUT",
-                EventTime = DateTime.UtcNow,
-                TenantId = 1
+                EventTime = Clock.Now,
+                TenantId = AbpSession.TenantId ?? 1,
+                Latitude = input.Latitude,
+                Longitude = input.Longitude,
+                Notes = input.Notes,
+                Source = "Web"
             };
 
             await _attendenceRepository.InsertAsync(clockOut);

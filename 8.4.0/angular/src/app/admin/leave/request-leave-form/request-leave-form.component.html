@@ -1,0 +1,48 @@
+<div class="modal-header">
+    <h5 class="modal-title">{{ 'RequestLeave' | localize }}</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="bsModalRef.hide()"></button>
+</div>
+
+<div class="modal-body">
+    <form [formGroup]="leaveForm">
+        <input type="hidden" formControlName="id" class="form-control" />
+        <!-- Leave Type -->
+        <div class="mb-3">
+            <label class="form-label">{{ 'LeaveType' | localize }}</label>
+            <select formControlName="leaveType" class="form-control">
+                <option value="VACATION">{{ 'Vacation' | localize }}</option>
+                <option value="SICK">{{ 'SickLeave' | localize }}</option>
+                <option value="PERSONAL">{{ 'Personal' | localize }}</option>
+                <option value="UNPAID">{{ 'Unpaid' | localize }}</option>
+            </select>
+        </div>
+
+        <!-- Start Date -->
+        <div class="mb-3">
+            <label class="form-label">{{ 'StartDate' | localize }}</label>
+            <input type="date" formControlName="startDate" class="form-control" />
+        </div>
+
+        <!-- End Date -->
+        <div class="mb-3">
+            <label class="form-label">{{ 'EndDate' | localize }}</label>
+            <input type="date" formControlName="endDate" class="form-control" />
+        </div>
+
+        <!-- Half Day -->
+        <div class="form-check mb-3">
+            <input type="checkbox" formControlName="halfDay" class="form-check-input" id="halfDayCheck" />
+            <label class="form-check-label" for="halfDayCheck">{{ 'HalfDay' | localize }}</label>
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (onCloseClick)="bsModalRef.hide()">
+        {{ 'Cancel' | localize }}
+    </button>
+    <button type="button" class="btn btn-primary" [disabled]="isSaving" (click)="submit()">
+        <span *ngIf="!isSaving">{{ 'Submit' | localize }}</span>
+        <span *ngIf="isSaving" class="spinner-border spinner-border-sm"></span>
+    </button>
+</div>

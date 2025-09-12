@@ -41,6 +41,8 @@ import { SidebarMenuComponent } from './layout/sidebar-menu.component';
 import { ClockInOutComponent } from './admin/attendance/clock-in-out/clock-in-out.component';
 import { Service } from './proxy/api-proxies';
 import { LeaveManagementComponent } from './admin/leave/leave-management/leave-management.component';
+import { RequestLeaveFormComponent } from './admin/leave/request-leave-form/request-leave-form.component';
+import { ManagerDashboardComponent } from './admin/attendance/manager-dashboard/manager-dashboard.component';
 
 @NgModule({
     declarations: [
@@ -72,7 +74,9 @@ import { LeaveManagementComponent } from './admin/leave/leave-management/leave-m
         SidebarUserPanelComponent,
         SidebarMenuComponent,
         ClockInOutComponent,
-        LeaveManagementComponent
+        LeaveManagementComponent,
+        RequestLeaveFormComponent,
+        ManagerDashboardComponent
     ],
     imports: [
         CommonModule,
