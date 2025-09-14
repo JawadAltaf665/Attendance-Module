@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(netstat:*)",
+      "Bash(ng serve:*)",
+      "Bash(npm run start:*)",
+      "Bash(npx ng serve:*)",
+      "Bash(curl:*)",
+      "Bash(dir:*)",
+      "Bash(dotnet build)",
+      "Bash(del \"C:\\Users\\LAPTECH\\source\\repos\\JawadAltaf665\\Attendance-Module\\8.4.0\\aspnet-core\\src\\AttendanceModule.EntityFrameworkCore\\EntityFrameworkCore\\Seed\\TestData\\AttendanceTestDataBuilder.cs\")",
+      "Bash(dotnet run:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

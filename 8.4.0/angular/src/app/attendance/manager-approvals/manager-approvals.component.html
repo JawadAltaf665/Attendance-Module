@@ -1,0 +1,363 @@
+<div class="container-fluid py-4" *ngIf="permission.isGranted('Pages.Leaves.Approve')">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-primary text-white shadow">
+                <div class="card-body p-4">
+                    <h2 class="mb-2">
+                        <i class="fas fa-clipboard-check me-3"></i>
+                        Manager Approvals
+                    </h2>
+                    <p class="mb-0 opacity-75">Review and approve pending requests from your team</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <ul class="nav nav-tabs nav-fill">
+                <li class="nav-item">
+                    <button class="nav-link" [class.active]="activeTab === 'pto'"
+                            (click)="switchTab('pto')">
+                        <i class="fas fa-calendar-alt me-2"></i>
+                        PTO Requests
+                        <span class="badge bg-danger ms-2" *ngIf="pendingLeaves.length > 0">
+                            {{ pendingLeaves.length }}
+                        </span>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" [class.active]="activeTab === 'shifts'"
+                            (click)="switchTab('shifts')" [disabled]="true">
+                        <i class="fas fa-exchange-alt me-2"></i>
+                        Shift Swaps
+                        <span class="badge bg-secondary ms-2">Coming Soon</span>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" [class.active]="activeTab === 'exceptions'"
+                            (click)="switchTab('exceptions')" [disabled]="true">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Exceptions
+                        <span class="badge bg-secondary ms-2">Coming Soon</span>
+                    </button>
+                </li>
+                <li class="nav-item">
+                    <button class="nav-link" [class.active]="activeTab === 'overtime'"
+                            (click)="switchTab('overtime')" [disabled]="true">
+                        <i class="fas fa-clock me-2"></i>
+                        Overtime
+                        <span class="badge bg-secondary ms-2">Coming Soon</span>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- PTO Requests Tab Content -->
+    <div *ngIf="activeTab === 'pto'">
+        <!-- Filters -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <form [formGroup]="filterForm" class="row g-3">
+                            <div class="col-md-3">
+                                <label class="form-label">Team Member</label>
+                                <input type="text" class="form-control" formControlName="employeeName"
+                                       placeholder="Filter by name...">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Start Date</label>
+                                <input type="date" class="form-control" formControlName="startDate">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">End Date</label>
+                                <input type="date" class="form-control" formControlName="endDate">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Leave Type</label>
+                                <select class="form-control" formControlName="leaveType">
+                                    <option value="">All Types</option>
+                                    <option value="VACATION">Vacation</option>
+                                    <option value="SICK">Sick</option>
+                                    <option value="PERSONAL">Personal</option>
+                                    <option value="UNPAID">Unpaid</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bulk Actions -->
+        <div class="row mb-3" *ngIf="hasSelection()">
+            <div class="col-12">
+                <div class="alert alert-info d-flex justify-content-between align-items-center">
+                    <span>
+                        <i class="fas fa-info-circle me-2"></i>
+                        {{ selectedItems.size }} item(s) selected
+                    </span>
+                    <div>
+                        <button class="btn btn-success me-2" (click)="openBulkApprovalModal(true)">
+                            <i class="fas fa-check me-2"></i>
+                            Bulk Approve
+                        </button>
+                        <button class="btn btn-danger" (click)="openBulkApprovalModal(false)">
+                            <i class="fas fa-times me-2"></i>
+                            Bulk Reject
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Request List -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <!-- Loading State -->
+                        <div *ngIf="isLoading" class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2 text-muted">Loading pending requests...</p>
+                        </div>
+
+                        <!-- No Data State -->
+                        <div *ngIf="!isLoading && pendingLeaves.length === 0" class="text-center py-5">
+                            <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                            <h5 class="text-muted">No Pending Requests</h5>
+                            <p class="text-muted">All requests have been processed.</p>
+                        </div>
+
+                        <!-- Data Table -->
+                        <div *ngIf="!isLoading && pendingLeaves.length > 0" class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th width="40">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                       [checked]="isAllSelected()"
+                                                       [indeterminate]="isIndeterminate()"
+                                                       (change)="toggleSelectAll()">
+                                            </div>
+                                        </th>
+                                        <th>Employee</th>
+                                        <th>Type</th>
+                                        <th>Dates</th>
+                                        <th>Days</th>
+                                        <th>Reason</th>
+                                        <th>Submitted</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let item of paginatedItems">
+                                        <td>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox"
+                                                       [checked]="item.selected"
+                                                       (change)="toggleItemSelection(item)">
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <strong>{{ item.employeeName }}</strong>
+                                            <br>
+                                            <small class="text-muted">ID: {{ item.employeeId }}</small>
+                                        </td>
+                                        <td>
+                                            <span [class]="getLeaveTypeBadgeClass(item.leaveType)">
+                                                {{ item.leaveType }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {{ formatDate(item.startDate) }} - {{ formatDate(item.endDate) }}
+                                            <span *ngIf="item.halfDay" class="badge bg-info ms-1">Half Day</span>
+                                        </td>
+                                        <td>
+                                            <strong>{{ item.totalDays }}</strong>
+                                        </td>
+                                        <td>
+                                            <span class="text-truncate d-inline-block" style="max-width: 200px;"
+                                                  [title]="item.reason">
+                                                {{ item.reason }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            {{ formatDate(item.creationTime) }}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm" role="group">
+                                                <button class="btn btn-outline-info" (click)="viewDetails(item)"
+                                                        title="View Details">
+                                                    <i class="fas fa-eye"></i>
+                                                </button>
+                                                <button class="btn btn-outline-success" (click)="approveSingle(item)"
+                                                        [disabled]="isProcessing" title="Approve">
+                                                    <i class="fas fa-check"></i>
+                                                </button>
+                                                <button class="btn btn-outline-danger" (click)="rejectSingle(item)"
+                                                        [disabled]="isProcessing" title="Reject">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Pagination -->
+                        <nav *ngIf="!isLoading && totalPages > 1" class="mt-3">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" [class.disabled]="currentPage === 1">
+                                    <button class="page-link" (click)="onPageChange(currentPage - 1)">
+                                        Previous
+                                    </button>
+                                </li>
+                                <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index"
+                                    [class.active]="currentPage === i + 1">
+                                    <button class="page-link" (click)="onPageChange(i + 1)">{{ i + 1 }}</button>
+                                </li>
+                                <li class="page-item" [class.disabled]="currentPage === totalPages">
+                                    <button class="page-link" (click)="onPageChange(currentPage + 1)">
+                                        Next
+                                    </button>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comment Modal -->
+    <div class="modal" [class.show]="showCommentModal" [style.display]="showCommentModal ? 'block' : 'none'"
+         tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas" [ngClass]="isApproving ? 'fa-check text-success' : 'fa-times text-danger'"
+                           class="me-2"></i>
+                        {{ isApproving ? 'Approve' : 'Reject' }} {{ selectedItems.size }} Request(s)
+                    </h5>
+                    <button type="button" class="btn-close" (click)="closeCommentModal()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Comment (Optional)</label>
+                        <textarea class="form-control" rows="3" [(ngModel)]="approvalComment"
+                                  placeholder="Add a comment for the employee..."></textarea>
+                    </div>
+                    <div class="alert" [ngClass]="isApproving ? 'alert-success' : 'alert-danger'" class="mt-3">
+                        <i class="fas fa-info-circle me-2"></i>
+                        You are about to {{ isApproving ? 'approve' : 'reject' }} {{ selectedItems.size }} leave
+                        request(s).
+                        This action will notify the affected employees.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closeCommentModal()">Cancel</button>
+                    <button type="button" class="btn" [ngClass]="isApproving ? 'btn-success' : 'btn-danger'"
+                            (click)="processBulkApproval()" [disabled]="isProcessing">
+                        <span *ngIf="!isProcessing">
+                            <i class="fas" [ngClass]="isApproving ? 'fa-check' : 'fa-times'" class="me-2"></i>
+                            {{ isApproving ? 'Approve' : 'Reject' }}
+                        </span>
+                        <span *ngIf="isProcessing">
+                            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                            Processing...
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="modal" [class.show]="showDetailModal" [style.display]="showDetailModal ? 'block' : 'none'"
+         tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" *ngIf="selectedLeave">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-file-alt me-2"></i>
+                        Leave Request Details
+                    </h5>
+                    <button type="button" class="btn-close" (click)="closeDetailModal()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Employee Information</h6>
+                            <dl class="row">
+                                <dt class="col-sm-4">Name:</dt>
+                                <dd class="col-sm-8">{{ selectedLeave.employeeName }}</dd>
+                                <dt class="col-sm-4">Employee ID:</dt>
+                                <dd class="col-sm-8">{{ selectedLeave.employeeId }}</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Leave Details</h6>
+                            <dl class="row">
+                                <dt class="col-sm-4">Type:</dt>
+                                <dd class="col-sm-8">
+                                    <span [class]="getLeaveTypeBadgeClass(selectedLeave.leaveType)">
+                                        {{ selectedLeave.leaveType }}
+                                    </span>
+                                </dd>
+                                <dt class="col-sm-4">Duration:</dt>
+                                <dd class="col-sm-8">{{ selectedLeave.totalDays }} day(s)</dd>
+                                <dt class="col-sm-4">Dates:</dt>
+                                <dd class="col-sm-8">
+                                    {{ formatDate(selectedLeave.startDate) }} - {{ formatDate(selectedLeave.endDate) }}
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-12">
+                            <h6 class="text-muted">Reason</h6>
+                            <p>{{ selectedLeave.reason }}</p>
+                        </div>
+                    </div>
+                    <div class="row" *ngIf="selectedLeave.attachmentUrl">
+                        <div class="col-12">
+                            <h6 class="text-muted">Attachment</h6>
+                            <a [href]="selectedLeave.attachmentUrl" target="_blank" class="btn btn-sm btn-outline-primary">
+                                <i class="fas fa-paperclip me-2"></i>
+                                View Attachment
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="closeDetailModal()">Close</button>
+                    <button type="button" class="btn btn-success" (click)="approveSingle(selectedLeave)"
+                            [disabled]="isProcessing">
+                        <i class="fas fa-check me-2"></i>
+                        Approve
+                    </button>
+                    <button type="button" class="btn btn-danger" (click)="rejectSingle(selectedLeave)"
+                            [disabled]="isProcessing">
+                        <i class="fas fa-times me-2"></i>
+                        Reject
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Backdrop -->
+    <div class="modal-backdrop fade" [class.show]="showCommentModal || showDetailModal"
+         *ngIf="showCommentModal || showDetailModal"></div>
+</div>

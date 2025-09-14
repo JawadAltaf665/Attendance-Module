@@ -1,0 +1,174 @@
+<div class="card">
+  <div class="card-header">
+    <h4>{{ isEditMode ? 'Edit Shift' : 'Create New Shift' }}</h4>
+  </div>
+  <div class="card-body">
+    <form>
+      <!-- Shift Name -->
+      <div class="mb-3">
+        <label for="shiftName" class="form-label">Shift Name <span class="text-danger">*</span></label>
+        <input
+          type="text"
+          class="form-control"
+          id="shiftName"
+          [(ngModel)]="formData.name"
+          name="name"
+          placeholder="e.g., Morning Shift, Night Shift"
+          required>
+      </div>
+
+      <!-- Time Settings Row -->
+      <div class="row">
+        <div class="col-md-4">
+          <div class="mb-3">
+            <label for="startTime" class="form-label">Start Time <span class="text-danger">*</span></label>
+            <input
+              type="time"
+              class="form-control"
+              id="startTime"
+              [(ngModel)]="formData.startTime"
+              name="startTime"
+              required>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="mb-3">
+            <label for="endTime" class="form-label">End Time <span class="text-danger">*</span></label>
+            <input
+              type="time"
+              class="form-control"
+              id="endTime"
+              [(ngModel)]="formData.endTime"
+              name="endTime"
+              required>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="mb-3">
+            <label for="breakMinutes" class="form-label">Break Duration (minutes)</label>
+            <input
+              type="number"
+              class="form-control"
+              id="breakMinutes"
+              [(ngModel)]="formData.breakMinutes"
+              name="breakMinutes"
+              min="0"
+              max="120">
+          </div>
+        </div>
+      </div>
+
+      <!-- Shift Duration Display -->
+      <div class="alert alert-info" *ngIf="getShiftDuration()">
+        <i class="fas fa-clock"></i> Working Hours: {{ getShiftDuration() }}
+      </div>
+
+      <!-- Recurrence Settings -->
+      <div class="mb-3">
+        <label class="form-label">Recurrence Pattern</label>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="recurrenceType"
+            id="recurrenceNone"
+            [(ngModel)]="formData.recurrenceType"
+            value="none">
+          <label class="form-check-label" for="recurrenceNone">
+            One-time shift
+          </label>
+        </div>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="recurrenceType"
+            id="recurrenceDaily"
+            [(ngModel)]="formData.recurrenceType"
+            value="daily">
+          <label class="form-check-label" for="recurrenceDaily">
+            Daily (Every day)
+          </label>
+        </div>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="recurrenceType"
+            id="recurrenceWeekly"
+            [(ngModel)]="formData.recurrenceType"
+            value="weekly">
+          <label class="form-check-label" for="recurrenceWeekly">
+            Weekly (Specific days)
+          </label>
+        </div>
+        <div class="form-check">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="recurrenceType"
+            id="recurrenceMonthly"
+            [(ngModel)]="formData.recurrenceType"
+            value="monthly">
+          <label class="form-check-label" for="recurrenceMonthly">
+            Monthly (Specific day of month)
+          </label>
+        </div>
+      </div>
+
+      <!-- Weekly Days Selection -->
+      <div class="card mb-3" *ngIf="formData.recurrenceType === 'weekly'">
+        <div class="card-body">
+          <label class="form-label">Select Days</label>
+          <div class="btn-group d-flex flex-wrap" role="group">
+            <button
+              *ngFor="let day of weekDays"
+              type="button"
+              class="btn m-1"
+              [class.btn-primary]="day.selected"
+              [class.btn-outline-secondary]="!day.selected"
+              (click)="toggleWeekDay(day)">
+              {{ day.name }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monthly Day Selection -->
+      <div class="mb-3" *ngIf="formData.recurrenceType === 'monthly'">
+        <label for="monthlyDay" class="form-label">Day of Month</label>
+        <select
+          class="form-select"
+          id="monthlyDay"
+          [(ngModel)]="formData.monthlyDay"
+          name="monthlyDay">
+          <option *ngFor="let day of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]" [value]="day">
+            Day {{ day }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="d-flex justify-content-end gap-2">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="cancel()"
+          [disabled]="loading">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="save()"
+          [disabled]="loading">
+          <span *ngIf="!loading">{{ isEditMode ? 'Update Shift' : 'Create Shift' }}</span>
+          <span *ngIf="loading">
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+            Saving...
+          </span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

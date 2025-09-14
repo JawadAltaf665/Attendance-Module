@@ -1,0 +1,164 @@
+<div class="attendance-clock-container">
+    <!-- Status Card Component -->
+    <app-attendance-status-card
+        [isClockedIn]="isClockedIn"
+        [lastPunchTime]="lastPunchTime"
+        [lastPunchType]="lastPunchType"
+        [timezone]="timezone"
+        [employeeName]="employeeName">
+    </app-attendance-status-card>
+
+    <!-- Main Clock Card -->
+    <div class="clock-card">
+        <div class="current-time">
+            <h1 class="time-display">{{ currentTime | date:'HH:mm:ss' }}</h1>
+            <p class="date-display">{{ currentTime | date:'EEEE, MMMM d, yyyy' }}</p>
+        </div>
+
+        <!-- Grace Period Message -->
+        <div class="grace-message" *ngIf="graceMessage" [class.late]="isLate">
+            <i class="fas fa-exclamation-triangle"></i>
+            {{ graceMessage }}
+        </div>
+
+        <!-- Clock Button -->
+        <div class="clock-button-container">
+            <button
+                class="btn-clock"
+                [class]="getButtonClass()"
+                [disabled]="isLoading"
+                (click)="onClockButtonClick()">
+                <span *ngIf="!isLoading">
+                    <i class="fas" [ngClass]="isClockedIn ? 'fa-sign-out-alt' : 'fa-sign-in-alt'"></i>
+                    {{ getButtonText() }}
+                </span>
+                <span *ngIf="isLoading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    Processing...
+                </span>
+            </button>
+        </div>
+
+        <!-- Last Punch Info -->
+        <div class="last-punch-info" *ngIf="lastPunchTime">
+            <div class="punch-detail">
+                <span class="punch-label">Last Action:</span>
+                <span class="punch-value" [class.clock-in]="lastPunchType === 'CLOCK_IN'"
+                      [class.clock-out]="lastPunchType === 'CLOCK_OUT'">
+                    {{ lastPunchType === 'CLOCK_IN' ? 'Clocked In' : 'Clocked Out' }}
+                </span>
+            </div>
+            <div class="punch-detail">
+                <span class="punch-label">Time:</span>
+                <span class="punch-value">{{ formatDateTime(lastPunchTime) }}</span>
+            </div>
+        </div>
+
+        <!-- Retry Button for Pending Events -->
+        <div class="retry-section" *ngIf="showRetryButton">
+            <div class="alert alert-warning">
+                <i class="fas fa-exclamation-circle"></i>
+                {{ pendingEvents.length }} pending event(s) to sync
+            </div>
+            <button class="btn btn-warning btn-sm" (click)="retryPendingEvents()" [disabled]="isLoading">
+                <i class="fas fa-sync-alt" [class.fa-spin]="isLoading"></i>
+                Retry Now
+            </button>
+        </div>
+
+        <!-- Location Permission Status -->
+        <div class="location-status" *ngIf="!locationPermissionGranted && locationRequired">
+            <button class="btn btn-link" (click)="requestLocationPermission()">
+                <i class="fas fa-map-marker-alt"></i>
+                Enable Location
+            </button>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" [class.show]="showConfirmationModal" *ngIf="showConfirmationModal">
+        <div class="modal-backdrop" (click)="showConfirmationModal = false"></div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        Confirm {{ isClockedIn ? 'Clock Out' : 'Clock In' }}
+                    </h5>
+                    <button type="button" class="close" (click)="showConfirmationModal = false">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="confirmation-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Action:</span>
+                            <span class="detail-value">
+                                {{ isClockedIn ? 'Clock Out' : 'Clock In' }}
+                            </span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Time:</span>
+                            <span class="detail-value">{{ currentTime | date:'HH:mm:ss' }}</span>
+                        </div>
+                        <div class="detail-row" *ngIf="currentLocation.latitude">
+                            <span class="detail-label">Location:</span>
+                            <span class="detail-value">
+                                <i class="fas fa-check-circle text-success"></i> Captured
+                            </span>
+                        </div>
+                        <div class="detail-row" *ngIf="capturedPhotoUrl">
+                            <span class="detail-label">Selfie:</span>
+                            <span class="detail-value">
+                                <i class="fas fa-check-circle text-success"></i> Captured
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Optional Notes -->
+                    <div class="notes-section mt-3">
+                        <label for="notes">Notes (Optional):</label>
+                        <textarea
+                            class="form-control"
+                            id="notes"
+                            [formControl]="clockForm.get('notes')"
+                            rows="2"
+                            placeholder="Add any notes...">
+                        </textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="showConfirmationModal = false">
+                        Cancel
+                    </button>
+                    <button type="button"
+                            class="btn"
+                            [ngClass]="isClockedIn ? 'btn-danger' : 'btn-success'"
+                            (click)="confirmClockAction()">
+                        Confirm {{ isClockedIn ? 'Clock Out' : 'Clock In' }}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Selfie Capture Modal -->
+    <div class="modal" [class.show]="showSelfieModal" *ngIf="showSelfieModal">
+        <div class="modal-backdrop" (click)="cancelSelfie()"></div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Capture Selfie</h5>
+                    <button type="button" class="close" (click)="cancelSelfie()">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <app-selfie-capture
+                        (photoCapture)="onSelfieCapture($event)"
+                        (cancel)="cancelSelfie()">
+                    </app-selfie-capture>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -46,22 +46,60 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
             new MenuItem(this.l('About'), '/app/about', 'fas fa-info-circle'),
             new MenuItem(this.l('HomePage'), '/app/home', 'fas fa-home'),
             new MenuItem(
-                this.l('Clock Events'),
-                '/app/attendance',
+                this.l('Attendance'),
+                '',
                 'fas fa-clock',
-                'Pages.Attendance'
-            ),
-            new MenuItem(
-                this.l('Managar dashboard'),
-                '/app/managar-dashborad',
-                'fas fa-clock',
-                'Pages.Attendance'
-            ),
-            new MenuItem(
-                this.l('Leave'),
-                '/app/leave',
-                'fas fa-calendar-alt', // leave icon
-                'Pages.Leaves'
+                'Pages.Attendance',
+                [
+                    new MenuItem(
+                        this.l('Clock In/Out'),
+                        '/app/attendance/clock-in-out',
+                        'fas fa-user-clock',
+                        'Pages.Attendance.ClockInOut'
+                    ),
+                    new MenuItem(
+                        this.l('My History'),
+                        '/app/attendance/history',
+                        'fas fa-history',
+                        'Pages.Attendance.View'
+                    ),
+                    new MenuItem(
+                        this.l('Leave Request'),
+                        '/app/attendance/leave-request',
+                        'fas fa-calendar-plus',
+                        'Pages.Leaves.Request'
+                    ),
+                    new MenuItem(
+                        this.l('My Leaves'),
+                        '/app/attendance/leave-list',
+                        'fas fa-calendar-check',
+                        'Pages.Leaves.View'
+                    ),
+                    new MenuItem(
+                        this.l('Manager Approvals'),
+                        '/app/attendance/approvals',
+                        'fas fa-tasks',
+                        'Pages.Leaves.Approve'
+                    ),
+                    new MenuItem(
+                        this.l('Roster'),
+                        '/app/attendance/roster',
+                        'fas fa-calendar-alt',
+                        'Pages.Rosters.View'
+                    ),
+                    new MenuItem(
+                        this.l('Swap Approvals'),
+                        '/app/attendance/swap-approvals',
+                        'fas fa-exchange-alt',
+                        'Pages.Rosters.Swap'
+                    ),
+                    new MenuItem(
+                        this.l('Shift Management'),
+                        '/app/attendance/admin/shifts',
+                        'fas fa-business-time',
+                        'Pages.Shifts.View'
+                    )
+                ]
             ),
             new MenuItem(
                 this.l('Roles'),

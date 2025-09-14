@@ -1418,6 +1418,9 @@ namespace AttendanceModule.Migrations
                     b.Property<double?>("Longitude")
                         .HasColumnType("float");
 
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PhotoUrl")
                         .HasColumnType("nvarchar(max)");
 
@@ -1497,6 +1500,9 @@ namespace AttendanceModule.Migrations
                     b.Property<int?>("ApproverId")
                         .HasColumnType("int");
 
+                    b.Property<string>("AttachmentUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
 
@@ -1519,6 +1525,9 @@ namespace AttendanceModule.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("LeaveType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Reason")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDate")

@@ -13,6 +13,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static AttendanceModule.Authorization.AttendanceModuleAuthorizationProvider;
+using AttendanceModule.Authorization.Users;
+using Microsoft.AspNetCore.Identity;
+using Abp.Runtime.Session;
 
 namespace AttendanceModule.Employee
 {
@@ -20,14 +23,17 @@ namespace AttendanceModule.Employee
     {
         private readonly IRepository<AttendanceModuleEntities.Employee, int> _employeeRepository;
         private readonly IMapper _mapper;
+        private readonly UserManager _userManager;
 
         public EmployeeAppService(
             IRepository<AttendanceModuleEntities.Employee, int> employeeRepository,
-            IMapper mapper
+            IMapper mapper,
+            UserManager userManager
         )
         {
             _employeeRepository = employeeRepository;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         [AbpAuthorize(EmployeePermissions.Pages_Employees_Create)]
@@ -76,6 +82,49 @@ namespace AttendanceModule.Employee
             if (employee == null)
             {
                 throw new UserFriendlyException("Employee not found");
+            }
+
+            return _mapper.Map<EmployeeDto>(employee);
+        }
+
+        public async Task<EmployeeDto> GetCurrentUserEmployeeAsync()
+        {
+            var userId = AbpSession.UserId;
+            if (!userId.HasValue)
+            {
+                throw new UserFriendlyException("User not logged in");
+            }
+
+            var employee = await _employeeRepository.FirstOrDefaultAsync(e => e.UserId == userId.Value);
+            if (employee == null)
+            {
+                // Auto-create employee record for the current user
+                var user = await _userManager.GetUserByIdAsync(userId.Value);
+                employee = new AttendanceModuleEntities.Employee
+                {
+                    UserId = (int)userId.Value,
+                    EmployeeNumber = $"EMP{userId.Value:D4}",
+                    FirstName = user.Name?.Split(' ').FirstOrDefault() ?? user.UserName,
+                    LastName = user.Surname ?? "",
+                    Email = user.EmailAddress,
+                    Timezone = "UTC",
+                    IsActive = true,
+                    TenantId = AbpSession.TenantId ?? 1
+                };
+
+                employee = await _employeeRepository.InsertAsync(employee);
+                await CurrentUnitOfWork.SaveChangesAsync();
+            }
+
+            return _mapper.Map<EmployeeDto>(employee);
+        }
+
+        public async Task<EmployeeDto> GetEmployeeByUserIdAsync(int userId)
+        {
+            var employee = await _employeeRepository.FirstOrDefaultAsync(e => e.UserId == userId);
+            if (employee == null)
+            {
+                throw new UserFriendlyException($"No employee record found for user ID {userId}");
             }
 
             return _mapper.Map<EmployeeDto>(employee);

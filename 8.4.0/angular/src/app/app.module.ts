@@ -8,6 +8,7 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { NgxPaginationModule } from 'ngx-pagination';
+import { AbpModule } from 'abp-ng2-module';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
@@ -38,11 +39,7 @@ import { SidebarComponent } from './layout/sidebar.component';
 import { SidebarLogoComponent } from './layout/sidebar-logo.component';
 import { SidebarUserPanelComponent } from './layout/sidebar-user-panel.component';
 import { SidebarMenuComponent } from './layout/sidebar-menu.component';
-import { ClockInOutComponent } from './admin/attendance/clock-in-out/clock-in-out.component';
 import { Service } from './proxy/api-proxies';
-import { LeaveManagementComponent } from './admin/leave/leave-management/leave-management.component';
-import { RequestLeaveFormComponent } from './admin/leave/request-leave-form/request-leave-form.component';
-import { ManagerDashboardComponent } from './admin/attendance/manager-dashboard/manager-dashboard.component';
 
 @NgModule({
     declarations: [
@@ -73,10 +70,6 @@ import { ManagerDashboardComponent } from './admin/attendance/manager-dashboard/
         SidebarLogoComponent,
         SidebarUserPanelComponent,
         SidebarMenuComponent,
-        ClockInOutComponent,
-        LeaveManagementComponent,
-        RequestLeaveFormComponent,
-        ManagerDashboardComponent
     ],
     imports: [
         CommonModule,
@@ -84,6 +77,7 @@ import { ManagerDashboardComponent } from './admin/attendance/manager-dashboard/
         ReactiveFormsModule,
         HttpClientModule,
         HttpClientJsonpModule,
+        AbpModule,
         ModalModule.forChild(),
         BsDropdownModule,
         CollapseModule,

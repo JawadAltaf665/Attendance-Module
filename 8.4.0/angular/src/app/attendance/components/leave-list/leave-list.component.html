@@ -1,0 +1,317 @@
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-gradient bg-primary text-white shadow">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="mb-2">
+                                <i class="fas fa-calendar-alt me-2"></i>
+                                My Leave Requests
+                            </h2>
+                            <p class="mb-0 opacity-75">Manage and track your leave requests</p>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <button class="btn btn-light btn-lg" (click)="onRequestNewLeave()">
+                                <i class="fas fa-plus me-2"></i>
+                                Request New Leave
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-calendar-check text-primary fa-2x"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">{{ statistics.total }}</h3>
+                            <p class="text-muted mb-0 small">Total Requests</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-warning bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-hourglass-half text-warning fa-2x"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">{{ statistics.pending }}</h3>
+                            <p class="text-muted mb-0 small">Pending</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-check-circle text-success fa-2x"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">{{ statistics.approved }}</h3>
+                            <p class="text-muted mb-0 small">Approved</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle bg-info bg-opacity-10 p-3 me-3">
+                            <i class="fas fa-calendar-day text-info fa-2x"></i>
+                        </div>
+                        <div>
+                            <h3 class="mb-0">{{ statistics.totalDaysUsed }}</h3>
+                            <p class="text-muted mb-0 small">Days Used</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leave Balances -->
+    <div class="card shadow-sm mb-4" *ngIf="leaveBalances.length > 0">
+        <div class="card-header bg-white py-3">
+            <h5 class="mb-0 text-primary">
+                <i class="fas fa-chart-bar me-2"></i>Current Leave Balances
+            </h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 col-sm-6 mb-3" *ngFor="let balance of leaveBalances">
+                    <div class="border rounded p-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="fw-bold">
+                                <i class="fas me-1"
+                                   [ngClass]="getLeaveTypeIcon(balance.leaveType)"
+                                   [class.text-primary]="balance.leaveType === 'VACATION'"
+                                   [class.text-danger]="balance.leaveType === 'SICK'"
+                                   [class.text-info]="balance.leaveType === 'PERSONAL'"
+                                   [class.text-secondary]="balance.leaveType === 'UNPAID'"></i>
+                                {{ balance.leaveType }}
+                            </span>
+                            <span class="badge bg-secondary">
+                                {{ balance.availableDays }} / {{ balance.totalAllocation }}
+                            </span>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar"
+                                 [class.bg-success]="balance.availableDays > balance.totalAllocation * 0.5"
+                                 [class.bg-warning]="balance.availableDays <= balance.totalAllocation * 0.5 && balance.availableDays > balance.totalAllocation * 0.25"
+                                 [class.bg-danger]="balance.availableDays <= balance.totalAllocation * 0.25"
+                                 [style.width.%]="(balance.usedDays / balance.totalAllocation) * 100">
+                            </div>
+                        </div>
+                        <small class="text-muted">Used: {{ balance.usedDays }} days</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-white py-3">
+            <h6 class="mb-0 text-primary">
+                <i class="fas fa-filter me-2"></i>Filters
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3 mb-2">
+                    <label class="form-label fw-bold small">Status</label>
+                    <select class="form-control" [(ngModel)]="selectedStatus" (change)="onFilterChange()">
+                        <option value="ALL">All Status</option>
+                        <option value="PENDING">Pending</option>
+                        <option value="APPROVED">Approved</option>
+                        <option value="REJECTED">Rejected</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label class="form-label fw-bold small">Leave Type</label>
+                    <select class="form-control" [(ngModel)]="selectedType" (change)="onFilterChange()">
+                        <option value="ALL">All Types</option>
+                        <option value="VACATION">Vacation</option>
+                        <option value="SICK">Sick Leave</option>
+                        <option value="PERSONAL">Personal</option>
+                        <option value="UNPAID">Unpaid</option>
+                    </select>
+                </div>
+                <div class="col-md-4 mb-2">
+                    <label class="form-label fw-bold small">Search</label>
+                    <div class="input-group">
+                        <span class="input-group-text">
+                            <i class="fas fa-search"></i>
+                        </span>
+                        <input type="text" class="form-control" placeholder="Search by reason..."
+                               [(ngModel)]="searchTerm" (input)="onFilterChange()">
+                    </div>
+                </div>
+                <div class="col-md-2 mb-2">
+                    <label class="form-label small">&nbsp;</label>
+                    <button class="btn btn-outline-secondary w-100" (click)="refreshData()">
+                        <i class="fas fa-sync-alt me-2"></i>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leave Requests Table -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-white py-3">
+            <h6 class="mb-0 text-primary">
+                <i class="fas fa-list me-2"></i>Leave Requests
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Request ID</th>
+                            <th>Type</th>
+                            <th>Date Range</th>
+                            <th>Days</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Requested On</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngIf="isLoading">
+                            <td colspan="8" class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-3 mb-0 text-muted">Loading leave requests...</p>
+                            </td>
+                        </tr>
+                        <tr *ngIf="!isLoading && paginatedRequests.length === 0">
+                            <td colspan="8" class="text-center py-5">
+                                <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">No leave requests found</h5>
+                                <p class="text-muted mb-3">You haven't submitted any leave requests yet</p>
+                                <button class="btn btn-primary" (click)="onRequestNewLeave()">
+                                    <i class="fas fa-plus me-2"></i>
+                                    Request Your First Leave
+                                </button>
+                            </td>
+                        </tr>
+                        <tr *ngFor="let request of paginatedRequests">
+                            <td>
+                                <span class="badge bg-light text-dark">#{{ request.id }}</span>
+                            </td>
+                            <td>
+                                <span class="badge"
+                                      [class.bg-primary]="request.leaveType === 'VACATION'"
+                                      [class.bg-danger]="request.leaveType === 'SICK'"
+                                      [class.bg-info]="request.leaveType === 'PERSONAL'"
+                                      [class.bg-secondary]="request.leaveType === 'UNPAID'">
+                                    <i class="fas me-1" [ngClass]="getLeaveTypeIcon(request.leaveType)"></i>
+                                    {{ request.leaveType }}
+                                </span>
+                            </td>
+                            <td>
+                                <div>
+                                    {{ formatDateRange(request.startDate, request.endDate) }}
+                                    <span class="badge bg-info ms-1" *ngIf="request.halfDay">
+                                        <i class="fas fa-adjust"></i> Half Day
+                                    </span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="fw-bold">{{ calculateDays(request) }}</span>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <span class="text-truncate d-inline-block" style="max-width: 200px;"
+                                          [title]="request.reason">
+                                        {{ request.reason }}
+                                    </span>
+                                    <i class="fas fa-paperclip ms-2 text-muted" *ngIf="request.attachmentUrl"
+                                       title="Has attachment"></i>
+                                </div>
+                            </td>
+                            <td>
+                                <span [ngClass]="getStatusBadgeClass(request.status)">
+                                    <i class="fas me-1"
+                                       [class.fa-hourglass-half]="request.status === 'PENDING'"
+                                       [class.fa-check-circle]="request.status === 'APPROVED'"
+                                       [class.fa-times-circle]="request.status === 'REJECTED'"></i>
+                                    {{ request.status }}
+                                </span>
+                            </td>
+                            <td>
+                                <small class="text-muted">{{ formatDate(request.creationTime) }}</small>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button class="btn btn-outline-info" (click)="onViewDetails(request)"
+                                            title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-outline-danger" (click)="onCancelRequest(request)"
+                                            *ngIf="request.status === 'PENDING'" title="Cancel Request">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-between align-items-center mt-4" *ngIf="totalPages > 1">
+                <div class="text-muted small">
+                    Showing <strong>{{ (currentPage - 1) * pageSize + 1 }}</strong> to
+                    <strong>{{ Math.min(currentPage * pageSize, filteredRequests.length) }}</strong> of
+                    <strong>{{ filteredRequests.length }}</strong> entries
+                </div>
+                <nav>
+                    <ul class="pagination mb-0">
+                        <li class="page-item" [class.disabled]="currentPage === 1">
+                            <a class="page-link" (click)="onPageChange(currentPage - 1)" style="cursor: pointer;">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
+                        <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index"
+                            [class.active]="currentPage === i + 1"
+                            [class.d-none]="totalPages > 10 && Math.abs(currentPage - (i + 1)) > 2 && i !== 0 && i !== totalPages - 1">
+                            <a class="page-link" (click)="onPageChange(i + 1)" style="cursor: pointer;">
+                                {{ i + 1 }}
+                            </a>
+                        </li>
+                        <li class="page-item" [class.disabled]="currentPage === totalPages">
+                            <a class="page-link" (click)="onPageChange(currentPage + 1)" style="cursor: pointer;">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>

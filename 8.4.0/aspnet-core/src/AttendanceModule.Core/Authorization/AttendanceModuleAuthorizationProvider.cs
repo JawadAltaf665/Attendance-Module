@@ -21,6 +21,8 @@ namespace AttendanceModule.Authorization
             var shifts = context.CreatePermission(ShiftPermissions.Pages_Shifts, L("Shifts"));
             shifts.CreateChildPermission(ShiftPermissions.Pages_Shifts_Create, L("CreateShift"));
             shifts.CreateChildPermission(ShiftPermissions.Pages_Shifts_View, L("ViewShift"));
+            shifts.CreateChildPermission(ShiftPermissions.Pages_Shifts_Edit, L("EditShift"));
+            shifts.CreateChildPermission(ShiftPermissions.Pages_Shifts_Delete, L("DeleteShift"));
 
 
             // Roster
@@ -34,6 +36,7 @@ namespace AttendanceModule.Authorization
             var leaves = context.CreatePermission(LeavePermissions.Pages_Leaves, L("Leaves"));
             leaves.CreateChildPermission(LeavePermissions.Pages_Leaves_Request, L("RequestLeave"));
             leaves.CreateChildPermission(LeavePermissions.Pages_Leaves_Approve, L("ApproveLeave"));
+            leaves.CreateChildPermission(LeavePermissions.Pages_Leaves_Reject, L("RejectLeave"));
             leaves.CreateChildPermission(LeavePermissions.Pages_Leaves_View, L("ViewLeave"));
 
             // Reports
@@ -79,6 +82,8 @@ namespace AttendanceModule.Authorization
             public const string Pages_Shifts = "Pages.Shifts";
             public const string Pages_Shifts_Create = "Pages.Shifts.Create";
             public const string Pages_Shifts_View = "Pages.Shifts.View";
+            public const string Pages_Shifts_Edit = "Pages.Shifts.Edit";
+            public const string Pages_Shifts_Delete = "Pages.Shifts.Delete";
         }
 
         public static class RosterPermissions

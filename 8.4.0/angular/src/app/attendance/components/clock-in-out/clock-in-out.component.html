@@ -1,0 +1,262 @@
+<div class="container-fluid py-4">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-primary text-white shadow">
+                <div class="card-body p-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="mb-2">
+                                <i class="fas fa-user-clock me-3"></i>
+                                Attendance Management
+                            </h2>
+                            <p class="mb-0 opacity-75">Track your work hours and manage attendance</p>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <h1 class="display-6 mb-0">{{ currentTime | date:'HH:mm:ss' }}</h1>
+                            <small class="opacity-75">{{ currentDate | date:'EEEE, MMMM d, y' }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Left Column: Clock Actions & Current Status -->
+        <div class="col-12 col-xl-8 mb-4">
+            <!-- Clock Actions Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 text-primary">
+                        <i class="fas fa-clock me-3"></i>Clock In/Out
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Employee Info -->
+                    <div class="alert alert-info mb-4" *ngIf="employeeName">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-user-circle fa-2x me-3"></i>
+                            <div>
+                                <h6 class="mb-0">{{ employeeName }}</h6>
+                                <small>Employee ID: {{ employeeId }}</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Clock Status -->
+                    <div class="text-center mb-4">
+                        <div class="badge rounded-pill px-4 py-3"
+                             [ngClass]="isClockedIn ? 'bg-success' : 'bg-secondary'">
+                            <h4 class="mb-0 text-white">
+                                <i class="fas" [ngClass]="isClockedIn ? 'fa-check-circle' : 'fa-times-circle'"></i>
+                                {{ isClockedIn ? 'Clocked In' : 'Clocked Out' }}
+                            </h4>
+                        </div>
+                        <div class="mt-3" *ngIf="isClockedIn && clockInTime">
+                            <small class="text-muted">Since {{ formatTime(clockInTime) }}</small>
+                            <div class="h5 text-primary mt-2">
+                                <i class="fas fa-hourglass-half me-3"></i>
+                                Session: {{ sessionDuration }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Clock Form -->
+                    <form [formGroup]="clockForm" class="mb-4">
+                        <!-- Location Toggle -->
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox"
+                                   formControlName="includeLocation"
+                                   id="locationToggle">
+                            <label class="form-check-label" for="locationToggle">
+                                <i class="fas fa-map-marker-alt me-2"></i>
+                                Include Location
+                            </label>
+                        </div>
+
+                        <!-- Location Warning -->
+                        <div class="alert alert-warning py-2" *ngIf="showLocationWarning">
+                            <small>
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Location access denied. Clock events will be recorded without location.
+                            </small>
+                        </div>
+
+                        <!-- Notes Toggle -->
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-outline-secondary btn-sm"
+                                    (click)="toggleNotesField()">
+                                <i class="fas fa-sticky-note me-2"></i>
+                                {{ showNotesField ? 'Hide' : 'Add' }} Notes
+                            </button>
+                        </div>
+
+                        <!-- Notes Field -->
+                        <div class="mb-3" *ngIf="showNotesField">
+                            <textarea class="form-control"
+                                      formControlName="notes"
+                                      rows="3"
+                                      placeholder="Add any notes about this clock event..."></textarea>
+                        </div>
+                    </form>
+
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-success btn-lg"
+                                *ngIf="canClockIn()"
+                                (click)="clockIn()"
+                                [disabled]="isLoading">
+                            <i class="fas fa-sign-in-alt me-3"></i>
+                            Clock In
+                        </button>
+                        <button class="btn btn-danger btn-lg"
+                                *ngIf="canClockOut()"
+                                (click)="clockOut()"
+                                [disabled]="isLoading">
+                            <i class="fas fa-sign-out-alt me-3"></i>
+                            Clock Out
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Today's Events -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h5 class="mb-0 text-primary">
+                        <i class="fas fa-history me-3"></i>Today's Activity
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive" *ngIf="todayEvents.length > 0">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Event</th>
+                                    <th>Notes</th>
+                                    <th>Source</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let event of todayEvents">
+                                    <td>{{ formatTime(event.eventTime) }}</td>
+                                    <td>
+                                        <span class="badge"
+                                              [ngClass]="event.eventType === 'CLOCK_IN' ? 'bg-success' : 'bg-danger'">
+                                            {{ event.eventType === 'CLOCK_IN' ? 'Clock In' : 'Clock Out' }}
+                                        </span>
+                                    </td>
+                                    <td>{{ event.notes || '-' }}</td>
+                                    <td>
+                                        <span class="badge bg-secondary">{{ event.source || 'Web' }}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center text-muted py-4" *ngIf="todayEvents.length === 0">
+                        <i class="fas fa-calendar-times fa-3x mb-3"></i>
+                        <p>No attendance events recorded today</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Summary & Schedule -->
+        <div class="col-12 col-xl-4">
+            <!-- Today's Summary -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0 text-primary">
+                        <i class="fas fa-chart-pie me-3"></i>Today's Summary
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-6 mb-3">
+                            <div class="text-muted small">Total Hours</div>
+                            <div class="h4 text-primary">{{ todaySummary.totalHours | number:'1.1-1' }}h</div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="text-muted small">Overtime</div>
+                            <div class="h4" [ngClass]="todaySummary.overtime > 0 ? 'text-warning' : 'text-muted'">
+                                {{ todaySummary.overtime | number:'1.1-1' }}h
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Schedule Info -->
+            <div class="card shadow-sm mb-4" *ngIf="todaySchedule">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0 text-primary">
+                        <i class="fas fa-calendar-day me-3"></i>Today's Schedule
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="text-center" *ngIf="todaySchedule.scheduleType === 'shift'">
+                        <div class="badge bg-info text-white px-3 py-2 mb-3">
+                            {{ todaySchedule.shiftName }}
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <small class="text-muted">Start</small>
+                                <div class="fw-bold">{{ todaySchedule.startTime }}</div>
+                            </div>
+                            <div class="col-6">
+                                <small class="text-muted">End</small>
+                                <div class="fw-bold">{{ todaySchedule.endTime }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center" *ngIf="todaySchedule.scheduleType === 'leave'">
+                        <div class="badge bg-warning text-dark px-3 py-2">
+                            On Leave - {{ todaySchedule.leaveType }}
+                        </div>
+                    </div>
+                    <div class="text-center text-muted" *ngIf="todaySchedule.scheduleType === 'none'">
+                        <i class="fas fa-calendar-times fa-2x mb-2"></i>
+                        <p class="mb-0">No schedule for today</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Progress -->
+            <div class="card shadow-sm" *ngIf="weeklySummary">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0 text-primary">
+                        <i class="fas fa-chart-line me-3"></i>Weekly Progress
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <small>Hours Worked</small>
+                            <small class="fw-bold">{{ weeklySummary.hoursWorked }}h / {{ weeklySummary.target }}h</small>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar"
+                                 [style.width.%]="getProgressPercentage()"
+                                 [ngClass]="{
+                                     'bg-success': getProgressPercentage() >= 100,
+                                     'bg-primary': getProgressPercentage() >= 75 && getProgressPercentage() < 100,
+                                     'bg-warning': getProgressPercentage() >= 50 && getProgressPercentage() < 75,
+                                     'bg-danger': getProgressPercentage() < 50
+                                 }">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center" *ngIf="weeklySummary.overtime > 0">
+                        <small class="text-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Overtime: {{ weeklySummary.overtime }}h
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

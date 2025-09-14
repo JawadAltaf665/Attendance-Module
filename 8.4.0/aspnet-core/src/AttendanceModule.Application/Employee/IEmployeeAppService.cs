@@ -13,6 +13,8 @@ namespace AttendanceModule.Employee
     {
         Task<List<EmployeeDto>> GetAllEmployeesAsync();
         Task<EmployeeDto> GetEmployeeByIdAsync(int id);
+        Task<EmployeeDto> GetCurrentUserEmployeeAsync();
+        Task<EmployeeDto> GetEmployeeByUserIdAsync(int userId);
         Task<EmployeeDto> CreateEmployeeAsync(CreateEmployeeDto input);
         Task<EmployeeDto> UpdateEmployeeAsync(CreateEmployeeDto input);
         Task DeactivateEmployeeAsync(int id);

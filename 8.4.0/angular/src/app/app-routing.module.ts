@@ -8,9 +8,6 @@ import { UsersComponent } from './users/users.component';
 import { TenantsComponent } from './tenants/tenants.component';
 import { RolesComponent } from 'app/roles/roles.component';
 import { ChangePasswordComponent } from './users/change-password/change-password.component';
-import { ClockInOutComponent } from './admin/attendance/clock-in-out/clock-in-out.component';
-import { LeaveManagementComponent } from './admin/leave/leave-management/leave-management.component';
-import { ManagerDashboardComponent } from './admin/attendance/manager-dashboard/manager-dashboard.component';
 
 @NgModule({
     imports: [
@@ -25,9 +22,13 @@ import { ManagerDashboardComponent } from './admin/attendance/manager-dashboard/
                     { path: 'tenants', component: TenantsComponent, data: { permission: 'Pages.Tenants' }, canActivate: [AppRouteGuard] },
                     { path: 'about', component: AboutComponent, canActivate: [AppRouteGuard] },
                     { path: 'update-password', component: ChangePasswordComponent, canActivate: [AppRouteGuard] },
-                    { path: 'attendance', component: ClockInOutComponent, data: { permission: 'Pages.Attendance' }, canActivate: [AppRouteGuard] },
-                    { path: 'managar-dashborad', component: ManagerDashboardComponent, canActivate: [AppRouteGuard] },
-                    { path: 'leave', component: LeaveManagementComponent, canActivate: [AppRouteGuard] }
+                    // Attendance module is loaded lazily
+                    {
+                        path: 'attendance',
+                        loadChildren: () => import('./attendance/attendance.module').then(m => m.AttendanceModule),
+                        data: { permission: 'Pages.Attendance' },
+                        canActivate: [AppRouteGuard]
+                    }
 
 
                 ]

@@ -1,0 +1,42 @@
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h4 class="mb-1">{{ employeeName }}</h4>
+                <p class="text-muted mb-0">
+                    <i class="fas fa-globe me-1"></i>
+                    {{ timezone }}
+                </p>
+            </div>
+            <div class="text-center">
+                <div class="rounded-circle p-3" [ngClass]="isClockedIn ? 'bg-success' : 'bg-secondary'">
+                    <i class="fas text-white fs-3" [ngClass]="getStatusIcon()"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-top pt-3">
+            <div class="mb-2">
+                <h5 class="mb-1" [ngClass]="isClockedIn ? 'text-success' : 'text-secondary'">
+                    {{ getStatusText() }}
+                </h5>
+                <p class="text-muted mb-0" *ngIf="isClockedIn && lastPunchTime">
+                    <i class="fas fa-clock me-1"></i>
+                    Working for {{ getElapsedTime() }}
+                </p>
+            </div>
+
+            <div class="bg-light rounded p-2 mt-3" *ngIf="lastPunchTime">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted">Last Punch:</span>
+                    <div>
+                        <span class="fw-bold me-2">{{ formatTime(lastPunchTime) }}</span>
+                        <span class="badge" [ngClass]="lastPunchType === 'CLOCK_IN' ? 'bg-success' : 'bg-danger'">
+                            {{ lastPunchType === 'CLOCK_IN' ? 'IN' : 'OUT' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

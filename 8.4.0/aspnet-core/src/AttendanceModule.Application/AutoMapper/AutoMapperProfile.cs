@@ -31,6 +31,7 @@ namespace AttendanceModule.AutoMapper
             // Shift
             CreateMap<AttendanceModuleEntities.Shift, ShiftDto>();
             CreateMap<CreateShiftDto, AttendanceModuleEntities.Shift>();
+            CreateMap<UpdateShiftDto, AttendanceModuleEntities.Shift>();
 
             CreateMap<CreateShiftSwapRequestDto, ShiftSwapRequest>();
             CreateMap<ShiftSwapRequest, ShiftSwapRequestDto>();

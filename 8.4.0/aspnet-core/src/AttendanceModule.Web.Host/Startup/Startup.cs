@@ -119,9 +119,10 @@ namespace AttendanceModule.Web.Host.Startup
             {
                 // specifying the Swagger JSON endpoint.
                 options.SwaggerEndpoint($"/swagger/{_apiVersion}/swagger.json", $"AttendanceModule API {_apiVersion}");
-                options.IndexStream = () => Assembly.GetExecutingAssembly()
-                    .GetManifestResourceStream("AttendanceModule.Web.Host.wwwroot.swagger.ui.index.html");
-                options.DisplayRequestDuration(); // Controls the display of the request duration (in milliseconds) for "Try it out" requests.  
+                // Remove custom index to use default Swagger UI
+                // options.IndexStream = () => Assembly.GetExecutingAssembly()
+                //     .GetManifestResourceStream("AttendanceModule.Web.Host.wwwroot.swagger.ui.index.html");
+                options.DisplayRequestDuration(); // Controls the display of the request duration (in milliseconds) for "Try it out" requests.
             }); // URL: /swagger
         }
         
@@ -133,48 +134,43 @@ namespace AttendanceModule.Web.Host.Startup
                 {
                     Version = _apiVersion,
                     Title = "AttendanceModule API",
-                    Description = "AttendanceModule",
-                    // uncomment if needed TermsOfService = new Uri("https://example.com/terms"),
-                    Contact = new OpenApiContact
-                    {
-                        Name = "AttendanceModule",
-                        Email = string.Empty,
-                        Url = new Uri("https://twitter.com/aspboilerplate"),
-                    },
-                    License = new OpenApiLicense
-                    {
-                        Name = "MIT License",
-                        Url = new Uri("https://github.com/aspnetboilerplate/aspnetboilerplate/blob/dev/LICENSE"),
-                    }
+                    Description = "AttendanceModule"
                 });
+
                 options.DocInclusionPredicate((docName, description) => true);
+
+                // Use simple naming strategy to avoid conflicts
+                options.CustomSchemaIds(type =>
+                {
+                    var typeName = type.Name;
+                    if (type.IsGenericType)
+                    {
+                        var genericArgs = string.Join("", type.GetGenericArguments().Select(x => x.Name));
+                        typeName = $"{type.Name.Split('`')[0]}Of{genericArgs}";
+                    }
+                    if (type.Namespace != null && type.Namespace.Contains("AttendanceModule"))
+                    {
+                        var nameParts = type.Namespace.Split('.');
+                        if (nameParts.Length > 1)
+                        {
+                            var lastPart = nameParts[nameParts.Length - 1];
+                            if (lastPart != "AttendanceModule")
+                            {
+                                typeName = $"{lastPart}{typeName}";
+                            }
+                        }
+                    }
+                    return typeName;
+                });
 
                 // Define the BearerAuth scheme that's in use
                 options.AddSecurityDefinition("bearerAuth", new OpenApiSecurityScheme()
                 {
-                    Description =
-                        "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+                    Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
                     Type = SecuritySchemeType.ApiKey
                 });
-
-                //add summaries to swagger
-                bool canShowSummaries = _appConfiguration.GetValue<bool>("Swagger:ShowSummaries");
-                if (canShowSummaries)
-                {
-                    var hostXmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-                    var hostXmlPath = Path.Combine(AppContext.BaseDirectory, hostXmlFile);
-                    options.IncludeXmlComments(hostXmlPath);
-
-                    var applicationXml = $"AttendanceModule.Application.xml";
-                    var applicationXmlPath = Path.Combine(AppContext.BaseDirectory, applicationXml);
-                    options.IncludeXmlComments(applicationXmlPath);
-
-                    var webCoreXmlFile = $"AttendanceModule.Web.Core.xml";
-                    var webCoreXmlPath = Path.Combine(AppContext.BaseDirectory, webCoreXmlFile);
-                    options.IncludeXmlComments(webCoreXmlPath);
-                }
             });
         }
     }

@@ -1,0 +1,122 @@
+<div class="modal fade show d-block" tabindex="-1" role="dialog" style="background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Shift Details</h5>
+        <button type="button" class="btn-close" (click)="onClose()"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="card mb-3">
+          <div class="card-body">
+            <h6 class="card-subtitle mb-2 text-muted">Shift Information</h6>
+            <div class="row">
+              <div class="col-12 mb-2">
+                <strong>Shift Name:</strong> {{ roster.shift.name }}
+              </div>
+              <div class="col-12 mb-2">
+                <strong>Date:</strong> {{ roster.rosterDate | date:'fullDate' }}
+              </div>
+              <div class="col-6 mb-2">
+                <strong>Start Time:</strong> {{ formatTime(roster.shift.startTime) }}
+              </div>
+              <div class="col-6 mb-2">
+                <strong>End Time:</strong> {{ formatTime(roster.shift.endTime) }}
+              </div>
+              <div class="col-6 mb-2">
+                <strong>Duration:</strong> {{ calculateDuration() }}
+              </div>
+              <div class="col-6 mb-2">
+                <strong>Break:</strong> {{ roster.shift.breakMinutes }} minutes
+              </div>
+              <div class="col-12">
+                <strong>Assigned To:</strong> {{ roster.employeeName }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="showSwapRequest" class="card border-primary">
+          <div class="card-body">
+            <h6 class="card-subtitle mb-3 text-primary">
+              <i class="fa fa-exchange-alt"></i> Request Shift Swap
+            </h6>
+
+            <div class="alert alert-info mb-3">
+              <i class="fa fa-info-circle"></i>
+              <strong>Note:</strong> Upon approval, your shift on {{ roster.rosterDate | date:'fullDate' }}
+              will be swapped with the selected employee.
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Select Employee to Swap With <span class="text-danger">*</span></label>
+              <select class="form-select" [(ngModel)]="targetEmployeeId" [disabled]="loading">
+                <option [value]="null">-- Select Employee --</option>
+                <optgroup label="Same Team">
+                  <option *ngFor="let emp of getTeamEmployees()" [value]="emp.id">
+                    {{ emp.firstName }} {{ emp.lastName }}
+                  </option>
+                </optgroup>
+                <optgroup label="Other Employees">
+                  <option *ngFor="let emp of getOtherEmployees()" [value]="emp.id">
+                    {{ emp.firstName }} {{ emp.lastName }}
+                  </option>
+                </optgroup>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Reason for Swap Request <span class="text-danger">*</span></label>
+              <textarea class="form-control" rows="3" [(ngModel)]="swapReason"
+                        placeholder="Please provide a reason for the swap request..."
+                        [class.is-invalid]="showReasonError"
+                        required></textarea>
+              <div class="invalid-feedback" *ngIf="showReasonError">
+                Reason is required for swap requests
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label">Proposed Alternative Date (Optional)</label>
+              <input type="date" class="form-control" [(ngModel)]="proposedDate"
+                     [min]="getMinDate()" />
+              <small class="form-text text-muted">
+                If you have a preferred date for the swap, please select it here
+              </small>
+            </div>
+
+            <div class="form-check mb-3">
+              <input type="checkbox" class="form-check-input" id="confirmSwap" [(ngModel)]="confirmSwap">
+              <label class="form-check-label" for="confirmSwap">
+                I understand that this swap request requires manager approval and both employees' consent
+              </label>
+            </div>
+
+            <div class="d-flex justify-content-end gap-2">
+              <button type="button" class="btn btn-secondary" (click)="toggleSwapRequest()">
+                <i class="fa fa-times"></i> Cancel
+              </button>
+              <button type="button" class="btn btn-primary"
+                      (click)="submitSwapRequest()"
+                      [disabled]="!isSwapFormValid() || loading">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                <i class="fa fa-paper-plane" *ngIf="!loading"></i> Submit Request
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="onClose()">
+          Close
+        </button>
+        <button *ngIf="canRequestSwap() && !showSwapRequest"
+                type="button" class="btn btn-primary"
+                (click)="toggleSwapRequest()">
+          Request Swap
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
