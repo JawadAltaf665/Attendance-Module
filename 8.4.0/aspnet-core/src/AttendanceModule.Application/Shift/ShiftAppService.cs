@@ -184,9 +184,15 @@ namespace AttendanceModule.Shift
         [AbpAuthorize(ShiftPermissions.Pages_Shifts_View)]
         public async Task<List<RosterWithShiftDto>> GetRosterAsync(int? employeeId, DateTime startDate, DateTime endDate)
         {
+            Logger.Info($"GetRosterAsync called with: employeeId={employeeId}, startDate={startDate:yyyy-MM-dd}, endDate={endDate:yyyy-MM-dd}");
+
+            // Use Date property to ensure we compare dates without time
+            var startDateOnly = startDate.Date;
+            var endDateOnly = endDate.Date.AddDays(1).AddTicks(-1); // Include entire end date
+
             var query = _rosterRepository
                 .GetAllIncluding(r => r.Employee, r => r.Shift)
-                .Where(r => r.RosterDate >= startDate && r.RosterDate <= endDate);
+                .Where(r => r.RosterDate >= startDateOnly && r.RosterDate <= endDateOnly);
 
             if (employeeId.HasValue)
             {
@@ -201,7 +207,7 @@ namespace AttendanceModule.Shift
             var rosterDtos = rosters.Select(r => new RosterWithShiftDto
             {
                 Id = r.Id,
-                RosterDate = r.RosterDate,
+                RosterDate = r.RosterDate.Date, // Ensure date only
                 EmployeeId = r.EmployeeId,
                 EmployeeName = $"{r.Employee.FirstName} {r.Employee.LastName}",
                 Shift = new ShiftDetailsDto
@@ -213,6 +219,12 @@ namespace AttendanceModule.Shift
                     BreakMinutes = r.Shift.BreakMinutes
                 }
             }).ToList();
+
+            Logger.Info($"Returning {rosterDtos.Count} roster entries");
+            foreach (var dto in rosterDtos)
+            {
+                Logger.Info($"Roster: Employee={dto.EmployeeName}, Date={dto.RosterDate:yyyy-MM-dd}, Shift={dto.Shift.Name}");
+            }
 
             return rosterDtos;
         }
@@ -236,11 +248,15 @@ namespace AttendanceModule.Shift
                 return new List<RosterWithShiftDto>();
             }
 
+            // Use Date property to ensure we compare dates without time
+            var startDateOnly = startDate.Date;
+            var endDateOnly = endDate.Date.AddDays(1).AddTicks(-1); // Include entire end date
+
             var rosters = await _rosterRepository
                 .GetAllIncluding(r => r.Employee, r => r.Shift)
                 .Where(r => r.EmployeeId == employee.Id &&
-                           r.RosterDate >= startDate &&
-                           r.RosterDate <= endDate)
+                           r.RosterDate >= startDateOnly &&
+                           r.RosterDate <= endDateOnly)
                 .OrderBy(r => r.RosterDate)
                 .ThenBy(r => r.Shift.StartTime)
                 .ToListAsync();
@@ -248,7 +264,7 @@ namespace AttendanceModule.Shift
             var rosterDtos = rosters.Select(r => new RosterWithShiftDto
             {
                 Id = r.Id,
-                RosterDate = r.RosterDate,
+                RosterDate = r.RosterDate.Date, // Ensure date only
                 EmployeeId = r.EmployeeId,
                 EmployeeName = $"{r.Employee.FirstName} {r.Employee.LastName}",
                 Shift = new ShiftDetailsDto
@@ -261,7 +277,7 @@ namespace AttendanceModule.Shift
                 }
             }).ToList();
 
-            Logger.Info($"Found {rosterDtos.Count} roster entries for employee {employee.Id} between {startDate:yyyy-MM-dd} and {endDate:yyyy-MM-dd}");
+            Logger.Info($"Found {rosterDtos.Count} roster entries for employee {employee.Id} between {startDateOnly:yyyy-MM-dd} and {endDateOnly:yyyy-MM-dd}");
 
             return rosterDtos;
         }

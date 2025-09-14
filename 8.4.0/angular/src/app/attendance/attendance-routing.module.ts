@@ -9,6 +9,7 @@ import { ManagerApprovalsComponent } from './manager-approvals/manager-approvals
 import { RosterComponent } from './roster/roster.component';
 import { ManagerSwapApprovalComponent } from './manager-swap-approval/manager-swap-approval.component';
 import { AdminShiftsComponent } from './admin-shifts/admin-shifts.component';
+import { EmployeeShiftSwapComponent } from './employee-shift-swap/employee-shift-swap.component';
 
 const routes: Routes = [
     {
@@ -36,7 +37,7 @@ const routes: Routes = [
         path: 'history',
         component: AttendanceHistoryComponent,
         data: {
-            permission: 'Pages.Attendance.View',
+            permission: 'Pages.Attendance.ClockInOut',
             title: 'Attendance History'
         }
     },
@@ -44,7 +45,7 @@ const routes: Routes = [
         path: 'leave-request',
         component: LeaveRequestComponent,
         data: {
-            permission: 'Pages.Leaves.Request',
+            permission: 'Pages.Attendance.ClockInOut',
             title: 'Request Leave'
         }
     },
@@ -52,7 +53,7 @@ const routes: Routes = [
         path: 'leave-list',
         component: LeaveListComponent,
         data: {
-            permission: 'Pages.Leaves.View',
+            permission: 'Pages.Attendance.ClockInOut',
             title: 'My Leave Requests'
         }
     },
@@ -73,10 +74,18 @@ const routes: Routes = [
         }
     },
     {
+        path: 'shift-swap',
+        component: EmployeeShiftSwapComponent,
+        data: {
+            permission: 'Pages.Attendance.ClockInOut',
+            title: 'Shift Swap Request'
+        }
+    },
+    {
         path: 'swap-approvals',
         component: ManagerSwapApprovalComponent,
         data: {
-            permission: 'Pages.Rosters.Swap',
+            permission: 'Pages.Rosters.SwapApprove',
             title: 'Swap Approvals'
         }
     },

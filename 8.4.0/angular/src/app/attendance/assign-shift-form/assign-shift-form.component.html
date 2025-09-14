@@ -9,7 +9,7 @@
             Select Employee <span class="text-danger">*</span>
           </label>
           <select id="employee"
-                  class="form-select"
+                  class="form-control"
                   [(ngModel)]="selectedEmployeeId"
                   name="employee"
                   required
@@ -31,7 +31,7 @@
             Select Shift <span class="text-danger">*</span>
           </label>
           <select id="shift"
-                  class="form-select"
+                  class="form-control"
                   [(ngModel)]="selectedShiftId"
                   name="shift"
                   required
@@ -61,14 +61,14 @@
                   <strong>Shift:</strong> {{ getSelectedShift()?.name }}
                 </div>
                 <div class="col-md-6">
-                  <strong>Duration:</strong> {{ calculateShiftDuration(getSelectedShift()!) }}
+                  <strong>Duration:</strong> {{ getSelectedShift() ? calculateShiftDuration(getSelectedShift()!) : '' }}
                 </div>
               </div>
               <div class="row mt-2">
                 <div class="col-md-6">
                   <strong>Time:</strong>
-                  {{ formatTime(getSelectedShift()?.startTime!) }} -
-                  {{ formatTime(getSelectedShift()?.endTime!) }}
+                  {{ getSelectedShift()?.startTime ? formatTime(getSelectedShift()!.startTime) : '' }} -
+                  {{ getSelectedShift()?.endTime ? formatTime(getSelectedShift()!.endTime) : '' }}
                 </div>
                 <div class="col-md-6" *ngIf="getSelectedShift()?.breakMinutes">
                   <strong>Break:</strong> {{ getSelectedShift()?.breakMinutes }} minutes

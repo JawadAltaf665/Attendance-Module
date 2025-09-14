@@ -16,6 +16,7 @@ namespace AttendanceModule.Roster.Dtos
         public int ShiftId { get; set; }
 
         [Required]
+        [DataType(DataType.Date)]
         public DateTime RosterDate { get; set; }
     }
 }

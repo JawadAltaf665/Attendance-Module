@@ -62,17 +62,48 @@ namespace AttendanceModule.Employee
             await _employeeRepository.UpdateAsync(employee);
         }
 
-        [AbpAuthorize(EmployeePermissions.Pages_Employees_View)]
         public async Task<List<EmployeeDto>> GetAllEmployeesAsync()
         {
-            var employees = await _employeeRepository.GetAllListAsync();
-
-            if (!employees.Any())
+            try
             {
-                throw new UserFriendlyException("No employees found");
-            }
+                var employees = await _employeeRepository.GetAllListAsync();
 
-            return _mapper.Map<List<EmployeeDto>>(employees);
+                if (!employees.Any())
+                {
+                    Logger.Info("No employees found in database");
+                    return new List<EmployeeDto>();
+                }
+
+                Logger.Info($"Found {employees.Count} employees");
+                return _mapper.Map<List<EmployeeDto>>(employees);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Error in GetAllEmployeesAsync", ex);
+                throw new UserFriendlyException("Failed to retrieve employees: " + ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Get employees for roster assignment - requires only roster assign permission
+        /// </summary>
+        [AbpAuthorize(RosterPermissions.Pages_Rosters_Assign)]
+        public async Task<List<EmployeeDto>> GetEmployeesForAssignmentAsync()
+        {
+            try
+            {
+                var employees = await _employeeRepository.GetAll()
+                    .Where(e => e.IsActive == true)
+                    .ToListAsync();
+
+                Logger.Info($"Found {employees.Count} active employees for assignment");
+                return _mapper.Map<List<EmployeeDto>>(employees);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Error in GetEmployeesForAssignmentAsync", ex);
+                throw new UserFriendlyException("Failed to retrieve employees for assignment: " + ex.Message);
+            }
         }
 
         [AbpAuthorize(EmployeePermissions.Pages_Employees_View)]

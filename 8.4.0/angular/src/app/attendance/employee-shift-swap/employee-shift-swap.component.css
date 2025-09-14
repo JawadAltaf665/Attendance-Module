@@ -1,0 +1,31 @@
+/* Bootstrap-based minimal styling */
+
+.table-responsive {
+    margin-top: 15px;
+}
+
+.card-tools {
+    float: right;
+}
+
+.modal.show {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.badge {
+    padding: 5px 10px;
+    font-size: 0.875rem;
+}
+
+/* Simple status colors using Bootstrap utilities */
+.text-danger {
+    color: #dc3545 !important;
+}
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
+.text-success {
+    color: #28a745 !important;
+}

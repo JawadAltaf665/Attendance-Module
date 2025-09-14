@@ -61,19 +61,19 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
                         this.l('My History'),
                         '/app/attendance/history',
                         'fas fa-history',
-                        'Pages.Attendance.View'
+                        'Pages.Attendance.ClockInOut'
                     ),
                     new MenuItem(
                         this.l('Leave Request'),
                         '/app/attendance/leave-request',
                         'fas fa-calendar-plus',
-                        'Pages.Leaves.Request'
+                        'Pages.Attendance.ClockInOut'
                     ),
                     new MenuItem(
                         this.l('My Leaves'),
                         '/app/attendance/leave-list',
                         'fas fa-calendar-check',
-                        'Pages.Leaves.View'
+                        'Pages.Attendance.ClockInOut'
                     ),
                     new MenuItem(
                         this.l('Manager Approvals'),
@@ -81,17 +81,29 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
                         'fas fa-tasks',
                         'Pages.Leaves.Approve'
                     ),
+                    //new MenuItem(
+                    //    this.l('Roster'),
+                    //    '/app/attendance/roster',
+                    //    'fas fa-calendar-alt',
+                    //    'Pages.Rosters.View'
+                    //),
                     new MenuItem(
-                        this.l('Roster'),
+                        this.l('Assign Rosters'),
                         '/app/attendance/roster',
-                        'fas fa-calendar-alt',
-                        'Pages.Rosters.View'
+                        'fas fa-user-plus',
+                        'Pages.Rosters.Assign'
+                    ),
+                    new MenuItem(
+                        this.l('Shift Swap Request'),
+                        '/app/attendance/shift-swap',
+                        'fas fa-exchange-alt',
+                        'Pages.Attendance.ClockInOut'
                     ),
                     new MenuItem(
                         this.l('Swap Approvals'),
                         '/app/attendance/swap-approvals',
                         'fas fa-exchange-alt',
-                        'Pages.Rosters.Swap'
+                        'Pages.Rosters.SwapApprove'
                     ),
                     new MenuItem(
                         this.l('Shift Management'),

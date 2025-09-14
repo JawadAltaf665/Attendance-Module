@@ -37,7 +37,15 @@ export class EmployeeService {
       params = params.set('Keyword', keyword);
     }
 
-    return this.http.get<PagedResultDto<EmployeeDto>>(`${this.baseUrl}/api/services/app/Employee/GetAll`, { params });
+    return this.http.get<PagedResultDto<EmployeeDto>>(`${this.baseUrl}/api/services/app/Employee/GetPagedEmployeeList`, { params });
+  }
+
+  getAllEmployees(): Observable<EmployeeDto[]> {
+    return this.http.get<EmployeeDto[]>(`${this.baseUrl}/api/services/app/Employee/GetAllEmployees`);
+  }
+
+  getEmployeesForAssignment(): Observable<EmployeeDto[]> {
+    return this.http.get<EmployeeDto[]>(`${this.baseUrl}/api/services/app/Employee/GetEmployeesForAssignment`);
   }
 
   get(id: number): Observable<EmployeeDto> {

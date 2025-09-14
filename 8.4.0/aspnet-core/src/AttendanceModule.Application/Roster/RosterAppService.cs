@@ -55,55 +55,22 @@ namespace AttendanceModule.Roster
         [AbpAuthorize(RosterPermissions.Pages_Rosters_Assign)]
         public async Task<RosterDto> AssignRosterAsync(CreateRosterDto input)
         {
+            _logger.LogInformation($"AssignRosterAsync called with: EmployeeId={input.EmployeeId}, ShiftId={input.ShiftId}, RosterDate={input.RosterDate:yyyy-MM-dd}");
+
             var roster = _mapper.Map<AttendanceModuleEntities.Roster>(input);
             roster.TenantId = 1;
+
+            // Ensure date is stored without time component
+            roster.RosterDate = input.RosterDate.Date;
+
+            _logger.LogInformation($"Saving roster with date: {roster.RosterDate:yyyy-MM-dd}");
 
             await _rosterRepository.InsertAsync(roster);
 
             return _mapper.Map<RosterDto>(roster);
         }
 
-        [AbpAuthorize(RosterPermissions.Pages_Rosters_View)]
-        public async Task<List<RosterDto>> GetEmployeeRosterAsync(int employeeId, DateTime startDate, DateTime endDate)
-        {
-            var query = await _rosterRepository
-                .GetAllIncluding(r => r.Employee, r => r.Shift)
-                .Where(r => r.EmployeeId == employeeId &&
-                            r.RosterDate >= startDate &&
-                            r.RosterDate <= endDate)
-                .OrderBy(r => r.RosterDate)
-                .ToListAsync();
-
-            return _mapper.Map<List<RosterDto>>(query);
-        }
-
-
-        [AbpAuthorize(RosterPermissions.Pages_Rosters_View)]
-        public async Task<PagedResultDto<RosterDto>> GetPagedRosterAsync(GetRosterListInputDto input)
-        {
-            var query = _rosterRepository.GetAllIncluding(r => r.Employee, r => r.Shift);
-
-            if (!string.IsNullOrWhiteSpace(input.Keyword))
-            {
-                query = query.Where(r => r.Employee.FirstName.Contains(input.Keyword) ||
-                                         r.Employee.LastName.Contains(input.Keyword) ||
-                                         r.Shift.Name.Contains(input.Keyword));
-            }
-
-            var totalCount = await query.CountAsync();
-
-            var rosters = await query
-                .OrderBy(r => r.RosterDate)
-                .Skip(input.SkipCount)
-                .Take(input.MaxResultCount)
-                .ToListAsync();
-
-            var rosterDtos = _mapper.Map<List<RosterDto>>(rosters);
-
-            return new PagedResultDto<RosterDto>(totalCount, rosterDtos);
-        }
-
-        [AbpAuthorize(RosterPermissions.Pages_Rosters_Assign)]
+        [AbpAuthorize]
         public async Task<ShiftSwapRequestDto> RequestShiftSwapAsync(CreateShiftSwapRequestDto input)
         {
             var requestToSwapShift = new ShiftSwapRequest
@@ -142,7 +109,7 @@ namespace AttendanceModule.Roster
             return _mapper.Map<ShiftSwapRequestDto>(requestToSwapShift);
         }
 
-        [AbpAuthorize(RosterPermissions.Pages_Rosters_View)]
+        [AbpAuthorize(RosterPermissions.Pages_Rosters_SwapApprove)]
         public async Task<PagedResultDto<ShiftSwapRequestDto>> GetPendingSwapRequestsAsync(GetSwapRequestsInputDto input)
         {
             try
@@ -197,12 +164,18 @@ namespace AttendanceModule.Roster
             }
         }
 
-        [AbpAuthorize(RosterPermissions.Pages_Rosters_View)]
+        [AbpAuthorize]
         public async Task<PagedResultDto<ShiftSwapRequestDto>> GetMySwapRequestsAsync(GetSwapRequestsInputDto input)
         {
             try
             {
                 var currentUserId = _abpSession.UserId;
+                if (!currentUserId.HasValue)
+                {
+                    _logger.LogWarning("GetMySwapRequestsAsync called without a user ID");
+                    return new PagedResultDto<ShiftSwapRequestDto>(0, new List<ShiftSwapRequestDto>());
+                }
+
                 var currentEmployee = await _employeeRepository.FirstOrDefaultAsync(e => e.UserId == (int)currentUserId.Value);
 
                 if (currentEmployee == null)
@@ -266,7 +239,7 @@ namespace AttendanceModule.Roster
             }
         }
 
-        [AbpAuthorize(RosterPermissions.Pages_Rosters_Swap)]
+        [AbpAuthorize(RosterPermissions.Pages_Rosters_SwapApprove)]
         public async Task ApproveShiftSwapAsync(int swapRequestId, ApproveRejectSwapRequestDto input)
         {
             var swapRequest = await _shiftSwapRequestRepository.GetAsync(swapRequestId);
@@ -346,7 +319,7 @@ namespace AttendanceModule.Roster
             _logger.LogInformation($"Shift swap request {swapRequestId} approved by user {currentUserId}");
         }
 
-        [AbpAuthorize(RosterPermissions.Pages_Rosters_Swap)]
+        [AbpAuthorize(RosterPermissions.Pages_Rosters_SwapApprove)]
         public async Task RejectShiftSwapAsync(int swapRequestId, ApproveRejectSwapRequestDto input)
         {
             var swapRequest = await _shiftSwapRequestRepository.GetAsync(swapRequestId);

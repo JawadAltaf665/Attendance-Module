@@ -67,9 +67,17 @@ export class RosterService {
   constructor(private http: HttpClient) { }
 
   getRoster(employeeId: number | null, startDate: Date, endDate: Date): Observable<RosterWithShift[]> {
+    // Format dates as YYYY-MM-DD in local timezone to avoid timezone issues
+    const formatLocalDate = (date: Date): string => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     let params = new HttpParams()
-      .set('startDate', startDate.toISOString())
-      .set('endDate', endDate.toISOString());
+      .set('startDate', formatLocalDate(startDate))
+      .set('endDate', formatLocalDate(endDate));
 
     if (employeeId !== null) {
       params = params.set('employeeId', employeeId.toString());
@@ -79,9 +87,17 @@ export class RosterService {
   }
 
   getMyRoster(startDate: Date, endDate: Date): Observable<RosterWithShift[]> {
+    // Format dates as YYYY-MM-DD in local timezone to avoid timezone issues
+    const formatLocalDate = (date: Date): string => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+
     const params = new HttpParams()
-      .set('startDate', startDate.toISOString())
-      .set('endDate', endDate.toISOString());
+      .set('startDate', formatLocalDate(startDate))
+      .set('endDate', formatLocalDate(endDate));
 
     return this.http.get<RosterWithShift[]>(`${this.baseUrl}/api/services/app/Shift/GetMyRoster`, { params });
   }

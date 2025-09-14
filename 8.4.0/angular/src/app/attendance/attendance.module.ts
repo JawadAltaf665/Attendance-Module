@@ -26,6 +26,7 @@ import { ManagerSwapApprovalComponent } from './manager-swap-approval/manager-sw
 import { AdminShiftsComponent } from './admin-shifts/admin-shifts.component';
 import { ShiftFormComponent } from './shift-form/shift-form.component';
 import { AssignShiftFormComponent } from './assign-shift-form/assign-shift-form.component';
+import { EmployeeShiftSwapComponent } from './employee-shift-swap/employee-shift-swap.component';
 
 // Services
 import { AttendanceApiService } from './services/attendance-api.service';
@@ -47,7 +48,8 @@ import { EmployeeSessionService } from './services/employee-session.service';
         ManagerSwapApprovalComponent,
         AdminShiftsComponent,
         ShiftFormComponent,
-        AssignShiftFormComponent
+        AssignShiftFormComponent,
+        EmployeeShiftSwapComponent
     ],
     imports: [
         CommonModule,

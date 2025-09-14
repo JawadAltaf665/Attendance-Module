@@ -88,13 +88,30 @@ export class RosterComponent extends AppComponentBase implements OnInit {
     this.rostersByDate.clear();
     if (this.rosters && Array.isArray(this.rosters)) {
       this.rosters.forEach(roster => {
-        const dateKey = format(new Date(roster.rosterDate), 'yyyy-MM-dd');
+        // Parse the date string directly without timezone conversion
+        // If rosterDate is "2025-01-15", use it as is
+        let dateKey: string;
+        if (typeof roster.rosterDate === 'string' && roster.rosterDate.includes('T')) {
+          // If it's an ISO string, parse it as local date
+          const dateObj = new Date(roster.rosterDate);
+          const year = dateObj.getFullYear();
+          const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+          const day = String(dateObj.getDate()).padStart(2, '0');
+          dateKey = `${year}-${month}-${day}`;
+        } else if (typeof roster.rosterDate === 'string') {
+          // If it's already in YYYY-MM-DD format, use as is
+          dateKey = roster.rosterDate.split('T')[0];
+        } else {
+          dateKey = format(new Date(roster.rosterDate), 'yyyy-MM-dd');
+        }
+
         if (!this.rostersByDate.has(dateKey)) {
           this.rostersByDate.set(dateKey, []);
         }
         this.rostersByDate.get(dateKey)!.push(roster);
       });
     }
+    console.log('Organized rosters by date:', this.rostersByDate);
   }
 
   getRostersForDate(date: Date): RosterWithShift[] {
@@ -182,8 +199,16 @@ export class RosterComponent extends AppComponentBase implements OnInit {
   }
 
   isManager(): boolean {
+    // Check for roster assignment permissions (managers/admins only)
     return this.permission.isGranted('Pages.Rosters.Assign') ||
-           this.permission.isGranted('Pages.Rosters.Swap');
+           this.permission.isGranted('Pages.Rosters.Swap') ||
+           this.permission.isGranted('Pages.Administration') ||
+           this.permission.isGranted('Pages.Administration.Roles') ||
+           this.isHost();
+  }
+
+  private isHost(): boolean {
+    return this.appSession.tenant === null;
   }
 
   getMonthWeeks(): Date[] {

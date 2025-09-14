@@ -49,6 +49,9 @@ namespace AttendanceModule.Web.Host.Startup
                 {
                     NamingStrategy = new CamelCaseNamingStrategy()
                 };
+                // Configure date handling to avoid timezone issues
+                options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Local;
+                options.SerializerSettings.DateFormatHandling = Newtonsoft.Json.DateFormatHandling.IsoDateFormat;
             });
 
             IdentityRegistrar.Register(services);

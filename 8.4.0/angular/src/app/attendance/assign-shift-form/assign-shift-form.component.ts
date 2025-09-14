@@ -33,8 +33,22 @@ export class AssignShiftFormComponent extends AppComponentBase implements OnInit
   }
 
   ngOnInit(): void {
+    // Check if user has permission to assign rosters
+    if (!this.canAssignShifts()) {
+      abp.notify.error('You do not have permission to assign shifts');
+      this.cancelled.emit();
+      return;
+    }
+
     this.loadShifts();
     this.loadEmployees();
+  }
+
+  canAssignShifts(): boolean {
+    return this.permission.isGranted('Pages.Rosters.Assign') ||
+           this.permission.isGranted('Pages.Administration') ||
+           this.permission.isGranted('Pages.Administration.Roles') ||
+           this.appSession.tenant === null;
   }
 
   loadShifts(): void {
@@ -42,8 +56,16 @@ export class AssignShiftFormComponent extends AppComponentBase implements OnInit
     this.shiftService.getAllShifts()
       .pipe(finalize(() => this.loadingShifts = false))
       .subscribe(
-        (result) => {
-          this.shifts = result || [];
+        (result: any) => {
+          // Handle ABP response wrapper
+          if (result && result.result) {
+            this.shifts = result.result;
+          } else if (Array.isArray(result)) {
+            this.shifts = result;
+          } else {
+            this.shifts = [];
+          }
+          console.log('Loaded shifts:', this.shifts);
         },
         (error) => {
           console.error('Error loading shifts:', error);
@@ -54,15 +76,32 @@ export class AssignShiftFormComponent extends AppComponentBase implements OnInit
 
   loadEmployees(): void {
     this.loadingEmployees = true;
-    this.employeeService.getAll(1000, 0, '')
+    this.employeeService.getAllEmployees()
       .pipe(finalize(() => this.loadingEmployees = false))
       .subscribe(
-        (result) => {
-          this.employees = result.items || [];
+        (result: any) => {
+          // Handle ABP response wrapper
+          let allEmployees: any[] = [];
+          if (result && result.result) {
+            allEmployees = result.result;
+          } else if (Array.isArray(result)) {
+            allEmployees = result;
+          }
+
+          // Filter out the current user (manager/admin) and show only active employees
+          this.employees = allEmployees.filter(emp =>
+            emp.isActive !== false &&
+            emp.id !== this.appSession.user?.id
+          );
+
+          console.log('Loaded employees for assignment:', this.employees);
         },
         (error) => {
           console.error('Error loading employees:', error);
-          abp.notify.error('Failed to load employees');
+          const errorMessage = error?.error?.error?.message ||
+                             error?.error?.message ||
+                             'Failed to load employees. Please ensure you have proper permissions and that employee records exist.';
+          abp.notify.error(errorMessage);
         }
       );
   }
@@ -73,17 +112,35 @@ export class AssignShiftFormComponent extends AppComponentBase implements OnInit
       return;
     }
 
+    // Format date as YYYY-MM-DD in local timezone
+    const year = this.selectedDate.getFullYear();
+    const month = String(this.selectedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(this.selectedDate.getDate()).padStart(2, '0');
+    const localDateString = `${year}-${month}-${day}`;
+
+    console.log('Selected Date:', this.selectedDate);
+    console.log('Formatted Date String:', localDateString);
+
     const rosterDto: CreateRosterDto = {
       employeeId: this.selectedEmployeeId,
       shiftId: this.selectedShiftId,
-      rosterDate: this.selectedDate.toISOString().split('T')[0]
+      rosterDate: localDateString
     };
 
+    console.log('Sending roster DTO:', rosterDto);
+
     this.loading = true;
+    const assignedDate = localDateString; // Store for use in callback
     this.rosterService.assignRoster(rosterDto)
       .pipe(finalize(() => this.loading = false))
       .subscribe(
-        (result) => {
+        (result: any) => {
+          console.log('Shift assigned successfully:', result);
+          const selectedShift = this.getSelectedShift();
+          const selectedEmployee = this.getSelectedEmployee();
+          abp.notify.success(
+            `Shift "${selectedShift?.name}" assigned to ${selectedEmployee?.firstName} ${selectedEmployee?.lastName} for ${assignedDate}`
+          );
           this.assigned.emit();
         },
         (error) => {
