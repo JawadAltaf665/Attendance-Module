@@ -1,4 +1,4 @@
-﻿using Abp.Authorization;
+using Abp.Authorization;
 using Abp.Localization;
 using Abp.MultiTenancy;
 
@@ -9,7 +9,11 @@ namespace AttendanceModule.Authorization
         public override void SetPermissions(IPermissionDefinitionContext context)
         {
             // Employees
-            context.CreatePermission(EmployeePermissions.Pages_Employees, L("Employees"));
+            var employees = context.CreatePermission(EmployeePermissions.Pages_Employees, L("Employees"));
+            employees.CreateChildPermission(EmployeePermissions.Pages_Employees_View, L("ViewEmployees"));
+            employees.CreateChildPermission(EmployeePermissions.Pages_Employees_Create, L("CreateEmployee"));
+            employees.CreateChildPermission(EmployeePermissions.Pages_Employees_Edit, L("EditEmployee"));
+            employees.CreateChildPermission(EmployeePermissions.Pages_Employees_Delete, L("DeleteEmployee"));
 
             // Attendance
             var attendance = context.CreatePermission(AttendencePermissions.Pages_Attendance, L("Attendance"));
@@ -17,10 +21,13 @@ namespace AttendanceModule.Authorization
             attendance.CreateChildPermission(AttendencePermissions.Pages_Attendance_View, L("ViewAttendance"));
 
 
-            // Shifts
+            // Shifts (Admin/Manager only)
             var shifts = context.CreatePermission(ShiftPermissions.Pages_Shifts, L("Shifts"));
             shifts.CreateChildPermission(ShiftPermissions.Pages_Shifts_Create, L("CreateShift"));
             shifts.CreateChildPermission(ShiftPermissions.Pages_Shifts_View, L("ViewShift"));
+            shifts.CreateChildPermission(ShiftPermissions.Pages_Shifts_Edit, L("EditShift"));
+            shifts.CreateChildPermission(ShiftPermissions.Pages_Shifts_Delete, L("DeleteShift"));
+            shifts.CreateChildPermission(ShiftPermissions.Pages_Shifts_Management, L("ShiftManagement"));
 
 
             // Roster
@@ -28,12 +35,15 @@ namespace AttendanceModule.Authorization
             rosters.CreateChildPermission(RosterPermissions.Pages_Rosters_Assign, L("AssignRoster"));
             rosters.CreateChildPermission(RosterPermissions.Pages_Rosters_View, L("ViewRoster"));
             rosters.CreateChildPermission(RosterPermissions.Pages_Rosters_Swap, L("SwapRoster"));
+            rosters.CreateChildPermission(RosterPermissions.Pages_Rosters_SwapRequest, L("RequestShiftSwap"));
+            rosters.CreateChildPermission(RosterPermissions.Pages_Rosters_SwapApprove, L("ApproveShiftSwap"));
 
 
             // Leaves
             var leaves = context.CreatePermission(LeavePermissions.Pages_Leaves, L("Leaves"));
             leaves.CreateChildPermission(LeavePermissions.Pages_Leaves_Request, L("RequestLeave"));
             leaves.CreateChildPermission(LeavePermissions.Pages_Leaves_Approve, L("ApproveLeave"));
+            leaves.CreateChildPermission(LeavePermissions.Pages_Leaves_Reject, L("RejectLeave"));
             leaves.CreateChildPermission(LeavePermissions.Pages_Leaves_View, L("ViewLeave"));
 
             // Reports
@@ -79,6 +89,9 @@ namespace AttendanceModule.Authorization
             public const string Pages_Shifts = "Pages.Shifts";
             public const string Pages_Shifts_Create = "Pages.Shifts.Create";
             public const string Pages_Shifts_View = "Pages.Shifts.View";
+            public const string Pages_Shifts_Edit = "Pages.Shifts.Edit";
+            public const string Pages_Shifts_Delete = "Pages.Shifts.Delete";
+            public const string Pages_Shifts_Management = "Pages.Shifts.Management";
         }
 
         public static class RosterPermissions
@@ -88,6 +101,8 @@ namespace AttendanceModule.Authorization
             public const string Pages_Rosters_Assign = "Pages.Rosters.Assign";
             public const string Pages_Rosters_View = "Pages.Rosters.View";
             public const string Pages_Rosters_Swap = "Pages.Rosters.Swap";
+            public const string Pages_Rosters_SwapRequest = "Pages.Rosters.SwapRequest";
+            public const string Pages_Rosters_SwapApprove = "Pages.Rosters.SwapApprove";
         }
         
         public static class LeavePermissions

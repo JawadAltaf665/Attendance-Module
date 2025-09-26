@@ -1,0 +1,142 @@
+<form class="form-horizontal"
+      autocomplete="off"
+      [formGroup]="employeeForm"
+      (ngSubmit)="save()">
+    <abp-modal-header [title]="'CreateNewEmployee' | localize"
+                      (onCloseClick)="bsModalRef.hide()"></abp-modal-header>
+
+    <div class="modal-body">
+         User Selection 
+        <div class="mb-3">
+            <label for="userId" class="form-label">{{ "SelectUser" | localize }} <span class="text-danger">*</span></label>
+            <select id="userId"
+                    class="form-control"
+                    formControlName="userId"
+                    (change)="onUserSelected($event)"
+                    [class.is-invalid]="employeeForm.get('userId')?.invalid && employeeForm.get('userId')?.touched">
+                <option value="">{{ "SelectUser" | localize }}</option>
+                <option *ngFor="let user of availableUsers" [value]="user.id">
+                    {{ user.fullName }} ({{ user.userName }})
+                </option>
+            </select>
+            <div class="invalid-feedback" *ngIf="employeeForm.get('userId')?.invalid && employeeForm.get('userId')?.touched">
+                {{ "UserIsRequired" | localize }}
+            </div>
+            <small class="form-text text-muted">Selected User ID: {{ employeeForm.get('userId')?.value }}</small>
+        </div>
+
+
+
+
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="firstName">
+                {{ "FirstName" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text"
+                       id="firstName"
+                       class="form-control"
+                       formControlName="firstName"
+                       placeholder="Enter first name"
+                       [class.is-invalid]="employeeForm.get('firstName')?.invalid && employeeForm.get('firstName')?.touched" />
+                <div class="invalid-feedback" *ngIf="employeeForm.get('firstName')?.invalid && employeeForm.get('firstName')?.touched">
+                    <div *ngIf="employeeForm.get('firstName')?.errors?.['required']">
+                        First Name is required
+                    </div>
+                    <div *ngIf="employeeForm.get('firstName')?.errors?.['maxlength']">
+                        First Name cannot exceed 32 characters
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="lastName">
+                {{ "LastName" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text"
+                       id="lastName"
+                       class="form-control"
+                       formControlName="lastName"
+                       placeholder="Enter last name"
+                       [class.is-invalid]="employeeForm.get('lastName')?.invalid && employeeForm.get('lastName')?.touched" />
+                <div class="invalid-feedback" *ngIf="employeeForm.get('lastName')?.invalid && employeeForm.get('lastName')?.touched">
+                    <div *ngIf="employeeForm.get('lastName')?.errors?.['required']">
+                        Last Name is required
+                    </div>
+                    <div *ngIf="employeeForm.get('lastName')?.errors?.['maxlength']">
+                        Last Name cannot exceed 32 characters
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="email">
+                {{ "Email" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="email"
+                       id="email"
+                       class="form-control"
+                       formControlName="email"
+                       placeholder="Enter email address"
+                       [class.is-invalid]="employeeForm.get('email')?.invalid && employeeForm.get('email')?.touched" />
+                <div class="invalid-feedback" *ngIf="employeeForm.get('email')?.invalid && employeeForm.get('email')?.touched">
+                    <div *ngIf="employeeForm.get('email')?.errors?.['required']">
+                        Email is required
+                    </div>
+                    <div *ngIf="employeeForm.get('email')?.errors?.['email']">
+                        Please enter a valid email address
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group row required">
+            <label class="col-md-3 col-form-label" for="timezone">
+                {{ "Timezone" | localize }}
+            </label>
+            <div class="col-md-9">
+                <input type="text"
+                       id="timezone"
+                       class="form-control"
+                       formControlName="timezone"
+                       placeholder="e.g., UTC, Asia/Karachi"
+                       [class.is-invalid]="employeeForm.get('timezone')?.invalid && employeeForm.get('timezone')?.touched" />
+                <div class="invalid-feedback" *ngIf="employeeForm.get('timezone')?.invalid && employeeForm.get('timezone')?.touched">
+                    Timezone is required
+                </div>
+                <small class="form-text text-muted">
+                    Common timezones: UTC, Asia/Karachi, America/New_York, Europe/London
+                </small>
+            </div>
+        </div>
+
+        <div class="form-group row mb-0">
+            <label class="col-md-3 col-form-label">
+                {{ "IsActive" | localize }}
+            </label>
+            <div class="col-md-9">
+                <div class="custom-control custom-checkbox">
+                    <input type="checkbox"
+                           class="custom-control-input"
+                           id="isActive"
+                           formControlName="isActive" />
+                    <label class="custom-control-label" for="isActive">
+                        Employee is active and can access the system
+                    </label>
+                </div>
+                <small class="form-text text-muted">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Active employees can log in and clock in/out
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <abp-modal-footer [cancelDisabled]="saving"
+                      [saveDisabled]="!employeeForm.valid || saving"
+                      (onCancelClick)="bsModalRef.hide()"></abp-modal-footer>
+</form>

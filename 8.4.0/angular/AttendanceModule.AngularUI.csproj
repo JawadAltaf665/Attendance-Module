@@ -6,8 +6,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="node_modules\**" />
+    <Compile Remove="src\app\admin\**" />
     <EmbeddedResource Remove="node_modules\**" />
+    <EmbeddedResource Remove="src\app\admin\**" />
     <None Remove="node_modules\**" />
+    <None Remove="src\app\admin\**" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="dist" />
@@ -22,10 +25,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="src\app\admin\attendance\" />
-    <Folder Include="src\app\admin\leave\" />
-    <Folder Include="src\app\admin\roster\" />
-    <Folder Include="src\app\admin\shift\" />
-    <Folder Include="src\app\admin\report\" />
+    <Folder Include="src\app\Employee\" />
   </ItemGroup>
 </Project>

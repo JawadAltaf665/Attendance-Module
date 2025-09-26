@@ -14,11 +14,13 @@ namespace AttendanceModule.Leave
         // Employee
         Task<LeaveDto> CreateLeaveAsync(CreateLeaveDto input);
         Task<List<LeaveDto>> GetMyLeavesAsync();
+        Task<EmployeeLeaveBalanceDto> GetLeaveBalanceAsync();
 
         // Manager
-        Task<List<LeaveDto>> GetPendingLeavesAsync();
-        Task<bool> ApproveLeaveAsync(int id);
-        Task<bool> RejectLeaveAsync(int id);
+        Task<List<LeaveDetailDto>> GetPendingLeavesForManagerAsync(GetPendingLeavesInputDto input);
+        Task<bool> BulkApproveLeaveAsync(BulkApprovalRequestDto input);
+        Task<bool> ApproveLeaveAsync(int id, ApprovalRequestDto input);
+        Task<bool> RejectLeaveAsync(int id, ApprovalRequestDto input);
 
         // Admin/HR
         Task<List<LeaveDto>> GetAllLeavesAsync();

@@ -10,14 +10,26 @@ namespace AttendanceModule.Shift.Dtos
 {
     public class CreateShiftSwapRequestDto
     {
-        [Required] 
+        [Required]
         public int RequesterId { get; set; }
-        [Required] 
+        [Required]
         public int TargetEmployeeId { get; set; }
-        [Required] 
+        [Required]
         public int ShiftId { get; set; }
-        [Required] 
+        [Required]
         public DateTime RosterDate { get; set; }
+        [Required]
+        [StringLength(500)]
+        public string Reason { get; set; }
+        public DateTime? ProposedDate { get; set; }
+    }
+
+    public class ApproveRejectSwapRequestDto
+    {
+        [Required]
+        public int SwapRequestId { get; set; }
+        [StringLength(500)]
+        public string Comments { get; set; }
     }
 
 }

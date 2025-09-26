@@ -1,0 +1,191 @@
+/* Edit Employee Dialog Styles */
+
+/* Form styling */
+.form-horizontal {
+    max-width: 100%;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group.required .col-form-label::after {
+    content: " *";
+    color: #dc3545;
+}
+
+/* Input styling */
+.form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+    background-image: none;
+}
+
+.form-control.is-invalid:focus {
+    border-color: #dc3545;
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25);
+}
+
+/* Validation feedback */
+.invalid-feedback {
+    display: block;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #dc3545;
+}
+
+.form-text {
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #6c757d;
+}
+
+/* Alert styling */
+.alert-info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+    border-radius: 0.375rem;
+}
+
+/* Loading state */
+.spinner-border {
+    width: 2rem;
+    height: 2rem;
+}
+
+/* Checkbox styling */
+.form-check {
+    padding-left: 1.5em;
+}
+
+.form-check-input {
+    width: 1.25em;
+    height: 1.25em;
+    margin-top: 0.125em;
+    margin-left: -1.5em;
+    border-radius: 0.25em;
+}
+
+.form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.form-check-input:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.form-check-label {
+    color: #495057;
+    cursor: pointer;
+}
+
+/* Audit information section */
+.border-top {
+    border-top: 1px solid #dee2e6 !important;
+}
+
+/* Modal body spacing */
+.modal-body {
+    padding: 1.5rem;
+}
+
+/* Select dropdown styling */
+select.form-control {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m1 6 7 7 7-7'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    padding-right: 2.5rem;
+}
+
+/* Warning text styling */
+.text-warning {
+    color: #f57c00 !important;
+}
+
+/* Icon spacing */
+.fas.me-1,
+.fas.me-2 {
+    margin-right: 0.25rem;
+}
+
+.ms-2 {
+    margin-left: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .form-group.row {
+        flex-direction: column;
+    }
+    
+    .col-md-3,
+    .col-md-9 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    
+    .col-form-label {
+        margin-bottom: 0.5rem;
+    }
+}
+
+/* Button states */
+.btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* Enhanced focus states */
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+    outline: 0;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Improved spacing for small text */
+small.form-text {
+    line-height: 1.4;
+}
+
+/* Employee info display */
+.alert .d-flex {
+    align-items: flex-start;
+}
+
+.alert i {
+    margin-top: 0.125rem;
+}
+
+/* Audit section styling */
+.audit-info {
+    background-color: #f8f9fa;
+    border-radius: 0.375rem;
+    padding: 1rem;
+}
+
+/* Form validation states */
+.was-validated .form-control:valid,
+.form-control.is-valid {
+    border-color: #198754;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23198754' d='m2.3 6.73.94-.94 1.44 1.44L7.4 4.5l-.94-.94L4.07 6.06z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right calc(0.375em + 0.1875rem) center;
+    background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.was-validated .form-control:valid:focus,
+.form-control.is-valid:focus {
+    border-color: #198754;
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.25);
+}

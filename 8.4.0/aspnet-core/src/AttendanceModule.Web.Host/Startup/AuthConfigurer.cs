@@ -70,8 +70,18 @@ namespace AttendanceModule.Web.Host.Startup
                 return Task.CompletedTask;
             }
 
-            // Set auth token from cookie
-            context.Token = SimpleStringCipher.Instance.Decrypt(qsAuthToken);
+            try
+            {
+                // Set auth token from cookie
+                context.Token = SimpleStringCipher.Instance.Decrypt(qsAuthToken);
+            }
+            catch (Exception ex)
+            {
+                // Log the error but don't throw - invalid tokens should just fail authentication
+                Console.WriteLine($"Failed to decrypt auth token: {ex.Message}");
+                // Don't set the token if decryption fails
+            }
+
             return Task.CompletedTask;
         }
     }

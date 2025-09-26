@@ -13,10 +13,10 @@ namespace AttendanceModule.Roster
     public interface IRosterAppService : IApplicationService
     {
         Task<RosterDto> AssignRosterAsync(CreateRosterDto input);
-        Task<List<RosterDto>> GetEmployeeRosterAsync(int employeeId, DateTime startDate, DateTime endDate);
-        Task<PagedResultDto<RosterDto>> GetPagedRosterAsync(GetRosterListInputDto input);
         Task<ShiftSwapRequestDto> RequestShiftSwapAsync(CreateShiftSwapRequestDto input);
-        Task ApproveShiftSwapAsync(int swapRequestId);
-        // Task RejectShiftSwapAsync(int swapRequestId);
+        Task<PagedResultDto<ShiftSwapRequestDto>> GetPendingSwapRequestsAsync(GetSwapRequestsInputDto input);
+        Task<PagedResultDto<ShiftSwapRequestDto>> GetMySwapRequestsAsync(GetSwapRequestsInputDto input);
+        Task ApproveShiftSwapAsync(int swapRequestId, ApproveRejectSwapRequestDto input);
+        Task RejectShiftSwapAsync(int swapRequestId, ApproveRejectSwapRequestDto input);
     }
 }

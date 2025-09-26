@@ -1,0 +1,197 @@
+<form class="form-horizontal"
+      autocomplete="off"
+      [formGroup]="employeeForm"
+      (ngSubmit)="save()">
+    <abp-modal-header [title]="'EditEmployee' | localize"
+                      (onCloseClick)="bsModalRef.hide()"></abp-modal-header>
+
+    <div class="modal-body">
+        <!-- Loading State -->
+        <div *ngIf="loading" class="text-center py-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3 mb-0 text-muted">Loading employee data...</p>
+        </div>
+
+        <!-- Form Content -->
+        <div *ngIf="!loading">
+            <!-- Employee Info Display -->
+            <div class="alert alert-info mb-3" *ngIf="employee.id">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <div>
+                        <strong>Editing Employee:</strong> {{ employee.firstName }} {{ employee.lastName }}
+                        <br>
+                        <small class="text-muted">Employee ID: {{ employee.id }} | User ID: {{ employee.userId }}</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Selection -->
+            <div class="mb-3">
+                <label for="userId" class="form-label">{{ "SelectUser" | localize }} <span class="text-danger">*</span></label>
+                <select id="userId"
+                        class="form-control"
+                        formControlName="userId"
+                        (change)="onUserSelected($event)"
+                        [class.is-invalid]="employeeForm.get('userId')?.invalid && employeeForm.get('userId')?.touched">
+                    <option value="">{{ "SelectUser" | localize }}</option>
+                    <option *ngFor="let user of availableUsers" [value]="user.id">
+                        {{ user.fullName }} ({{ user.userName }})
+                    </option>
+                </select>
+                <div class="invalid-feedback" *ngIf="employeeForm.get('userId')?.invalid && employeeForm.get('userId')?.touched">
+                    {{ "UserIsRequired" | localize }}
+                </div>
+                <small class="form-text text-muted">
+                    Current User ID: {{ employeeForm.get('userId')?.value }}
+                    <span class="text-warning ms-2">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Changing the user will affect login permissions
+                    </span>
+                </small>
+            </div>
+
+            <!-- First Name -->
+            <div class="form-group row required">
+                <label class="col-md-3 col-form-label" for="firstName">
+                    {{ "FirstName" | localize }}
+                </label>
+                <div class="col-md-9">
+                    <input type="text"
+                           id="firstName"
+                           class="form-control"
+                           formControlName="firstName"
+                           placeholder="Enter first name"
+                           [class.is-invalid]="employeeForm.get('firstName')?.invalid && employeeForm.get('firstName')?.touched" />
+                    <div class="invalid-feedback" *ngIf="employeeForm.get('firstName')?.invalid && employeeForm.get('firstName')?.touched">
+                        <div *ngIf="employeeForm.get('firstName')?.errors?.['required']">
+                            First Name is required
+                        </div>
+                        <div *ngIf="employeeForm.get('firstName')?.errors?.['maxlength']">
+                            First Name cannot exceed 32 characters
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Last Name -->
+            <div class="form-group row required">
+                <label class="col-md-3 col-form-label" for="lastName">
+                    {{ "LastName" | localize }}
+                </label>
+                <div class="col-md-9">
+                    <input type="text"
+                           id="lastName"
+                           class="form-control"
+                           formControlName="lastName"
+                           placeholder="Enter last name"
+                           [class.is-invalid]="employeeForm.get('lastName')?.invalid && employeeForm.get('lastName')?.touched" />
+                    <div class="invalid-feedback" *ngIf="employeeForm.get('lastName')?.invalid && employeeForm.get('lastName')?.touched">
+                        <div *ngIf="employeeForm.get('lastName')?.errors?.['required']">
+                            Last Name is required
+                        </div>
+                        <div *ngIf="employeeForm.get('lastName')?.errors?.['maxlength']">
+                            Last Name cannot exceed 32 characters
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group row required">
+                <label class="col-md-3 col-form-label" for="email">
+                    {{ "Email" | localize }}
+                </label>
+                <div class="col-md-9">
+                    <input type="email"
+                           id="email"
+                           class="form-control"
+                           formControlName="email"
+                           placeholder="Enter email address"
+                           [class.is-invalid]="employeeForm.get('email')?.invalid && employeeForm.get('email')?.touched" />
+                    <div class="invalid-feedback" *ngIf="employeeForm.get('email')?.invalid && employeeForm.get('email')?.touched">
+                        <div *ngIf="employeeForm.get('email')?.errors?.['required']">
+                            Email is required
+                        </div>
+                        <div *ngIf="employeeForm.get('email')?.errors?.['email']">
+                            Please enter a valid email address
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timezone -->
+            <div class="form-group row required">
+                <label class="col-md-3 col-form-label" for="timezone">
+                    {{ "Timezone" | localize }}
+                </label>
+                <div class="col-md-9">
+                    <input type="text"
+                           id="timezone"
+                           class="form-control"
+                           formControlName="timezone"
+                           placeholder="e.g., UTC, Asia/Karachi"
+                           [class.is-invalid]="employeeForm.get('timezone')?.invalid && employeeForm.get('timezone')?.touched" />
+                    <div class="invalid-feedback" *ngIf="employeeForm.get('timezone')?.invalid && employeeForm.get('timezone')?.touched">
+                        Timezone is required
+                    </div>
+                    <small class="form-text text-muted">
+                        Common timezones: UTC, Asia/Karachi, America/New_York, Europe/London
+                    </small>
+                </div>
+            </div>
+
+            <!-- Active Status -->
+            <div class="form-group row mb-0">
+                <label class="col-md-3 col-form-label">
+                    {{ "IsActive" | localize }}
+                </label>
+                <div class="col-md-9">
+                    <div class="form-check">
+                        <input type="checkbox"
+                               class="form-check-input"
+                               id="isActive"
+                               formControlName="isActive" />
+                        <label class="form-check-label" for="isActive">
+                            Employee is active and can access the system
+                        </label>
+                    </div>
+                    <small class="form-text text-muted">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Inactive employees cannot log in or clock in/out
+                    </small>
+                </div>
+            </div>
+
+            <!-- Audit Information -->
+            <div class="mt-4 pt-3 border-top" *ngIf="employee.creationTime">
+                <h6 class="text-muted mb-3">
+                    <i class="fas fa-history me-2"></i>
+                    Audit Information
+                </h6>
+                <div class="row">
+                    <div class="col-md-6">
+                        <small class="text-muted">
+                            <strong>Created:</strong><br>
+                            {{ employee.creationTime | date:'medium' }}
+                            <span *ngIf="employee.creatorUserId">(User ID: {{ employee.creatorUserId }})</span>
+                        </small>
+                    </div>
+                    <div class="col-md-6" *ngIf="employee.lastModificationTime">
+                        <small class="text-muted">
+                            <strong>Last Modified:</strong><br>
+                            {{ employee.lastModificationTime | date:'medium' }}
+                            <span *ngIf="employee.lastModifierUserId">(User ID: {{ employee.lastModifierUserId }})</span>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <abp-modal-footer [cancelDisabled]="saving || loading"
+                      [saveDisabled]="!employeeForm.valid || saving || loading"
+                      (onCancelClick)="cancel()"></abp-modal-footer>
+</form>

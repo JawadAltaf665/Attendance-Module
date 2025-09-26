@@ -98,7 +98,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "AttendanceModule:build"
+            "browserTarget": "AttendanceModule:build",
+            "proxyConfig": "proxy.conf.json"
           },
           "configurations": {
             "production": {
@@ -190,8 +191,5 @@
   },
   "cli": {
     "analytics": "2f126c41-54f7-4cb6-bf42-223edbd78ec4"
-  },
-  "options": {
-    "proxyConfig": "proxy.conf.json"
   }
 }

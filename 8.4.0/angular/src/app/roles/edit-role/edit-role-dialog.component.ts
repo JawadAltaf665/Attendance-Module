@@ -10,11 +10,11 @@ import { forEach as _forEach, includes as _includes, map as _map } from 'lodash-
 import { AppComponentBase } from '@shared/app-component-base';
 import {
   RoleServiceProxy,
-  GetRoleForEditOutput,
-  RoleDto,
-  PermissionDto,
-  RoleEditDto,
-  FlatPermissionDto
+  DtoGetRoleForEditOutput,
+  DtoRoleDto,
+  DtoPermissionDto,
+  DtoRoleEditDto,
+  DtoFlatPermissionDto
 } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -24,8 +24,8 @@ export class EditRoleDialogComponent extends AppComponentBase
   implements OnInit {
   saving = false;
   id: number;
-  role = new RoleEditDto();
-  permissions: FlatPermissionDto[];
+  role = new DtoRoleEditDto();
+  permissions: DtoFlatPermissionDto[];
   grantedPermissionNames: string[];
   checkedPermissionsMap: { [key: string]: boolean } = {};
 
@@ -42,7 +42,7 @@ export class EditRoleDialogComponent extends AppComponentBase
   ngOnInit(): void {
     this._roleService
       .getRoleForEdit(this.id)
-      .subscribe((result: GetRoleForEditOutput) => {
+      .subscribe((result: DtoGetRoleForEditOutput) => {
         this.role = result.role;
         this.permissions = result.permissions;
         this.grantedPermissionNames = result.grantedPermissionNames;
@@ -62,7 +62,7 @@ export class EditRoleDialogComponent extends AppComponentBase
     return _includes(this.grantedPermissionNames, permissionName);
   }
 
-  onPermissionChange(permission: PermissionDto, $event) {
+  onPermissionChange(permission: DtoPermissionDto, $event) {
     this.checkedPermissionsMap[permission.name] = $event.target.checked;
   }
 
@@ -79,7 +79,7 @@ export class EditRoleDialogComponent extends AppComponentBase
   save(): void {
     this.saving = true;
 
-    const role = new RoleDto();
+    const role = new DtoRoleDto();
     role.init(this.role);
     role.grantedPermissions = this.getCheckedPermissions();
 

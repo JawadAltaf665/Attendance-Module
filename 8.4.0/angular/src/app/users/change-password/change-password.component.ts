@@ -4,7 +4,7 @@ import { finalize } from 'rxjs/operators';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/app-component-base';
 import {
-  ChangePasswordDto,
+  DtoChangePasswordDto,
   UserServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AbpValidationError } from '@shared/components/validation/abp-validation.api';
@@ -15,7 +15,7 @@ import { AbpValidationError } from '@shared/components/validation/abp-validation
 })
 export class ChangePasswordComponent extends AppComponentBase {
   saving = false;
-  changePasswordDto = new ChangePasswordDto();
+  changePasswordDto = new DtoChangePasswordDto();
   newPasswordValidationErrors: Partial<AbpValidationError>[] = [
     {
       name: 'pattern',

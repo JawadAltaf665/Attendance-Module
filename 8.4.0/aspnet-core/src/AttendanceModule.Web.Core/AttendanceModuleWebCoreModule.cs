@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -44,7 +44,9 @@ namespace AttendanceModule
 
             Configuration.Modules.AbpAspNetCore()
                  .CreateControllersForAppServices(
-                     typeof(AttendanceModuleApplicationModule).GetAssembly()
+                     typeof(AttendanceModuleApplicationModule).GetAssembly(),
+                     moduleName: "app",
+                     useConventionalHttpVerbs: true
                  );
 
             ConfigureTokenAuth();

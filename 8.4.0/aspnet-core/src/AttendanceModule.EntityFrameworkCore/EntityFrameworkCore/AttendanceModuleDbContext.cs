@@ -46,6 +46,48 @@ namespace AttendanceModule.EntityFrameworkCore
                  .HasForeignKey(l => l.ApproverId)
                  .OnDelete(DeleteBehavior.Restrict);
             });
+
+            modelBuilder.Entity<ShiftSwapRequest>(entity =>
+            {
+                // Requester
+                entity.HasOne(ssr => ssr.Requester)
+                      .WithMany()
+                      .HasForeignKey(ssr => ssr.RequesterId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                // Target Employee
+                entity.HasOne(ssr => ssr.TargetEmployee)
+                      .WithMany()
+                      .HasForeignKey(ssr => ssr.TargetEmployeeId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                // Approver
+                entity.HasOne(ssr => ssr.Approver)
+                      .WithMany()
+                      .HasForeignKey(ssr => ssr.ApproverId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                // Shift
+                entity.HasOne(ssr => ssr.Shift)
+                      .WithMany()
+                      .HasForeignKey(ssr => ssr.ShiftId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Employee>()
+                      .HasOne(e => e.User)
+                      .WithMany()
+                      .HasForeignKey(e => e.UserId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+            //modelBuilder.HasSequence<int>("EmployeeNumberSeq")
+            //            .StartsAt(1)
+            //            .IncrementsBy(1);
+
+            //modelBuilder.Entity<Employee>()
+            //         .Property(e => e.EmployeeNumber)
+            //         .HasDefaultValueSql("FORMAT(NEXT VALUE FOR EmployeeNumberSeq, 'EMP0000')");
+
         }
 
     }

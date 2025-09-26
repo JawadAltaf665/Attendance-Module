@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Clear Storage - Attendance Module</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 500px;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .status {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover {
+            background: #5a67d8;
+        }
+        .log {
+            text-align: left;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .log-item {
+            margin: 5px 0;
+            padding: 5px;
+            background: white;
+            border-left: 3px solid #667eea;
+            padding-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧹 Clear Browser Storage</h1>
+        <p>This utility will clear all stored authentication tokens and cached data for the Attendance Module application.</p>
+
+        <div id="status" class="status info">
+            Ready to clear storage
+        </div>
+
+        <button onclick="clearAllStorage()">Clear All Storage</button>
+        <button onclick="window.location.href='http://localhost:4200'">Go to Application</button>
+
+        <div id="log" class="log" style="display:none;">
+            <strong>Cleared Items:</strong>
+            <div id="logContent"></div>
+        </div>
+    </div>
+
+    <script>
+        function clearAllStorage() {
+            const logContent = document.getElementById('logContent');
+            const log = document.getElementById('log');
+            const status = document.getElementById('status');
+
+            logContent.innerHTML = '';
+            log.style.display = 'block';
+
+            let clearedItems = [];
+
+            // Clear localStorage
+            if (window.localStorage) {
+                const localStorageKeys = Object.keys(localStorage);
+                localStorageKeys.forEach(key => {
+                    localStorage.removeItem(key);
+                    clearedItems.push(`localStorage: ${key}`);
+                });
+                logContent.innerHTML += `<div class="log-item">✓ Cleared ${localStorageKeys.length} localStorage items</div>`;
+            }
+
+            // Clear sessionStorage
+            if (window.sessionStorage) {
+                const sessionStorageKeys = Object.keys(sessionStorage);
+                sessionStorageKeys.forEach(key => {
+                    sessionStorage.removeItem(key);
+                    clearedItems.push(`sessionStorage: ${key}`);
+                });
+                logContent.innerHTML += `<div class="log-item">✓ Cleared ${sessionStorageKeys.length} sessionStorage items</div>`;
+            }
+
+            // Clear cookies
+            document.cookie.split(";").forEach(function(c) {
+                const eqPos = c.indexOf("=");
+                const name = eqPos > -1 ? c.substr(0, eqPos).trim() : c.trim();
+                if (name) {
+                    // Clear for current path
+                    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/';
+                    // Clear for current domain
+                    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=' + window.location.hostname;
+                    // Clear for parent domain
+                    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=.' + window.location.hostname;
+                    clearedItems.push(`cookie: ${name}`);
+                }
+            });
+            logContent.innerHTML += `<div class="log-item">✓ Cleared cookies</div>`;
+
+            // Clear IndexedDB
+            if (window.indexedDB) {
+                indexedDB.databases().then(databases => {
+                    databases.forEach(db => {
+                        indexedDB.deleteDatabase(db.name);
+                        clearedItems.push(`IndexedDB: ${db.name}`);
+                    });
+                    logContent.innerHTML += `<div class="log-item">✓ Cleared ${databases.length} IndexedDB databases</div>`;
+                }).catch(err => {
+                    console.error('Error clearing IndexedDB:', err);
+                });
+            }
+
+            // Clear cache storage
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => {
+                        caches.delete(name);
+                        clearedItems.push(`cache: ${name}`);
+                    });
+                    logContent.innerHTML += `<div class="log-item">✓ Cleared ${names.length} cache storages</div>`;
+                });
+            }
+
+            status.className = 'status success';
+            status.innerHTML = '✅ All storage cleared successfully!';
+
+            // Log to console
+            console.log('Cleared items:', clearedItems);
+
+            setTimeout(() => {
+                status.innerHTML += '<br><small>You can now return to the application with clean storage.</small>';
+            }, 500);
+        }
+
+        // Auto-clear if URL has ?auto=true
+        if (window.location.search.includes('auto=true')) {
+            setTimeout(clearAllStorage, 500);
+        }
+    </script>
+</body>
+</html>

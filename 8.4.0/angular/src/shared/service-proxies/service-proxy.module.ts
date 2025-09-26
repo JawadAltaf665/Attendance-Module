@@ -13,6 +13,12 @@ import * as ApiServiceProxies from './service-proxies';
         ApiServiceProxies.TokenAuthServiceProxy,
         ApiServiceProxies.AccountServiceProxy,
         ApiServiceProxies.ConfigurationServiceProxy,
+        // Added missing proxies used by DashboardService
+        ApiServiceProxies.EmployeeServiceProxy,
+        ApiServiceProxies.AttendanceServiceProxy,
+        ApiServiceProxies.LeaveServiceProxy,
+        ApiServiceProxies.ShiftServiceProxy,
+        ApiServiceProxies.RosterServiceProxy,
         { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true }
     ]
 })

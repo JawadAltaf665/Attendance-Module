@@ -8,7 +8,7 @@ import {
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { AppComponentBase } from '@shared/app-component-base';
 import {
-  CreateTenantDto,
+  DtoCreateTenantDto,
   TenantServiceProxy
 } from '@shared/service-proxies/service-proxies';
 
@@ -18,7 +18,7 @@ import {
 export class CreateTenantDialogComponent extends AppComponentBase
   implements OnInit {
   saving = false;
-  tenant: CreateTenantDto = new CreateTenantDto();
+  tenant: DtoCreateTenantDto = new DtoCreateTenantDto();
 
   @Output() onSave = new EventEmitter<any>();
 

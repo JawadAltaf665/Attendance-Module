@@ -1,0 +1,535 @@
+<style>
+    .status-in {
+        background: linear-gradient(135deg, #198754, #20c997);
+        box-shadow: 0 0 25px rgba(25, 135, 84, 0.6);
+        animation: glowIn 2s infinite alternate;
+    }
+
+    .status-out {
+        background: linear-gradient(135deg, #dc3545, #fd7e14);
+        box-shadow: 0 0 25px rgba(220, 53, 69, 0.6);
+        animation: glowOut 2s infinite alternate;
+    }
+
+    .status-late {
+        background: linear-gradient(135deg, #ffc107, #fd7e14);
+        box-shadow: 0 0 25px rgba(255, 193, 7, 0.6);
+        animation: glowWarning 2s infinite alternate;
+    }
+
+
+    .timing-badge {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        color: #495057;
+    }
+
+    .timing-badge.primary {
+        background: #e3f2fd;
+        border: 1px solid #2196f3;
+        color: #1976d2;
+    }
+
+    .clock-card {
+        background: white;
+        border: 1px solid #e9ecef;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .enhanced-button {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        font-weight: 600;
+        border-width: 2px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .enhanced-button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    }
+
+    .enhanced-button:active {
+        transform: translateY(0);
+    }
+
+    .pulse-animation {
+        animation: pulse 2s infinite;
+    }
+
+    .clean-alert {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-left: 4px solid #6c757d;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .clean-alert.alert-success {
+        border-left-color: #28a745;
+        background: #f8fff9;
+    }
+
+    .clean-alert.alert-warning {
+        border-left-color: #ffc107;
+        background: #fffdf5;
+    }
+
+    .clean-alert.alert-danger {
+        border-left-color: #dc3545;
+        background: #fff5f5;
+    }
+
+    .clean-alert.alert-info {
+        border-left-color: #17a2b8;
+        background: #f0fdff;
+    }
+
+    .clean-alert.alert-primary {
+        border-left-color: #007bff;
+        background: #f0f8ff;
+    }
+
+    @keyframes glowIn {
+        from { box-shadow: 0 0 15px rgba(25, 135, 84, 0.4); }
+        to { box-shadow: 0 0 35px rgba(25, 135, 84, 0.9); }
+    }
+
+    @keyframes glowOut {
+        from { box-shadow: 0 0 15px rgba(220, 53, 69, 0.4); }
+        to { box-shadow: 0 0 35px rgba(220, 53, 69, 0.9); }
+    }
+
+    @keyframes glowWarning {
+        from { box-shadow: 0 0 15px rgba(255, 193, 7, 0.4); }
+        to { box-shadow: 0 0 35px rgba(255, 193, 7, 0.9); }
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    .gradient-text {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .glass-effect {
+        background: white;
+        border: 1px solid #e9ecef;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .status-card {
+        background: white;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+    }
+
+    .status-card.status-in {
+        border: none;
+        background: linear-gradient(135deg, #28a745, #20c997, #17a2b8);
+        color: white;
+    }
+
+        .status-card.status-late {
+            border-color: #ffc107;
+            background: linear-gradient(135deg, #fff3cd, #ffffff);
+        }
+
+        .status-card.status-out {
+            /*background: linear-gradient(135deg, #dc3545, #ff6b6b);
+            border-color: #6c757d;
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);*/
+        }
+</style>
+
+<div class="container-fluid py-4 bg-light">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-body bg-gradient text-white p-4"
+                     style="background: linear-gradient(135deg, #0d6efd, #0dcaf0);">
+                    <div class="row align-items-center">
+
+                        <!-- Left Side -->
+                        <div class="col-md-8">
+                            <h2 class="fw-bold mb-2">
+                                <i class="fas fa-user-clock me-2"></i> Attendance Management
+                            </h2>
+                            <p class="mb-0 opacity-75">Track your work hours and manage attendance</p>
+                        </div>
+
+                        <!-- Right Side -->
+                        <div class="col-md-4 d-flex flex-column align-items-end justify-content-between">
+                            <h1 class="display-6 fw-bold mb-0">{{ currentTime | date:'HH:mm:ss' }}</h1>
+                            <small class="opacity-75 mt-2">{{ currentTime | date:'EEEE, MMMM d, y' }}</small>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="row">
+        <!-- Left Column -->
+        <div class="col-12 col-xl-8 mb-4">
+            <!-- Clock In/Out Card -->
+            <div class="card clock-card rounded-4 mb-4">
+                <div class="card-header border-0 py-4 d-flex align-items-center justify-content-between"
+                     style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+
+                    <!-- Left: Employee Info -->
+                    <div class="d-flex align-items-center" *ngIf="employeeName">
+                        <i class="fas fa-user-circle fa-2x text-white me-2"></i>
+                        <h6 class="mb-0 fw-semibold text-white">{{ employeeName }}</h6>
+                    </div>
+
+                    <!-- Center: Heading -->
+                    <h5 class="mb-0 fw-bold text-white text-center flex-grow-1">
+                        <i class="fas fa-calendar-check"></i> Daily Check-In/Out
+                    </h5>
+
+                    <!-- Right: (optional, keep empty to balance flexbox) -->
+                    <div style="width:40px"></div>
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- Status Message -->
+                    <div class="clean-alert rounded-3 mb-4"
+                         [ngClass]="{
+                            'clean-alert alert-success': hasAlreadyClockedInToday() && hasAlreadyClockedOutToday(),
+                            'clean-alert alert-warning': hasAlreadyClockedInToday() && !hasAlreadyClockedOutToday(),
+                            'clean-alert alert-primary': !hasAlreadyClockedInToday()
+                         }">
+                        <div class="d-flex align-items-center">
+                            <i class="fas me-3"
+                               [ngClass]="{
+                                  'fa-check-circle text-success': hasAlreadyClockedInToday() && hasAlreadyClockedOutToday(),
+                                  'fa-clock text-warning': hasAlreadyClockedInToday() && !hasAlreadyClockedOutToday(),
+                                  'fa-play-circle text-primary': !hasAlreadyClockedInToday()
+                               }"></i>
+                            <div>
+                                <small class="fw-semibold text-dark">{{ getClockStatusMessage() }}</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Enhanced Status Display -->
+                    <div class="text-center mb-4">
+                        <div class="p-4 rounded-4 status-card w-100"
+                             [ngClass]="{
+                                'status-in': isClockedIn && !isLateClockIn,
+                                'status-late': isClockedIn && isLateClockIn,
+                                'status-out': !isClockedIn
+                             }">
+
+                            <h3 class="mb-0 fw-bold d-flex align-items-center justify-content-center gap-2"
+                                [ngClass]="{
+                                   'text-white': isClockedIn,
+                                   'text-danger': !isClockedIn
+                                }">
+                                <i class="fas me-2"
+                                   [ngClass]="{
+                                      'fa-check-circle text-white': isClockedIn && !isLateClockIn,
+                                      'fa-exclamation-circle text-warning': isClockedIn && isLateClockIn,
+                                      'fa-times-circle text-danger': !isClockedIn
+                                   }"></i>
+                                <span *ngIf="isClockedIn && isLateClockIn">Clocked In (Late)</span>
+                                <span *ngIf="isClockedIn && !isLateClockIn">Clocked In</span>
+                                <span *ngIf="!isClockedIn">Clocked Out</span>
+                            </h3>
+
+                            <!-- Clocked In Info -->
+                            <div class="mt-3" *ngIf="isClockedIn && clockInTime">
+                                <small class="d-block text-white-50">Since {{ formatTime(clockInTime) }}</small>
+                                <div class="h5 fw-semibold mt-2 text-white">
+                                    <i class="fas fa-hourglass-half me-2 text-white-50"></i>
+                                    Session: {{ sessionDuration }}
+                                </div>
+                                <!-- Auto Clock-out Timer -->
+                                <div class="mt-2" *ngIf="timeUntilAutoClockOut">
+                                    <small class="d-block text-white-50">
+                                        <i class="fas fa-clock me-1 text-white-50"></i>
+                                        {{ timeUntilAutoClockOut }}
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Day Completed Status -->
+                        <div class="p-5 rounded-4 text-center"
+                             style="background: linear-gradient(135deg, #28a745, #20c997); color: white; box-shadow: 0 8px 32px rgba(40, 167, 69, 0.3);"
+                             *ngIf="!isClockedIn && hasAlreadyClockedInToday() && hasAlreadyClockedOutToday()">
+                            <i class="fas fa-check-circle fa-4x mb-3 text-white"></i>
+                            <h3 class="mb-3 fw-bold text-white">Today's Session Complete!</h3>
+                            <p class="mb-0 text-white-50 lead">Thank you for your hard work today. See you tomorrow!</p>
+                        </div>
+                    </div>
+
+                    <!-- Form -->
+                    <form [formGroup]="clockForm" class="mb-4" *ngIf="!hasAlreadyClockedOutToday()">
+                        <!-- Location Toggle -->
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox"
+                                   formControlName="includeLocation" id="locationToggle">
+                            <label class="form-check-label fw-semibold" for="locationToggle">
+                                <i class="fas fa-map-marker-alt me-2 text-danger"></i> Include Location
+                            </label>
+                        </div>
+
+                        <!-- Warning -->
+                        <div class="alert alert-warning border-0 py-2 rounded-3 shadow-sm"
+                             *ngIf="showLocationWarning">
+                            <small class="fw-semibold">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                Location access denied. Clock events will be recorded without location.
+                            </small>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="mb-3">
+                            <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill shadow-sm"
+                                    (click)="toggleNotesField()">
+                                <i class="fas fa-sticky-note me-2"></i>
+                                {{ showNotesField ? 'Hide' : 'Add' }} Notes
+                            </button>
+                        </div>
+                        <div class="mb-3" *ngIf="showNotesField">
+                            <textarea class="form-control rounded-3 shadow-sm"
+                                      formControlName="notes" rows="2"
+                                      placeholder="Add any notes..."></textarea>
+                        </div>
+                    </form>
+
+                    <!-- Enhanced Action Buttons -->
+                    <div class="d-grid gap-3" *ngIf="!hasAlreadyClockedOutToday()">
+                        <!-- Clock In Button -->
+                        <button class="btn enhanced-button btn-lg rounded-pill shadow-lg w-100"
+                                [ngClass]="{
+                                    'btn-success pulse-animation': canClockIn() && isWithinGracePeriod && !isLateClockIn,
+                                    'btn-warning pulse-animation': canClockIn() && isLateClockIn,
+                                    'btn-danger': !canClockIn() && shouldShowHRWarning,
+                                    'btn-secondary': !canClockIn() && hasAlreadyClockedInToday(),
+                                    'btn-outline-secondary': !canClockIn() && !hasAlreadyClockedInToday() && !shouldShowHRWarning
+                                }"
+                                *ngIf="!hasAlreadyClockedInToday() || !canClockOut()"
+                                (click)="clockIn()"
+                                [disabled]="isLoading || hasAlreadyClockedInToday() || shouldShowHRWarning">
+                            <i class="fas me-2"
+                               [ngClass]="{
+                                  'fa-check': hasAlreadyClockedInToday(),
+                                  'fa-sign-in-alt': !hasAlreadyClockedInToday() && !shouldShowHRWarning,
+                                  'fa-exclamation-triangle': shouldShowHRWarning
+                               }"></i>
+                            <span *ngIf="shouldShowHRWarning">Contact HR - Outside Hours</span>
+                            <span *ngIf="!shouldShowHRWarning">{{ getClockInButtonText() }}</span>
+                        </button>
+
+                        <!-- Clock Out Button -->
+                        <button class="btn enhanced-button btn-lg rounded-pill shadow-lg w-100"
+                                [ngClass]="{
+                                    'btn-danger': canClockOut(),
+                                    'btn-secondary': !canClockOut() && hasAlreadyClockedOutToday(),
+                                    'btn-outline-secondary': !canClockOut() && !hasAlreadyClockedOutToday()
+                                }"
+                                *ngIf="hasAlreadyClockedInToday()"
+                                (click)="clockOut()"
+                                [disabled]="isLoading || hasAlreadyClockedOutToday() || !isClockedIn">
+                            <i class="fas me-2"
+                               [ngClass]="hasAlreadyClockedOutToday() ? 'fa-check' : 'fa-sign-out-alt'"></i>
+                            {{ getClockOutButtonText() }}
+                        </button>
+
+                        <!-- HR Contact Button -->
+                        <button class="btn btn-outline-warning btn-lg rounded-pill shadow-sm w-100"
+                                *ngIf="shouldShowHRWarning"
+                                (click)="contactHR()">
+                            <i class="fas fa-phone me-2"></i> Contact HR Department
+                        </button>
+
+                        <!-- Completion Message -->
+                        <div class="clean-alert alert-success rounded-3 text-center glass-effect"
+                             *ngIf="hasAlreadyClockedInToday() && hasAlreadyClockedOutToday()">
+                            <i class="fas fa-trophy fa-2x mb-2 text-warning"></i>
+                            <h6 class="mb-0 fw-bold text-success">Day Complete!</h6>
+                            <small class="text-dark">Thank you for your hard work today. See you tomorrow!</small>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Today's Activity -->
+            <div class="card bg-white border rounded-4" style="box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);">
+                <div class="card-header border-0 py-3" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <h5 class="mb-0 fw-bold text-white">
+                        <i class="fas fa-history me-2"></i> Today's Activity
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="table-responsive" *ngIf="todayEvents.length > 0">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Event</th>
+                                    <th>Notes</th>
+                                    <th>Source</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let event of todayEvents">
+                                    <td>{{ formatTime(event.eventTime) }}</td>
+                                    <td>
+                                        <span class="badge"
+                                              [ngClass]="event.eventType === 'CLOCK_IN' ? 'bg-success' : 'bg-danger'">
+                                            {{ event.eventType === 'CLOCK_IN' ? 'Clock In' : 'Clock Out' }}
+                                        </span>
+                                    </td>
+                                    <td>{{ event.notes || '-' }}</td>
+                                    <td><span class="badge bg-secondary">{{ event.source || 'Web' }}</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-center text-muted py-4" *ngIf="todayEvents.length === 0">
+                        <i class="fas fa-calendar-times fa-3x mb-3"></i>
+                        <p>No attendance events recorded today</p>
+                        <small class="text-info">Clock in to start tracking your attendance</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="col-12 col-xl-4">
+            <!-- Office Schedule Card - Moved to top -->
+            <div class="card bg-white border rounded-4 mb-4" style="box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h6 class="mb-0 fw-bold text-dark">
+                        <i class="fas fa-building me-2 text-primary"></i> Office Schedule
+                    </h6>
+                </div>
+                <div class="card-body bg-white">
+                    <div class="row text-center">
+                        <div class="col-4 mb-3">
+                            <div class="text-muted small">Start</div>
+                            <div class="h6 fw-bold text-primary">{{ formatOfficeTime(officeConfig.startTime) }}</div>
+                        </div>
+                        <div class="col-4 mb-3">
+                            <div class="text-muted small">End</div>
+                            <div class="h6 fw-bold text-primary">{{ formatOfficeTime(officeConfig.endTime) }}</div>
+                        </div>
+                        <div class="col-4 mb-3">
+                            <div class="text-muted small">Auto Clock-out</div>
+                            <div class="h6 fw-bold text-warning">{{ formatOfficeTime(officeConfig.autoClockOutTime) }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary -->
+            <div class="card bg-white border rounded-4 mb-4" style="box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h6 class="mb-0 fw-bold text-dark">
+                        <i class="fas fa-chart-pie me-2 text-primary"></i> Today's Summary
+                    </h6>
+                </div>
+                <div class="card-body text-center bg-white">
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <div class="text-muted small">Total Hours</div>
+                            <div class="h4 text-primary">{{ todaySummary.totalHours | number:'1.1-1' }}h</div>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <div class="text-muted small">Overtime</div>
+                            <div class="h4" [ngClass]="todaySummary.overtime > 0 ? 'text-warning' : 'text-muted'">
+                                {{ todaySummary.overtime | number:'1.1-1' }}h
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Upcoming Roster -->
+            <div class="card bg-white border rounded-4 mb-4" style="box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h6 class="mb-0 fw-bold text-dark">
+                        <i class="fas fa-calendar-week me-2 text-primary"></i> Upcoming Roster
+                    </h6>
+                </div>
+                <div class="card-body bg-white">
+                    <!-- Show upcoming roster if available -->
+                    <div *ngIf="upcomingRoster && upcomingRoster.length > 0">
+                        <div *ngFor="let roster of upcomingRoster; let i = index" 
+                             class="d-flex justify-content-between align-items-center py-2 border-bottom" 
+                             [class.border-bottom-0]="i === upcomingRoster.length - 1">
+                            <div>
+                                <small class="fw-semibold text-dark">{{ formatDate(roster.date) }}</small>
+                                <div class="small text-muted">{{ roster.shiftName }}</div>
+                            </div>
+                            <div class="text-end">
+                                <small class="text-muted">{{ roster.startTime }} - {{ roster.endTime }}</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- No upcoming roster -->
+                    <div *ngIf="!upcomingRoster || upcomingRoster.length === 0" class="text-center py-4">
+                        <i class="fas fa-calendar-plus fa-3x mb-3 text-muted"></i>
+                        <h6 class="mb-2 text-dark">No Upcoming Roster</h6>
+                        <p class="mb-1 text-muted">No shifts assigned for the next 7 days</p>
+                        <small class="text-muted">Contact your manager for roster assignment</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Weekly Progress -->
+            <div class="card bg-white border rounded-4" style="box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);" *ngIf="weeklySummary">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h6 class="mb-0 fw-bold text-dark">
+                        <i class="fas fa-chart-line me-2 text-primary"></i> Weekly Progress
+                    </h6>
+                </div>
+                <div class="card-body p-4 bg-white">
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <small>Hours Worked</small>
+                            <small class="fw-bold">
+                                {{ weeklySummary.hoursWorked }}h / {{ weeklySummary.target }}h
+                            </small>
+                        </div>
+
+                        <div class="progress rounded-pill" style="height: 12px;">
+                            <div class="progress-bar"
+                                 [style.width.%]="getProgressPercentage() ?? 0"
+                                 [ngClass]="{
+                                    'bg-success': (getProgressPercentage() ?? 0) >= 100,
+                                    'bg-primary': (getProgressPercentage() ?? 0) >= 75 && (getProgressPercentage() ?? 0) < 100,
+                                    'bg-warning': (getProgressPercentage() ?? 0) >= 50 && (getProgressPercentage() ?? 0) < 75,
+                                    'bg-danger': (getProgressPercentage() ?? 0) < 50
+                                    }">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-2" *ngIf="weeklySummary.overtime > 0">
+                        <small class="text-warning fw-semibold">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Overtime: {{ weeklySummary.overtime }}h
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

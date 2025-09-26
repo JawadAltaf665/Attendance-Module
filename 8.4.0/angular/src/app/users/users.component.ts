@@ -8,8 +8,8 @@ import {
 } from 'shared/paged-listing-component-base';
 import {
   UserServiceProxy,
-  UserDto,
-  UserDtoPagedResultDto
+  DtoUserDto,
+  PagedResultDtoOfUserDto
 } from '@shared/service-proxies/service-proxies';
 import { CreateUserDialogComponent } from './create-user/create-user-dialog.component';
 import { EditUserDialogComponent } from './edit-user/edit-user-dialog.component';
@@ -24,8 +24,8 @@ class PagedUsersRequestDto extends PagedRequestDto {
   templateUrl: './users.component.html',
   animations: [appModuleAnimation()]
 })
-export class UsersComponent extends PagedListingComponentBase<UserDto> {
-  users: UserDto[] = [];
+export class UsersComponent extends PagedListingComponentBase<DtoUserDto> {
+  users: DtoUserDto[] = [];
   keyword = '';
   isActive: boolean | null;
   advancedFiltersVisible = false;
@@ -42,11 +42,11 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
     this.showCreateOrEditUserDialog();
   }
 
-  editUser(user: UserDto): void {
+  editUser(user: DtoUserDto): void {
     this.showCreateOrEditUserDialog(user.id);
   }
 
-  public resetPassword(user: UserDto): void {
+  public resetPassword(user: DtoUserDto): void {
     this.showResetPasswordUserDialog(user.id);
   }
 
@@ -76,13 +76,13 @@ export class UsersComponent extends PagedListingComponentBase<UserDto> {
           finishedCallback();
         })
       )
-      .subscribe((result: UserDtoPagedResultDto) => {
+      .subscribe((result: PagedResultDtoOfUserDto) => {
         this.users = result.items;
         this.showPaging(result, pageNumber);
       });
   }
 
-  protected delete(user: UserDto): void {
+  protected delete(user: DtoUserDto): void {
     abp.message.confirm(
       this.l('UserDeleteWarningMessage', user.fullName),
       undefined,

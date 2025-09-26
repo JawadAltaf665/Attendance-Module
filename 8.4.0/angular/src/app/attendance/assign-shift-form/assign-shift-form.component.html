@@ -1,0 +1,119 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+        <form (ngSubmit)="assignShift()" #assignForm="ngForm">
+
+            <!-- Shift Selection -->
+            <div class="mb-3">
+                <label for="shift" class="form-label">
+                    <i class="fa fa-clock-o text-primary me-1"></i>
+                    Select Shift <span class="text-danger">*</span>
+                </label>
+                <select id="shift"
+                        class="form-control"
+                        [(ngModel)]="selectedShiftId"
+                        name="shift"
+                        required
+                        [disabled]="loadingShifts">
+                    <option value="" selected>Choose a shift...</option>
+                    <option *ngFor="let shift of shifts" [value]="shift.id">
+                        {{ shift.name }} ({{ formatTime(shift.startTime) }} - {{ formatTime(shift.endTime) }})
+                    </option>
+                </select>
+                <div *ngIf="loadingShifts" class="form-text text-info">
+                    <i class="fa fa-spinner fa-spin me-1"></i>Loading shifts...
+                </div>
+            </div>
+
+            <!-- Employee Selection -->
+            <div class="mb-3">
+                <label for="employee" class="form-label">
+                    <i class="fa fa-user text-primary me-1"></i>
+                    Select Employee <span class="text-danger">*</span>
+                </label>
+                <select id="employee"
+                        class="form-control"
+                        [(ngModel)]="selectedEmployeeId"
+                        name="employee"
+                        required
+                        [disabled]="loadingEmployees">
+                    <option value="" selected>Choose an employee...</option>
+                    <option *ngFor="let employee of employees" [value]="employee.id">
+                        {{ employee.firstName }} {{ employee.lastName }} ({{ employee.email }})
+                    </option>
+                </select>
+                <div *ngIf="loadingEmployees" class="form-text text-info">
+                    <i class="fa fa-spinner fa-spin me-1"></i>Loading employees...
+                </div>
+            </div>
+
+            <!-- Selected Shift Details -->
+            <div *ngIf="getSelectedShift()" class="mb-3">
+                <div class="card border-info">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0">
+                            <i class="fa fa-info-circle text-info me-1"></i>
+                            Shift Details
+                        </h6>
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <strong>Shift:</strong> {{ getSelectedShift()?.name }}
+                            </div>
+                            <div class="col-md-6">
+                                <strong>Duration:</strong> {{ getSelectedShift() ? calculateShiftDuration(getSelectedShift()!) : '' }}
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-md-6">
+                                <strong>Time:</strong>
+                                {{ getSelectedShift()?.startTime ? formatTime(getSelectedShift()!.startTime) : '' }} -
+                                {{ getSelectedShift()?.endTime ? formatTime(getSelectedShift()!.endTime) : '' }}
+                            </div>
+                            <div class="col-md-6" *ngIf="getSelectedShift()?.breakMinutes">
+                                <strong>Break:</strong> {{ getSelectedShift()?.breakMinutes }} minutes
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assignment Summary -->
+            <div *ngIf="selectedEmployeeId && selectedShiftId" class="mb-3">
+                <div class="alert alert-success">
+                    <h6 class="alert-heading">
+                        <i class="fa fa-check-circle me-1"></i>
+                        Assignment Summary
+                    </h6>
+                    <p class="mb-0">
+                        <strong>{{ getSelectedEmployee()?.firstName }} {{ getSelectedEmployee()?.lastName }}</strong>
+                        will be assigned to the
+                        <strong>{{ getSelectedShift()?.name }}</strong>
+                        shift on
+                        <strong>{{ selectedDate | date:'fullDate' }}</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="d-flex justify-content-end gap-2">
+                <button type="button"
+                        class="btn btn-outline-secondary"
+                        (click)="cancel()"
+                        [disabled]="loading">
+                    <i class="fa fa-times me-1"></i>
+                    Cancel
+                </button>
+                <button type="submit"
+                        class="btn btn-primary"
+                        [disabled]="!selectedEmployeeId || !selectedShiftId || loading">
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+                    <i *ngIf="!loading" class="fa fa-check me-1"></i>
+                    {{ loading ? 'Assigning...' : 'Assign Shift' }}
+                </button>
+            </div>
+        </form>
+    </div>
+  </div>
+</div>

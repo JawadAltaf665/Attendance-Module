@@ -4,8 +4,8 @@ import { finalize } from 'rxjs/operators';
 import { AppComponentBase } from '@shared/app-component-base';
 import {
   AccountServiceProxy,
-  RegisterInput,
-  RegisterOutput
+  DtoRegisterInput,
+  DtoRegisterOutput
 } from '@shared/service-proxies/service-proxies';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { AppAuthService } from '@shared/auth/app-auth.service';
@@ -15,7 +15,7 @@ import { AppAuthService } from '@shared/auth/app-auth.service';
   animations: [accountModuleAnimation()]
 })
 export class RegisterComponent extends AppComponentBase {
-  model: RegisterInput = new RegisterInput();
+  model: DtoRegisterInput = new DtoRegisterInput();
   saving = false;
 
   constructor(
@@ -36,7 +36,7 @@ export class RegisterComponent extends AppComponentBase {
           this.saving = false;
         })
       )
-      .subscribe((result: RegisterOutput) => {
+      .subscribe((result: DtoRegisterOutput) => {
         if (!result.canLogin) {
           this.notify.success(this.l('SuccessfullyRegistered'));
           this._router.navigate(['/login']);

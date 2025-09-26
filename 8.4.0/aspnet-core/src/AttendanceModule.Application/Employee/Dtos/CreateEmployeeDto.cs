@@ -8,18 +8,47 @@ using System.Threading.Tasks;
 
 namespace AttendanceModule.Employee.Dtos
 {
-    public class CreateEmployeeDto: AuditedEntityDto<int>
+    public class CreateEmployeeDto : AuditedEntityDto<int>
     {
-        [Required]
-        public string EmployeeNumber { get; set; }
-        [Required, MaxLength(50), MinLength(3)]
-        public string FirstName { get; set; }
-        public string? LastName { get; set; }
+        //public string EmployeeNumber { get; set; } // Made optional as it can be auto-generated
 
-        [EmailAddress, Required]
-        public string? Email { get; set; }
+        [Required]
+        public long UserId { get; set; }  // Select from existing ABP Users
+
+        [MaxLength(50)]
+        public string FirstName { get; set; }  // Optional - can get from User
+
+        [MaxLength(50)]
+        public string LastName { get; set; }   // Optional - can get from User
+
+        [EmailAddress, MaxLength(256)]
+        public string Email { get; set; }      // Optional - can get from User
+
+        [MaxLength(50)]
         public string Timezone { get; set; } = "UTC";
+
         public bool IsActive { get; set; } = true;
 
     }
+
+    public class UpdateEmployeeDto : EntityDto<int>
+    {
+        [Required]
+        public long UserId { get; set; }
+
+        [MaxLength(50)]
+        public string FirstName { get; set; }
+
+        [MaxLength(50)]
+        public string LastName { get; set; }
+
+        [EmailAddress, MaxLength(256)]
+        public string Email { get; set; }
+
+        [MaxLength(50)]
+        public string Timezone { get; set; }
+
+        public bool IsActive { get; set; }
+    }
+
 }

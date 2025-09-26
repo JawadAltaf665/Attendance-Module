@@ -1,0 +1,247 @@
+<div class="container-fluid mt-3">
+    <div class="card">
+        <div class="card-header bg-light">
+            <div class="d-flex justify-content-between align-items-center">
+
+                <!-- Left Side -->
+                <h4 class="mb-0">
+                    <i class="fa fa-exchange-alt text-primary"></i> Shift Swap Approvals
+                    <span class="badge bg-primary ms-2">{{ totalCount }}</span>
+                </h4>
+
+                <!-- Right Side -->
+                <button class="btn btn-outline-primary"
+                        (click)="loadPendingRequests()"
+                        [disabled]="loading">
+                    <i class="fa fa-sync" [class.fa-spin]="loading"></i> Refresh
+                </button>
+
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div *ngIf="loading && swapRequests.length === 0" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Loading swap requests...</p>
+            </div>
+
+            <div *ngIf="!loading && swapRequests.length === 0" class="text-center py-5">
+                <i class="fa fa-check-circle fa-3x text-success mb-3"></i>
+                <h5>No Pending Swap Requests</h5>
+                <p class="text-muted">All shift swap requests have been processed.</p>
+            </div>
+
+            <div *ngIf="swapRequests.length > 0" class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Request Date</th>
+                            <th>Shift Details</th>
+                            <th>Requester</th>
+                            <th>Target Employee</th>
+                            <th>Reason</th>
+                            <th>Days Until Shift</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let request of swapRequests">
+                            <td>
+                                <small class="text-muted">{{ request.creationTime | date:'short' }}</small>
+                            </td>
+                            <td>
+                                <strong class="d-block">{{ request.shiftName }}</strong>
+                                <small class="text-muted">{{ formatDate(request.rosterDate) }}</small>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <i class="fa fa-user-circle text-primary me-2"></i>
+                                    <span>{{ request.requesterName }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <i class="fa fa-user-circle text-info me-2"></i>
+                                    <span>{{ request.targetEmployeeName }}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="text-truncate d-inline-block" style="max-width: 200px;"
+                                      [title]="request.reason"
+                                      data-bs-toggle="tooltip"
+                                      data-bs-placement="top">
+                                    {{ request.reason }}
+                                </span>
+                                <span *ngIf="request.proposedDate" class="d-block">
+                                    <small class="text-muted">
+                                        <i class="fa fa-calendar-alt"></i> Proposed: {{ request.proposedDate | date:'shortDate' }}
+                                    </small>
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge rounded-pill"
+                                      [ngClass]="{
+                                      'bg-danger' : getDaysDifference(request.rosterDate) <= 2,
+                        'bg-warning': getDaysDifference(request.rosterDate) > 2 && getDaysDifference(request.rosterDate) <= 7,
+                        'bg-success': getDaysDifference(request.rosterDate) > 7
+                      }">
+                  {{ getDaysDifference(request.rosterDate) }} days
+                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <button class="btn btn-outline-success"
+                                            (click)="openActionModal(request, 'approve')"
+                                            [disabled]="loading"
+                                            data-bs-toggle="tooltip"
+                                            title="Approve Request">
+                                        <i class="fa fa-check"></i> Approve
+                                    </button>
+                                    <button class="btn btn-outline-danger"
+                                            (click)="openActionModal(request, 'reject')"
+                                            [disabled]="loading"
+                                            data-bs-toggle="tooltip"
+                                            title="Reject Request">
+                                        <i class="fa fa-times"></i> Reject
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div *ngIf="totalCount > pageSize" class="d-flex justify-content-center mt-4">
+                <nav aria-label="Swap requests pagination">
+                    <ul class="pagination">
+                        <li class="page-item" [class.disabled]="pageNumber === 1">
+                            <a class="page-link" (click)="pageNumber > 1 && onPageChange(pageNumber - 1)"
+                               [style.cursor]="pageNumber > 1 ? 'pointer' : 'default'"
+                               tabindex="-1">
+                                <i class="fa fa-chevron-left"></i> Previous
+                            </a>
+                        </li>
+                        <li class="page-item active">
+                            <span class="page-link">
+                                Page {{ pageNumber }} of {{ Math.ceil(totalCount / pageSize) }}
+                            </span>
+                        </li>
+                        <li class="page-item" [class.disabled]="pageNumber >= Math.ceil(totalCount / pageSize)">
+                            <a class="page-link"
+                               (click)="pageNumber < Math.ceil(totalCount / pageSize) && onPageChange(pageNumber + 1)"
+                               [style.cursor]="pageNumber < Math.ceil(totalCount / pageSize) ? 'pointer' : 'default'">
+                                Next <i class="fa fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+  <!-- Action Modal -->
+  <div *ngIf="showActionModal && selectedRequest"
+       class="modal fade show d-block"
+       tabindex="-1"
+       role="dialog"
+       style="background-color: rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header"
+             [ngClass]="{
+               'bg-success text-white': actionType === 'approve',
+               'bg-danger text-white': actionType === 'reject'
+             }">
+          <h5 class="modal-title">
+            <i [class]="actionType === 'approve' ? 'fa fa-check-circle' : 'fa fa-times-circle'"></i>
+            {{ actionType === 'approve' ? 'Approve' : 'Reject' }} Shift Swap Request
+          </h5>
+          <button type="button" class="btn-close btn-close-white"
+                  (click)="closeActionModal()"
+                  aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <div class="alert alert-info mb-3">
+            <h6 class="alert-heading">
+              <i class="fa fa-info-circle"></i> Request Details
+            </h6>
+            <hr>
+            <div class="row">
+              <div class="col-md-6">
+                <p class="mb-2">
+                  <strong>Shift:</strong> {{ selectedRequest.shiftName }}
+                </p>
+                <p class="mb-2">
+                  <strong>Date:</strong> {{ formatDate(selectedRequest.rosterDate) }}
+                </p>
+              </div>
+              <div class="col-md-6">
+                <p class="mb-2">
+                  <strong>Requester:</strong> {{ selectedRequest.requesterName }}
+                </p>
+                <p class="mb-2">
+                  <strong>Swap with:</strong> {{ selectedRequest.targetEmployeeName }}
+                </p>
+              </div>
+            </div>
+            <p class="mb-0 mt-2">
+              <strong>Reason:</strong> {{ selectedRequest.reason }}
+            </p>
+          </div>
+
+          <div class="form-group mb-3">
+            <label class="form-label fw-bold">
+              Manager Comments
+              <small class="text-muted fw-normal ms-2">(Optional - Will be included in notification)</small>
+            </label>
+            <textarea class="form-control"
+                      rows="3"
+                      [(ngModel)]="actionComments"
+                      [placeholder]="actionType === 'approve' ?
+                        'e.g., Approved. Please ensure smooth handover...' :
+                        'e.g., Unable to approve due to staffing requirements...'">
+            </textarea>
+          </div>
+
+          <div *ngIf="actionType === 'approve'" class="alert alert-warning mb-0">
+            <i class="fa fa-exclamation-triangle"></i>
+            <strong>Important:</strong> Approving this request will:
+            <ul class="mb-0 mt-2">
+              <li>Automatically swap the rosters for both employees</li>
+              <li>Send email notifications to both parties</li>
+              <li>Update the attendance schedule immediately</li>
+            </ul>
+          </div>
+
+          <div *ngIf="actionType === 'reject'" class="alert alert-danger mb-0">
+            <i class="fa fa-exclamation-circle"></i>
+            <strong>Note:</strong> Rejecting this request will notify the requester via email.
+            The original schedule will remain unchanged.
+          </div>
+        </div>
+
+        <div class="modal-footer bg-light">
+          <button type="button" class="btn btn-secondary" (click)="closeActionModal()">
+            <i class="fa fa-times"></i> Cancel
+          </button>
+          <button type="button"
+                  [ngClass]="{
+                    'btn btn-success': actionType === 'approve',
+                    'btn btn-danger': actionType === 'reject'
+                  }"
+                  (click)="confirmAction()"
+                  [disabled]="loading">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status">
+              <span class="visually-hidden">Processing...</span>
+            </span>
+            <i *ngIf="!loading" [class]="actionType === 'approve' ? 'fa fa-check' : 'fa fa-times'"></i>
+            {{ actionType === 'approve' ? 'Approve Request' : 'Reject Request' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

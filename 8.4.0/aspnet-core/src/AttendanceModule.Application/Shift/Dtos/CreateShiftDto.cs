@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace AttendanceModule.Shift.Dtos
 {
-    public class CreateShiftDto: AuditedEntityDto<int>
+    public class CreateShiftDto
     {
         [Required, MaxLength(128), MinLength(3)]
         public string Name { get; set; }

@@ -4,6 +4,7 @@
   "private": true,
   "license": "MIT",
   "scripts": {
+    "generate-proxy": "ng-swagger-gen -c ng-swagger-gen.json",
     "pree2e": "webdriver-manager update --standalone false --gecko false",
     "e2e": "protractor",
     "hmr": "ng serve --host 0.0.0.0 --port 4200 --hmr",
@@ -31,6 +32,7 @@
     "axios": "^0.27.2",
     "bootstrap-icons": "^1.13.1",
     "core-js": "^3.26.1",
+    "date-fns": "^4.1.0",
     "famfamfam-flags": "^1.0.0",
     "lodash-es": "^4.17.15",
     "moment": "2.29.4",
@@ -63,6 +65,7 @@
     "karma-coverage-istanbul-reporter": "~3.0.2",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "^2.0.0",
+    "ng-swagger-gen": "^2.3.1",
     "nswag": "^13.18.1",
     "protractor": "~7.0.0",
     "ts-node": "^10.9.1",

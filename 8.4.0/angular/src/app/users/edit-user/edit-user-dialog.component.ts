@@ -10,8 +10,8 @@ import { forEach as _forEach, includes as _includes, map as _map } from 'lodash-
 import { AppComponentBase } from '@shared/app-component-base';
 import {
   UserServiceProxy,
-  UserDto,
-  RoleDto
+  DtoUserDto,
+  DtoRoleDto
 } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -20,8 +20,8 @@ import {
 export class EditUserDialogComponent extends AppComponentBase
   implements OnInit {
   saving = false;
-  user = new UserDto();
-  roles: RoleDto[] = [];
+  user = new DtoUserDto();
+  roles: DtoRoleDto[] = [];
   checkedRolesMap: { [key: string]: boolean } = {};
   id: number;
 
@@ -58,7 +58,7 @@ export class EditUserDialogComponent extends AppComponentBase
     return _includes(this.user.roleNames, normalizedName);
   }
 
-  onRoleChange(role: RoleDto, $event) {
+  onRoleChange(role: DtoRoleDto, $event) {
     this.checkedRolesMap[role.normalizedName] = $event.target.checked;
   }
 

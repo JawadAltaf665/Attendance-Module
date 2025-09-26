@@ -2,7 +2,7 @@ import { Component, OnInit, Injector } from '@angular/core';
 import { AppComponentBase } from '@shared/app-component-base';
 import {
   UserServiceProxy,
-  ResetPasswordDto
+  DtoResetPasswordDto
 } from '@shared/service-proxies/service-proxies';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 
@@ -13,7 +13,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 export class ResetPasswordDialogComponent extends AppComponentBase
   implements OnInit {
   public isLoading = false;
-  public resetPasswordDto: ResetPasswordDto;
+  public resetPasswordDto: DtoResetPasswordDto;
   id: number;
 
   constructor(
@@ -26,7 +26,7 @@ export class ResetPasswordDialogComponent extends AppComponentBase
 
   ngOnInit() {
     this.isLoading = true;
-    this.resetPasswordDto = new ResetPasswordDto();
+    this.resetPasswordDto = new DtoResetPasswordDto();
     this.resetPasswordDto.userId = this.id;
     this.resetPasswordDto.newPassword = Math.random()
       .toString(36)

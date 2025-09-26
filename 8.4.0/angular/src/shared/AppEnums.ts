@@ -1,4 +1,4 @@
-import { TenantAvailabilityState } from '@shared/service-proxies/service-proxies';
+import { DtoTenantAvailabilityState as TenantAvailabilityState } from '@shared/service-proxies/service-proxies';
 
 
 export class AppTenantAvailabilityState {
