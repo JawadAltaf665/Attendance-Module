@@ -9,7 +9,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { AppComponentBase } from '@shared/app-component-base';
 import {
   TenantServiceProxy,
-  TenantDto
+  DtoTenantDto
 } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -18,7 +18,7 @@ import {
 export class EditTenantDialogComponent extends AppComponentBase
   implements OnInit {
   saving = false;
-  tenant: TenantDto = new TenantDto();
+  tenant: DtoTenantDto = new DtoTenantDto();
   id: number;
 
   @Output() onSave = new EventEmitter<any>();
@@ -32,7 +32,7 @@ export class EditTenantDialogComponent extends AppComponentBase
   }
 
   ngOnInit(): void {
-    this._tenantService.get(this.id).subscribe((result: TenantDto) => {
+    this._tenantService.get(this.id).subscribe((result: DtoTenantDto) => {
       this.tenant = result;
     });
   }

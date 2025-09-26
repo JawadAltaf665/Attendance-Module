@@ -321,6 +321,9 @@ namespace AttendanceModule.Leave
             if (input.EndDate.HasValue)
                 query = query.Where(l => l.EndDate <= input.EndDate.Value);
 
+            if (!string.IsNullOrEmpty(input.Status))
+                query = query.Where(l => l.Status == input.Status);
+
             if (!string.IsNullOrEmpty(input.LeaveType))
                 query = query.Where(l => l.LeaveType == input.LeaveType);
 

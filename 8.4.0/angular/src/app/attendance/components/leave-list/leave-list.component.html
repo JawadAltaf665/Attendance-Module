@@ -1,23 +1,74 @@
+<style>
+    .stat-card {
+        transition: all 0.3s ease-in-out;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+    .icon-circle {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0; /* Prevents icon from shrinking */
+    }
+    /* Leave balance cards */
+    .leave-card {
+        background: #fff;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        border: 1px solid #e0e0e0; /* border added */
+    }
+
+        .leave-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 6px 14px rgba(0, 0, 0, 0.12);
+        }
+
+    /* Icon box */
+    .icon-box {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 22px;
+    }
+
+</style>
+
 <div class="container-fluid py-4">
     <!-- Header Section -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card bg-gradient bg-primary text-white shadow">
-                <div class="card-body p-4">
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-body bg-gradient text-white p-4"
+                     style="background: linear-gradient(135deg, #0d6efd, #0dcaf0);">
                     <div class="row align-items-center">
+
+                        <!-- Left Side -->
                         <div class="col-md-8">
-                            <h2 class="mb-2">
+                            <h2 class="fw-bold mb-2">
                                 <i class="fas fa-calendar-alt me-2"></i>
                                 My Leave Requests
                             </h2>
                             <p class="mb-0 opacity-75">Manage and track your leave requests</p>
                         </div>
-                        <div class="col-md-4 text-md-end">
-                            <button class="btn btn-light btn-lg" (click)="onRequestNewLeave()">
+
+                        <!-- Right Side (Button) -->
+                        <div class="col-md-4 d-flex justify-content-md-end justify-content-start mt-3 mt-md-0">
+                            <button class="btn btn-light btn-lg rounded-pill px-4 shadow-sm fw-bold"
+                                    (click)="onRequestNewLeave()">
                                 <i class="fas fa-plus me-2"></i>
                                 Request New Leave
                             </button>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -26,62 +77,63 @@
 
     <!-- Statistics Cards -->
     <div class="row mb-4">
+        <!-- Total Requests -->
         <div class="col-md-3 col-sm-6 mb-3">
-            <div class="card shadow-sm border-0">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="rounded-circle bg-primary bg-opacity-10 p-3 me-3">
-                            <i class="fas fa-calendar-check text-primary fa-2x"></i>
-                        </div>
-                        <div>
-                            <h3 class="mb-0">{{ statistics.total }}</h3>
-                            <p class="text-muted mb-0 small">Total Requests</p>
-                        </div>
+            <div class="card shadow-lg border-0 rounded-3 h-100 stat-card">
+                <div class="card-body d-flex align-items-center p-4">
+                    <!-- Icon Left -->
+                    <div class="icon-circle bg-primary bg-opacity-10 text-primary me-3">
+                        <i class="fas fa-calendar-check fa-2x"></i>
+                    </div>
+                    <!-- Text Right -->
+                    <div>
+                        <h2 class="fw-bold mb-1">{{ statistics.total }}</h2>
+                        <p class="text-muted mb-0">Total Requests</p>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Pending -->
         <div class="col-md-3 col-sm-6 mb-3">
-            <div class="card shadow-sm border-0">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="rounded-circle bg-warning bg-opacity-10 p-3 me-3">
-                            <i class="fas fa-hourglass-half text-warning fa-2x"></i>
-                        </div>
-                        <div>
-                            <h3 class="mb-0">{{ statistics.pending }}</h3>
-                            <p class="text-muted mb-0 small">Pending</p>
-                        </div>
+            <div class="card shadow-lg border-0 rounded-3 h-100 stat-card">
+                <div class="card-body d-flex align-items-center p-4">
+                    <div class="icon-circle bg-warning bg-opacity-10 text-warning me-3">
+                        <i class="fas fa-hourglass-half fa-2x"></i>
+                    </div>
+                    <div>
+                        <h2 class="fw-bold mb-1">{{ statistics.pending }}</h2>
+                        <p class="text-muted mb-0">Pending</p>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Approved -->
         <div class="col-md-3 col-sm-6 mb-3">
-            <div class="card shadow-sm border-0">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
-                            <i class="fas fa-check-circle text-success fa-2x"></i>
-                        </div>
-                        <div>
-                            <h3 class="mb-0">{{ statistics.approved }}</h3>
-                            <p class="text-muted mb-0 small">Approved</p>
-                        </div>
+            <div class="card shadow-lg border-0 rounded-3 h-100 stat-card">
+                <div class="card-body d-flex align-items-center p-4">
+                    <div class="icon-circle bg-success bg-opacity-10 text-success me-3">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                    </div>
+                    <div>
+                        <h2 class="fw-bold mb-1">{{ statistics.approved }}</h2>
+                        <p class="text-muted mb-0">Approved</p>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Days Used -->
         <div class="col-md-3 col-sm-6 mb-3">
-            <div class="card shadow-sm border-0">
-                <div class="card-body">
-                    <div class="d-flex align-items-center">
-                        <div class="rounded-circle bg-info bg-opacity-10 p-3 me-3">
-                            <i class="fas fa-calendar-day text-info fa-2x"></i>
-                        </div>
-                        <div>
-                            <h3 class="mb-0">{{ statistics.totalDaysUsed }}</h3>
-                            <p class="text-muted mb-0 small">Days Used</p>
-                        </div>
+            <div class="card shadow-lg border-0 rounded-3 h-100 stat-card">
+                <div class="card-body d-flex align-items-center p-4">
+                    <div class="icon-circle bg-info bg-opacity-10 text-info me-3">
+                        <i class="fas fa-calendar-day fa-2x"></i>
+                    </div>
+                    <div>
+                        <h2 class="fw-bold mb-1">{{ statistics.totalDaysUsed }}</h2>
+                        <p class="text-muted mb-0">Days Used</p>
                     </div>
                 </div>
             </div>
@@ -89,32 +141,57 @@
     </div>
 
     <!-- Leave Balances -->
-    <div class="card shadow-sm mb-4" *ngIf="leaveBalances.length > 0">
-        <div class="card-header bg-white py-3">
-            <h5 class="mb-0 text-primary">
-                <i class="fas fa-chart-bar me-2"></i>Current Leave Balances
-            </h5>
+    <div class="card shadow-lg border rounded-3 glass-card mb-4" *ngIf="leaveBalances.length > 0">
+        <div class="card-header bg-white border-bottom">
+            <div class="row align-items-center">
+                <!-- Title (left) -->
+                <div class="col">
+                    <h5 class="fw-bold mb-0 text-dark">
+                        <i class="fas fa-chart-bar text-primary me-2"></i>
+                        {{ 'Current Leave Balances' | localize }}
+                    </h5>
+                </div>
+
+                <!-- Button (right end) -->
+                <div class="col-auto">
+                    <button type="button"
+                            class="btn btn-sm btn-outline-secondary rounded-pill"
+                            (click)="toggleLeaveBalances()">
+                        <i class="fas" [ngClass]="showLeaveBalances ? 'fa-eye-slash' : 'fa-eye'"></i>
+                        {{ showLeaveBalances? ('Hide Leave Balances' | localize) : ('Show Leave Balances' | localize)}}
+                    </button>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-3 col-sm-6 mb-3" *ngFor="let balance of leaveBalances">
-                    <div class="border rounded p-3">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span class="fw-bold">
-                                <i class="fas me-1"
-                                   [ngClass]="getLeaveTypeIcon(balance.leaveType)"
-                                   [class.text-primary]="balance.leaveType === 'VACATION'"
-                                   [class.text-danger]="balance.leaveType === 'SICK'"
-                                   [class.text-info]="balance.leaveType === 'PERSONAL'"
-                                   [class.text-secondary]="balance.leaveType === 'UNPAID'"></i>
-                                {{ balance.leaveType }}
-                            </span>
-                            <span class="badge bg-secondary">
-                                {{ balance.availableDays }} / {{ balance.totalAllocation }}
-                            </span>
+
+        <div class="card-body" *ngIf="showLeaveBalances">
+            <div class="row g-3">
+                <div class="col-md-3 col-sm-6" *ngFor="let balance of leaveBalances">
+                    <div class="leave-card h-100 d-flex flex-column justify-content-between p-3 border rounded-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <!-- Icon Box -->
+                            <div class="icon-box me-3"
+                                 [ngClass]="{
+                   'bg-primary text-white': balance.leaveType === 'VACATION',
+                   'bg-danger text-white': balance.leaveType === 'SICK',
+                   'bg-info text-white': balance.leaveType === 'PERSONAL',
+                   'bg-secondary text-white': balance.leaveType === 'UNPAID'
+                 }">
+                                <i class="fas" [ngClass]="getLeaveTypeIcon(balance.leaveType)"></i>
+                            </div>
+
+                            <!-- Text Info -->
+                            <div>
+                                <h6 class="fw-bold mb-1">{{ balance.leaveType }}</h6>
+                                <small class="text-muted">
+                                    {{ balance.availableDays }} / {{ balance.totalAllocation }} days
+                                </small>
+                            </div>
                         </div>
-                        <div class="progress" style="height: 8px;">
-                            <div class="progress-bar"
+
+                        <!-- Progress bar -->
+                        <div class="progress rounded-pill mb-1" style="height: 10px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated"
                                  [class.bg-success]="balance.availableDays > balance.totalAllocation * 0.5"
                                  [class.bg-warning]="balance.availableDays <= balance.totalAllocation * 0.5 && balance.availableDays > balance.totalAllocation * 0.25"
                                  [class.bg-danger]="balance.availableDays <= balance.totalAllocation * 0.25"
@@ -130,12 +207,29 @@
 
     <!-- Filters -->
     <div class="card shadow-sm mb-4">
-        <div class="card-header bg-white py-3">
-            <h6 class="mb-0 text-primary">
-                <i class="fas fa-filter me-2"></i>Filters
-            </h6>
+        <div class="card-header bg-white border-bottom">
+            <div class="row align-items-center">
+                <!-- Title (left) -->
+                <div class="col">
+                    <h6 class="mb-0 text-primary">
+                        <i class="fas fa-filter me-2"></i>Filters
+                    </h6>
+                </div>
+
+                <!-- Toggle Button (right end) -->
+                <div class="col-auto">
+                    <button type="button"
+                            class="btn btn-sm btn-outline-danger rounded-pill"
+                            (click)="toggleFilters()">
+                        <i class="fas" [ngClass]="showFilters ? 'fa-eye-slash' : 'fa-eye'"></i>
+                        {{ showFilters? ('Hide Advance Filter' | localize) : ('Show Advance Filter' | localize)}}
+                    </button>
+                </div>
+            </div>
         </div>
-        <div class="card-body">
+
+        <!-- Card Body (toggleable) -->
+        <div class="card-body" *ngIf="showFilters">
             <div class="row">
                 <div class="col-md-3 mb-2">
                     <label class="form-label fw-bold small">Status</label>
@@ -146,6 +240,7 @@
                         <option value="REJECTED">Rejected</option>
                     </select>
                 </div>
+
                 <div class="col-md-3 mb-2">
                     <label class="form-label fw-bold small">Leave Type</label>
                     <select class="form-control" [(ngModel)]="selectedType" (change)="onFilterChange()">
@@ -156,6 +251,7 @@
                         <option value="UNPAID">Unpaid</option>
                     </select>
                 </div>
+
                 <div class="col-md-4 mb-2">
                     <label class="form-label fw-bold small">Search</label>
                     <div class="input-group">
@@ -166,6 +262,7 @@
                                [(ngModel)]="searchTerm" (input)="onFilterChange()">
                     </div>
                 </div>
+
                 <div class="col-md-2 mb-2">
                     <label class="form-label small">&nbsp;</label>
                     <button class="btn btn-outline-secondary w-100" (click)="refreshData()">
@@ -189,7 +286,6 @@
                 <table class="table table-hover">
                     <thead class="table-light">
                         <tr>
-                            <th>Request ID</th>
                             <th>Type</th>
                             <th>Date Range</th>
                             <th>Days</th>
@@ -220,9 +316,6 @@
                             </td>
                         </tr>
                         <tr *ngFor="let request of paginatedRequests">
-                            <td>
-                                <span class="badge bg-light text-dark">#{{ request.id }}</span>
-                            </td>
                             <td>
                                 <span class="badge"
                                       [class.bg-primary]="request.leaveType === 'VACATION'"
@@ -282,6 +375,92 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- My Leave Detail Modal -->
+            <div class="modal" [class.show]="showMyLeaveModal" [style.display]="showMyLeaveModal ? 'block' : 'none'"
+                 tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content" *ngIf="selectedMyLeave">
+                        <div class="modal-header">
+                            <h5 class="modal-title">
+                                <i class="fas fa-file-alt me-2"></i>
+                                My Leave Request
+                            </h5>
+                            <button type="button" class="btn-close" (click)="closeMyLeaveModal()"></button>
+                        </div>
+
+                        <div class="modal-body">
+                            <div class="row">
+                                <!-- Leave Information -->
+                                <div class="col-md-6">
+                                    <h6 class="text-muted">Leave Details</h6>
+                                    <dl class="row">
+                                        <dt class="col-sm-4">Type:</dt>
+                                        <dd class="col-sm-8">
+                                            <span [class]="getLeaveTypeBadgeClass(selectedMyLeave.leaveType)">
+                                                {{ selectedMyLeave.leaveType }}
+                                            </span>
+                                        </dd>
+                                        <dt class="col-sm-4">Duration:</dt>
+                                        <dd class="col-sm-8">{{ selectedMyLeave.totalDays }} day(s)</dd>
+                                        <dt class="col-sm-4">Dates:</dt>
+                                        <dd class="col-sm-8">
+                                            {{ formatDate(selectedMyLeave.startDate) }} - {{ formatDate(selectedMyLeave.endDate) }}
+                                        </dd>
+                                    </dl>
+                                </div>
+
+                                <!-- Status -->
+                                <div class="col-md-6">
+                                    <h6 class="text-muted">Status</h6>
+                                    <dl class="row">
+                                        <dt class="col-sm-4">Current:</dt>
+                                        <dd class="col-sm-8">
+                                            <span [ngClass]="getStatusBadgeClass(selectedMyLeave.status)">
+                                                <i class="fas me-1"
+                                                   [class.fa-hourglass-half]="selectedMyLeave.status === 'PENDING'"
+                                                   [class.fa-check-circle]="selectedMyLeave.status === 'APPROVED'"
+                                                   [class.fa-times-circle]="selectedMyLeave.status === 'REJECTED'"></i>
+                                                {{ selectedMyLeave.status }}
+                                            </span>
+
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <!-- Reason -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <h6 class="text-muted">Reason</h6>
+                                    <p>{{ selectedMyLeave.reason }}</p>
+                                </div>
+                            </div>
+
+                            <!-- Attachment -->
+                            <div class="row" *ngIf="selectedMyLeave.attachmentUrl">
+                                <div class="col-12">
+                                    <h6 class="text-muted">Attachment</h6>
+                                    <a [href]="selectedMyLeave.attachmentUrl" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-paperclip me-2"></i>
+                                        View Attachment
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" (click)="closeMyLeaveModal()">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Backdrop -->
+            <div class="modal-backdrop fade" [class.show]="showMyLeaveModal" *ngIf="showMyLeaveModal"></div>
+
 
             <!-- Pagination -->
             <div class="d-flex justify-content-between align-items-center mt-4" *ngIf="totalPages > 1">

@@ -1,181 +1,182 @@
 <div class="container-fluid mt-3">
-  <div class="card">
-    <div class="card-header">
-      <div class="row align-items-center">
-        <div class="col-md-3">
-          <h4 class="mb-0">Roster Schedule</h4>
+    <div class="card">
+        <div class="card-header">
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <h4 class="mb-0">Roster Schedule</h4>
+                </div>
+                <div class="col-md-9">
+                    <div class="d-flex justify-content-end align-items-center flex-wrap gap-2">
+                        <div class="btn-group" role="group">
+                            <button class="btn btn-outline-primary" (click)="previousPeriod()">
+                                <i class="fa fa-chevron-left"></i> Previous
+                            </button>
+                            <button class="btn btn-outline-primary" disabled>
+                                {{
+ viewMode === 'week' ?
+               (currentWeekStart | date:'MMM d') + ' - ' + (currentWeekEnd | date:'MMM d, yyyy') :
+               (currentWeekStart | date:'MMMM yyyy')
+                                }}
+                            </button>
+                            <button class="btn btn-outline-primary" (click)="nextPeriod()">
+                                Next <i class="fa fa-chevron-right"></i>
+                            </button>
+                        </div>
+
+                        <button class="btn btn-outline-secondary" (click)="toggleViewMode()">
+                            <i class="fa" [ngClass]="viewMode === 'week' ? 'fa-calendar' : 'fa-calendar-week'"></i>
+                            {{ viewMode === 'week' ? 'Month View' : 'Week View' }}
+                        </button>
+
+                        <button *ngIf="isManager()" class="btn btn-outline-info" (click)="toggleTeamView()">
+                            <i class="fa" [ngClass]="teamView ? 'fa-user' : 'fa-users'"></i>
+                            {{ teamView ? 'My View' : 'Team View' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="col-md-9">
-          <div class="d-flex justify-content-end align-items-center flex-wrap gap-2">
-            <div class="btn-group" role="group">
-              <button class="btn btn-outline-primary" (click)="previousPeriod()">
-                <i class="fa fa-chevron-left"></i> Previous
-              </button>
-              <button class="btn btn-outline-primary" disabled>
-                {{ viewMode === 'week' ?
-                   (currentWeekStart | date:'MMM d') + ' - ' + (currentWeekEnd | date:'MMM d, yyyy') :
-                   (currentWeekStart | date:'MMMM yyyy') }}
-              </button>
-              <button class="btn btn-outline-primary" (click)="nextPeriod()">
-                Next <i class="fa fa-chevron-right"></i>
-              </button>
+
+
+        <div class="card-body">
+            <div *ngIf="loading" class="text-center py-5">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-2">Loading roster...</p>
             </div>
 
-            <button class="btn btn-outline-secondary" (click)="toggleViewMode()">
-              <i class="fa" [ngClass]="viewMode === 'week' ? 'fa-calendar' : 'fa-calendar-week'"></i>
-              {{ viewMode === 'week' ? 'Month View' : 'Week View' }}
-            </button>
+            <div *ngIf="!loading && viewMode === 'week'" class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th *ngFor="let day of weekDays.slice(0, 7)"
+                                class="text-center"
+                                [ngClass]="{'bg-light': isToday(day)}">
+                                <div>{{ day | date:'EEEE' }}</div>
+                                <div class="text-muted small">{{ day | date:'MMM d' }}</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td *ngFor="let day of weekDays.slice(0, 7)"
+                                class="align-top p-2"
+                                [ngClass]="{'bg-light': isToday(day)}"
+                                style="min-height: 150px; width: 14.28%;">
+                                <div class="d-flex flex-column gap-2">
+                                    <div *ngFor="let roster of getRostersForDate(day)"
+                                         class="card border-primary cursor-pointer"
+                                         (click)="openShiftDetail(roster)"
+                                         style="cursor: pointer;">
+                                        <div class="card-body p-2">
+                                            <h6 class="card-title mb-1 text-primary">{{ roster.shift.name }}</h6>
+                                            <p class="card-text mb-1 small">
+                                                <i class="fa fa-clock-o"></i>
+                                                {{ formatTime(roster.shift.startTime) }} - {{ formatTime(roster.shift.endTime) }}
+                                            </p>
+                                            <p *ngIf="roster.shift.breakMinutes > 0" class="card-text mb-1 small text-muted">
+                                                <i class="fa fa-coffee"></i> {{ roster.shift.breakMinutes }} min break
+                                            </p>
+                                            <p *ngIf="teamView" class="card-text small text-info mb-0">
+                                                <i class="fa fa-user"></i> {{ roster.employeeName }}
+                                            </p>
+                                        </div>
+                                    </div>
 
-            <button *ngIf="isManager()" class="btn btn-outline-info" (click)="toggleTeamView()">
-              <i class="fa" [ngClass]="teamView ? 'fa-user' : 'fa-users'"></i>
-              {{ teamView ? 'My View' : 'Team View' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+                                    <div *ngIf="isManager() && getRostersForDate(day).length > 0"
+                                         class="text-center">
+                                        <button class="btn btn-outline-success btn-sm"
+                                                (click)="openAssignModal(day)"
+                                                title="Assign Additional Shift">
+                                            <i class="fa fa-plus"></i> Add Shift
+                                        </button>
+                                    </div>
+                                    <div *ngIf="getRostersForDate(day).length === 0"
+                                         class="text-center text-muted py-3">
+                                        <div>No shifts scheduled</div>
+                                        <button *ngIf="isManager()"
+                                                class="btn btn-outline-primary btn-sm mt-2"
+                                                (click)="openAssignModal(day)"
+                                                title="Assign Shift">
+                                            <i class="fa fa-plus"></i> Assign Shift
+                                        </button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
 
-    <div class="card-body">
-      <div *ngIf="loading" class="text-center py-5">
-        <div class="spinner-border text-primary" role="status">
-          <span class="visually-hidden">Loading...</span>
-        </div>
-        <p class="mt-2">Loading roster...</p>
-      </div>
-
-      <div *ngIf="!loading && viewMode === 'week'" class="table-responsive">
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th *ngFor="let day of weekDays.slice(0, 7)"
-                  class="text-center"
-                  [ngClass]="{'bg-light': isToday(day)}">
-                <div>{{ day | date:'EEEE' }}</div>
-                <div class="text-muted small">{{ day | date:'MMM d' }}</div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td *ngFor="let day of weekDays.slice(0, 7)"
-                  class="align-top p-2"
-                  [ngClass]="{'bg-light': isToday(day)}"
-                  style="min-height: 150px; width: 14.28%;">
-                <div class="d-flex flex-column gap-2">
-                  <div *ngFor="let roster of getRostersForDate(day)"
-                       class="card border-primary cursor-pointer"
-                       (click)="openShiftDetail(roster)"
-                       style="cursor: pointer;">
-                    <div class="card-body p-2">
-                      <h6 class="card-title mb-1 text-primary">{{ roster.shift.name }}</h6>
-                      <p class="card-text mb-1 small">
-                        <i class="fa fa-clock-o"></i>
-                        {{ formatTime(roster.shift.startTime) }} - {{ formatTime(roster.shift.endTime) }}
-                      </p>
-                      <p *ngIf="roster.shift.breakMinutes > 0" class="card-text mb-1 small text-muted">
-                        <i class="fa fa-coffee"></i> {{ roster.shift.breakMinutes }} min break
-                      </p>
-                      <p *ngIf="teamView" class="card-text small text-info mb-0">
-                        <i class="fa fa-user"></i> {{ roster.employeeName }}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div *ngIf="isManager() && getRostersForDate(day).length > 0"
-                       class="text-center">
-                    <button class="btn btn-outline-success btn-sm"
-                            (click)="openAssignModal(day)"
-                            title="Assign Additional Shift">
-                      <i class="fa fa-plus"></i> Add Shift
-                    </button>
-                  </div>
-                  <div *ngIf="getRostersForDate(day).length === 0"
-                       class="text-center text-muted py-3">
-                    <div>No shifts scheduled</div>
-                    <button *ngIf="isManager()"
-                            class="btn btn-outline-primary btn-sm mt-2"
-                            (click)="openAssignModal(day)"
-                            title="Assign Shift">
-                      <i class="fa fa-plus"></i> Assign Shift
-                    </button>
-                  </div>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div *ngIf="!loading && viewMode === 'month'" class="table-responsive">
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th *ngFor="let dayName of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']"
-                  class="text-center">
-                {{ dayName }}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let week of getMonthWeeks()">
-              <td *ngFor="let day of getWeekDays(week)"
-                  class="align-top p-1"
-                  [ngClass]="{
+            <div *ngIf="!loading && viewMode === 'month'" class="table-responsive">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th *ngFor="let dayName of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']"
+                                class="text-center">
+                                {{ dayName }}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let week of getMonthWeeks()">
+                            <td *ngFor="let day of getWeekDays(week)"
+                                class="align-top p-1"
+                                [ngClass]="{
                     'bg-light': isToday(day),
                     'text-muted': !isCurrentMonth(day)
                   }"
-                  style="height: 100px; width: 14.28%;">
-                <div class="d-flex flex-column">
-                  <div class="fw-bold small mb-1">{{ day.getDate() }}</div>
-                  <div class="flex-grow-1" style="font-size: 0.75rem;">
-                    <div *ngFor="let roster of getRostersForDate(day).slice(0, 2)"
-                         class="badge bg-primary text-truncate w-100 mb-1 cursor-pointer"
-                         (click)="openShiftDetail(roster)"
-                         style="cursor: pointer;"
-                         [title]="roster.shift.name + ' - ' + roster.employeeName">
-                      {{ formatTime(roster.shift.startTime) }} {{ roster.shift.name }}
-                    </div>
-                    <div *ngIf="getRostersForDate(day).length > 2"
-                         class="text-primary small">
-                      +{{ getRostersForDate(day).length - 2 }} more
-                    </div>
-                  </div>
+                                style="height: 100px; width: 14.28%;">
+                                <div class="d-flex flex-column">
+                                    <div class="fw-bold small mb-1">{{ day.getDate() }}</div>
+                                    <div class="flex-grow-1" style="font-size: 0.75rem;">
+                                        <div *ngFor="let roster of getRostersForDate(day).slice(0, 2)"
+                                             class="badge bg-primary text-truncate w-100 mb-1 cursor-pointer"
+                                             (click)="openShiftDetail(roster)"
+                                             style="cursor: pointer;"
+                                             [title]="roster.shift.name + ' - ' + roster.employeeName">
+                                            {{ formatTime(roster.shift.startTime) }} {{ roster.shift.name }}
+                                        </div>
+                                        <div *ngIf="getRostersForDate(day).length > 2"
+                                             class="text-primary small">
+                                            +{{ getRostersForDate(day).length - 2 }} more
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <app-shift-detail-modal *ngIf="showShiftDetail && selectedShift"
+                            [roster]="selectedShift"
+                            [isManager]="isManager()"
+                            (close)="closeShiftDetail()">
+    </app-shift-detail-modal>
+
+    <!-- Assign Shift Modal -->
+    <div *ngIf="showAssignModal" class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fa fa-calendar-plus-o text-primary me-2"></i>
+                        Assign Shift - {{ selectedDate | date:'fullDate' }}
+                    </h5>
+                    <button type="button" class="btn-close" (click)="closeAssignModal()"></button>
                 </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <app-shift-detail-modal
-    *ngIf="showShiftDetail && selectedShift"
-    [roster]="selectedShift"
-    [isManager]="isManager()"
-    (close)="closeShiftDetail()">
-  </app-shift-detail-modal>
-
-  <!-- Assign Shift Modal -->
-  <div *ngIf="showAssignModal" class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
-    <div class="modal-dialog modal-md">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">
-            <i class="fa fa-calendar-plus-o text-primary me-2"></i>
-            Assign Shift - {{ selectedDate | date:'fullDate' }}
-          </h5>
-          <button type="button" class="btn-close" (click)="closeAssignModal()"></button>
+                <div class="modal-body">
+                    <app-assign-shift-form *ngIf="selectedDate"
+                                           [selectedDate]="selectedDate"
+                                           (assigned)="onShiftAssigned()"
+                                           (cancelled)="closeAssignModal()">
+                    </app-assign-shift-form>
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
-          <app-assign-shift-form
-            *ngIf="selectedDate"
-            [selectedDate]="selectedDate"
-            (assigned)="onShiftAssigned()"
-            (cancelled)="closeAssignModal()">
-          </app-assign-shift-form>
-        </div>
-      </div>
     </div>
-  </div>
-</div>
+</div> 

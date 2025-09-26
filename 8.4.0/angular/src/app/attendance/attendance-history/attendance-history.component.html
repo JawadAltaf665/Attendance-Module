@@ -2,16 +2,27 @@
     <!-- Header Section -->
     <div class="row mb-4">
         <div class="col-12">
-            <div class="card border shadow-sm p-3 bg-primary text-white">
-                <h4 class="mb-1">
-                    <i class="fas fa-history me-2"></i> {{ 'Attendance History' | localize }}
-                </h4>
-                <small class="text-light">
-                    {{ 'View and analyze your attendance records over time' | localize }}
-                </small>
+            <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+                <div class="card-body bg-gradient text-white p-4"
+                     style="background: linear-gradient(135deg, #0d6efd, #0dcaf0);">
+                    <div class="row align-items-center">
+
+                        <!-- Left: Title + Subtitle -->
+                        <div class="col-md-8">
+                            <h2 class="fw-bold mb-2">
+                                <i class="fas fa-history me-2"></i> {{ 'Attendance History' | localize }}
+                            </h2>
+                            <p class="mb-0 opacity-75">
+                                {{ 'View and analyze your attendance records over time' | localize }}
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
 
     <!-- Summary Cards -->
     <div class="row mb-4">
@@ -54,27 +65,42 @@
         <div class="col-12">
             <div class="card border shadow-sm">
                 <div class="card-header">
-                    <h6 class="mb-0">
-                        <i class="fas fa-filter me-2"></i> {{ 'Filter & Export' | localize }}
-                    </h6>
+                    <div class="row align-items-center">
+                        <!-- Title (left) -->
+                        <div class="col">
+                            <h6 class="mb-0">
+                                <i class="fas fa-filter me-2"></i> {{ 'Filter & Export' | localize }}
+                            </h6>
+                        </div>
+
+                        <!-- Toggle Button (right end) -->
+                        <div class="col-auto">
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-secondary rounded-pill"
+                                    (click)="toggleAdvancedFilters()">
+                                <i class="fas" [ngClass]="showAdvancedFilters ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                {{ showAdvancedFilters ? ('Hide Advance Filters' | localize) : ('Show Advance Filters' | localize) }}
+                            </button>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-body">
+
+                <!-- Card Body (toggleable) -->
+                <div class="card-body" *ngIf="showAdvancedFilters">
                     <form [formGroup]="filterForm" class="row g-3">
                         <div class="col-md-3">
                             <label for="startDate" class="form-label">{{ 'Start Date' | localize }}</label>
-                            <input 
-                                type="date" 
-                                id="startDate" 
-                                class="form-control" 
-                                formControlName="startDate">
+                            <input type="date"
+                                   id="startDate"
+                                   class="form-control"
+                                   formControlName="startDate">
                         </div>
                         <div class="col-md-3">
                             <label for="endDate" class="form-label">{{ 'End Date' | localize }}</label>
-                            <input 
-                                type="date" 
-                                id="endDate" 
-                                class="form-control" 
-                                formControlName="endDate">
+                            <input type="date"
+                                   id="endDate"
+                                   class="form-control"
+                                   formControlName="endDate">
                         </div>
                         <div class="col-md-6">
                             <label class="form-label">{{ 'Quick Filters' | localize }}</label>
@@ -88,42 +114,38 @@
                             </div>
                         </div>
                     </form>
-                    
+
                     <hr>
-                    
+
                     <!-- Export and Action Buttons -->
                     <div class="d-flex flex-wrap gap-2 mt-3">
-                        <button
-                            type="button"
-                            class="btn btn-success"
-                            (click)="exportToCSV()"
-                            [disabled]="isExporting || attendanceRecords.length === 0">
+                        <button type="button"
+                                class="btn btn-success"
+                                (click)="exportToCSV()"
+                                [disabled]="isExporting || attendanceRecords.length === 0">
                             <i class="fas fa-file-csv me-1"></i>
                             {{ isExporting ? ('Exporting...' | localize) : ('Export CSV' | localize) }}
                         </button>
 
-                        <button
-                            type="button"
-                            class="btn btn-info"
-                            (click)="exportToExcel()"
-                            [disabled]="isExporting || attendanceRecords.length === 0">
+                        <button type="button"
+                                class="btn btn-info"
+                                (click)="exportToExcel()"
+                                [disabled]="isExporting || attendanceRecords.length === 0">
                             <i class="fas fa-file-excel me-1"></i>
                             {{ 'Export Excel' | localize }}
                         </button>
 
-                        <button
-                            type="button"
-                            class="btn btn-secondary"
-                            (click)="setLast30Days()">
+                        <button type="button"
+                                class="btn btn-secondary"
+                                (click)="setLast30Days()">
                             <i class="fas fa-calendar-alt me-1"></i>
                             {{ 'Last 30 Days' | localize }}
                         </button>
 
-                        <button
-                            type="button"
-                            class="btn btn-primary"
-                            (click)="refresh()"
-                            [disabled]="isLoading">
+                        <button type="button"
+                                class="btn btn-primary"
+                                (click)="refresh()"
+                                [disabled]="isLoading">
                             <i class="fas fa-sync-alt me-1" [class.fa-spin]="isLoading"></i>
                             {{ 'Refresh' | localize }}
                         </button>
@@ -139,15 +161,15 @@
             <div class="card border shadow-sm">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h6 class="mb-0">
-                        <i class="fas fa-table me-2"></i> 
-                        {{ 'Attendance Records' | localize }} 
-                        <span class="badge bg-secondary ms-2">{{ totalRecords }}</span>
+                        <i class="fas fa-table me-2"></i>
+                        {{ 'Attendance Records' | localize }}
+                        <!--<span class="badge bg-secondary ms-2">{{ totalRecords }}</span>-->
                     </h6>
-                    
+
                     <!-- Page Size Selector -->
                     <div class="d-flex align-items-center">
                         <label class="form-label me-2 mb-0">{{ 'Show' | localize }}:</label>
-                        <select class="form-control form-select-sm" style="width: auto;" 
+                        <select class="form-control form-select-sm" style="width: auto;"
                                 [value]="pageSize" (change)="onPageSizeChange(+$any($event.target).value)">
                             <option value="10">10</option>
                             <option value="25">25</option>
@@ -156,7 +178,7 @@
                         </select>
                     </div>
                 </div>
-                
+
                 <div class="card-body">
                     <!-- Loading Spinner -->
                     <div *ngIf="isLoading" class="text-center py-4">
@@ -211,7 +233,7 @@
                                         <span *ngIf="!record.clockOutTime" class="text-muted">-</span>
                                     </td>
                                     <td>
-                                        <span class="fw-bold" [class.text-success]="record.totalHours >= 8" 
+                                        <span class="fw-bold" [class.text-success]="record.totalHours >= 8"
                                               [class.text-warning]="record.totalHours > 0 && record.totalHours < 8"
                                               [class.text-muted]="record.totalHours === 0">
                                             {{ formatDuration(record.totalHours) }}
@@ -227,12 +249,11 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <button 
-                                            type="button" 
-                                            class="btn btn-outline-info btn-sm" 
-                                            (click)="viewDayDetails(record)"
-                                            [disabled]="record.events.length === 0"
-                                            title="{{ 'View Details' | localize }}">
+                                        <button type="button"
+                                                class="btn btn-outline-info btn-sm"
+                                                (click)="viewDayDetails(record)"
+                                                [disabled]="record.events.length === 0"
+                                                title="{{ 'View Details' | localize }}">
                                             <i class="fas fa-eye"></i>
                                         </button>
                                     </td>
@@ -251,37 +272,37 @@
                                 {{ 'of' | localize }} <strong>{{ totalRecords }}</strong>
                                 {{ 'records' | localize }}
                             </div>
-                            
+
                             <nav aria-label="Attendance pagination" *ngIf="totalPages > 1">
                                 <ul class="pagination pagination-sm mb-0">
-                                <li class="page-item" [class.disabled]="currentPage === 1">
-                                    <button class="page-link" (click)="onPageChange(1)" [disabled]="currentPage === 1">
-                                        <i class="fas fa-angle-double-left"></i>
-                                    </button>
-                                </li>
-                                <li class="page-item" [class.disabled]="currentPage === 1">
-                                    <button class="page-link" (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">
-                                        <i class="fas fa-angle-left"></i>
-                                    </button>
-                                </li>
-                                
-                                <!-- Page numbers (show max 5 pages) -->
-                                <li *ngFor="let page of getVisiblePages()" 
-                                    class="page-item" 
-                                    [class.active]="page === currentPage">
-                                    <button class="page-link" (click)="onPageChange(page)">{{ page }}</button>
-                                </li>
-                                
-                                <li class="page-item" [class.disabled]="currentPage === totalPages">
-                                    <button class="page-link" (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages">
-                                        <i class="fas fa-angle-right"></i>
-                                    </button>
-                                </li>
-                                <li class="page-item" [class.disabled]="currentPage === totalPages">
-                                    <button class="page-link" (click)="onPageChange(totalPages)" [disabled]="currentPage === totalPages">
-                                        <i class="fas fa-angle-double-right"></i>
-                                    </button>
-                                </li>
+                                    <li class="page-item" [class.disabled]="currentPage === 1">
+                                        <button class="page-link" (click)="onPageChange(1)" [disabled]="currentPage === 1">
+                                            <i class="fas fa-angle-double-left"></i>
+                                        </button>
+                                    </li>
+                                    <li class="page-item" [class.disabled]="currentPage === 1">
+                                        <button class="page-link" (click)="onPageChange(currentPage - 1)" [disabled]="currentPage === 1">
+                                            <i class="fas fa-angle-left"></i>
+                                        </button>
+                                    </li>
+
+                                    <!-- Page numbers (show max 5 pages) -->
+                                    <li *ngFor="let page of getVisiblePages()"
+                                        class="page-item"
+                                        [class.active]="page === currentPage">
+                                        <button class="page-link" (click)="onPageChange(page)">{{ page }}</button>
+                                    </li>
+
+                                    <li class="page-item" [class.disabled]="currentPage === totalPages">
+                                        <button class="page-link" (click)="onPageChange(currentPage + 1)" [disabled]="currentPage === totalPages">
+                                            <i class="fas fa-angle-right"></i>
+                                        </button>
+                                    </li>
+                                    <li class="page-item" [class.disabled]="currentPage === totalPages">
+                                        <button class="page-link" (click)="onPageChange(totalPages)" [disabled]="currentPage === totalPages">
+                                            <i class="fas fa-angle-double-right"></i>
+                                        </button>
+                                    </li>
                                 </ul>
                             </nav>
                         </div>

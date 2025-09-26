@@ -60,12 +60,26 @@ export class EmployeeShiftSwapComponent extends AppComponentBase implements OnIn
     const endDate = new Date();
     endDate.setMonth(endDate.getMonth() + 3); // Next 3 months
 
+    console.log('Loading roster for current user:', this.appSession.userId);
+
     this.rosterService.getMyRoster(startDate, endDate)
       .pipe(finalize(() => this.loadingRoster = false))
       .subscribe(
         (response) => {
           const result = (response as any).result || response;
           this.myRoster = result || [];
+          console.log('Loaded my roster:', this.myRoster);
+          
+          // Validate that these are actually MY assigned shifts
+          if (this.myRoster.length > 0) {
+            const currentEmployeeId = this.getCurrentEmployeeId();
+            if (currentEmployeeId) {
+              this.myRoster = this.myRoster.filter(roster => 
+                roster.employeeId === currentEmployeeId
+              );
+              console.log('Filtered roster for current employee:', this.myRoster);
+            }
+          }
         },
         (error) => {
           console.error('Failed to load roster:', error);
@@ -246,5 +260,10 @@ export class EmployeeShiftSwapComponent extends AppComponentBase implements OnIn
     if (days <= 2) return 'text-danger';
     if (days <= 7) return 'text-warning';
     return 'text-success';
+  }
+
+  getCurrentEmployeeId(): number | null {
+    const currentEmployee = this.employees.find(e => e.userId === this.appSession.userId);
+    return currentEmployee ? currentEmployee.id : null;
   }
 }

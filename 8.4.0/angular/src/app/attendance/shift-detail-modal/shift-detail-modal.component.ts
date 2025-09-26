@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit, Injector } from '@angular/core';
 import { RosterWithShift, RosterService, ShiftSwapRequestDto } from '@shared/services/roster.service';
 import { AppComponentBase } from '@shared/app-component-base';
-import { EmployeeService } from '@shared/services/employee.service';
+import { EmployeeDto, EmployeeService } from '@shared/services/employee.service';
 import { finalize } from 'rxjs/operators';
 
 @Component({
@@ -77,22 +77,22 @@ export class ShiftDetailModalComponent extends AppComponentBase implements OnIni
     }
   }
 
-  loadEmployees(): void {
-    this.loading = true;
-    this.employeeService.getAll(1000, 0, '')
-      .pipe(finalize(() => this.loading = false))
-      .subscribe(
-        (result) => {
-          this.employees = result.items.filter(e =>
-            e.id !== this.roster.employeeId &&
-            e.id !== this.appSession.user?.id
-          );
-        },
-        (error) => {
-          abp.notify.error('Failed to load employees');
-        }
-      );
-  }
+    loadEmployees(): void {
+        this.loading = true;
+        this.employeeService.getAllEmployees()
+            .pipe(finalize(() => this.loading = false))
+            .subscribe(
+                (result: EmployeeDto[]) => {   // 👈 directly array
+                    this.employees = result.filter(e =>
+                        e.id !== this.roster.employeeId &&
+                        e.id !== this.appSession.user?.id
+                    );
+                },
+                (error) => {
+                    abp.notify.error('Failed to load employees');
+                }
+            );
+    }
 
   submitSwapRequest(): void {
     this.showReasonError = false;

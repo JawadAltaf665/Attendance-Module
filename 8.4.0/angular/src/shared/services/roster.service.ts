@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { AppConsts } from '@shared/AppConsts';
 
 export interface ShiftDetails {
@@ -134,16 +135,36 @@ export class RosterService {
   approveShiftSwap(swapRequestId: number, comments?: string): Observable<any> {
     const input: ApproveRejectSwapRequestDto = {
       swapRequestId: swapRequestId,
-      comments: comments
+      comments: comments || ''
     };
-    return this.http.put(`${this.baseUrl}/api/services/app/Roster/ApproveShiftSwap?swapRequestId=${swapRequestId}`, input);
+    
+    console.log('Approving shift swap:', { swapRequestId, input });
+    
+    // Try PUT method first, then POST as fallback
+    return this.http.put(`${this.baseUrl}/api/services/app/Roster/ApproveShiftSwap?swapRequestId=${swapRequestId}`, input)
+      .pipe(
+        catchError(error => {
+          console.log('PUT failed, trying POST method for approve:', error);
+          return this.http.post(`${this.baseUrl}/api/services/app/Roster/ApproveShiftSwap?swapRequestId=${swapRequestId}`, input);
+        })
+      );
   }
 
   rejectShiftSwap(swapRequestId: number, comments?: string): Observable<any> {
     const input: ApproveRejectSwapRequestDto = {
       swapRequestId: swapRequestId,
-      comments: comments
+      comments: comments || ''
     };
-    return this.http.put(`${this.baseUrl}/api/services/app/Roster/RejectShiftSwap?swapRequestId=${swapRequestId}`, input);
+    
+    console.log('Rejecting shift swap:', { swapRequestId, input });
+    
+    // Try PUT method first, then POST as fallback
+    return this.http.put(`${this.baseUrl}/api/services/app/Roster/RejectShiftSwap?swapRequestId=${swapRequestId}`, input)
+      .pipe(
+        catchError(error => {
+          console.log('PUT failed, trying POST method for reject:', error);
+          return this.http.post(`${this.baseUrl}/api/services/app/Roster/RejectShiftSwap?swapRequestId=${swapRequestId}`, input);
+        })
+      );
   }
 }

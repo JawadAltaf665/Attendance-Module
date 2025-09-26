@@ -3,13 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { AttendanceClockComponent } from './components/attendance-clock/attendance-clock.component';
 import { ClockInOutComponent } from './components/clock-in-out/clock-in-out.component';
 import { AttendanceHistoryComponent } from './attendance-history/attendance-history.component';
-import { LeaveRequestComponent } from './components/leave-request/leave-request.component';
-import { LeaveListComponent } from './components/leave-list/leave-list.component';
-import { ManagerApprovalsComponent } from './manager-approvals/manager-approvals.component';
-import { RosterComponent } from './roster/roster.component';
-import { ManagerSwapApprovalComponent } from './manager-swap-approval/manager-swap-approval.component';
-import { AdminShiftsComponent } from './admin-shifts/admin-shifts.component';
-import { EmployeeShiftSwapComponent } from './employee-shift-swap/employee-shift-swap.component';
 
 const routes: Routes = [
     {
@@ -41,62 +34,6 @@ const routes: Routes = [
             title: 'Attendance History'
         }
     },
-    {
-        path: 'leave-request',
-        component: LeaveRequestComponent,
-        data: {
-            permission: 'Pages.Attendance.ClockInOut',
-            title: 'Request Leave'
-        }
-    },
-    {
-        path: 'leave-list',
-        component: LeaveListComponent,
-        data: {
-            permission: 'Pages.Attendance.ClockInOut',
-            title: 'My Leave Requests'
-        }
-    },
-    {
-        path: 'approvals',
-        component: ManagerApprovalsComponent,
-        data: {
-            permission: 'Pages.Leaves.Approve',
-            title: 'Manager Approvals'
-        }
-    },
-    {
-        path: 'roster',
-        component: RosterComponent,
-        data: {
-            permission: 'Pages.Rosters.View',
-            title: 'Roster Schedule'
-        }
-    },
-    {
-        path: 'shift-swap',
-        component: EmployeeShiftSwapComponent,
-        data: {
-            permission: 'Pages.Attendance.ClockInOut',
-            title: 'Shift Swap Request'
-        }
-    },
-    {
-        path: 'swap-approvals',
-        component: ManagerSwapApprovalComponent,
-        data: {
-            permission: 'Pages.Rosters.SwapApprove',
-            title: 'Swap Approvals'
-        }
-    },
-    {
-        path: 'admin/shifts',
-        component: AdminShiftsComponent,
-        data: {
-            permission: 'Pages.Shifts.View',
-            title: 'Shift Management'
-        }
-    }
 ];
 
 @NgModule({

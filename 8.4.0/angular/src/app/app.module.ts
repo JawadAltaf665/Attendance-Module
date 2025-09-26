@@ -40,6 +40,10 @@ import { SidebarLogoComponent } from './layout/sidebar-logo.component';
 import { SidebarUserPanelComponent } from './layout/sidebar-user-panel.component';
 import { SidebarMenuComponent } from './layout/sidebar-menu.component';
 import { Service } from './proxy/api-proxies';
+import { EmployeeListComponent } from './Employee/employee-list/employee-list.component';
+import { CreateEmployeeDialogBoxComponent } from './Employee/create-employee-dialog-box/create-employee-dialog-box.component';
+import { EditEmployeeDialogBoxComponent } from './Employee/edit-employee-dialog-box/edit-employee-dialog-box.component';
+
 
 @NgModule({
     declarations: [
@@ -70,6 +74,9 @@ import { Service } from './proxy/api-proxies';
         SidebarLogoComponent,
         SidebarUserPanelComponent,
         SidebarMenuComponent,
+        EmployeeListComponent,
+        CreateEmployeeDialogBoxComponent,
+        EditEmployeeDialogBoxComponent,
     ],
     imports: [
         CommonModule,

@@ -8,8 +8,8 @@ import {
 } from '@shared/paged-listing-component-base';
 import {
   TenantServiceProxy,
-  TenantDto,
-  TenantDtoPagedResultDto,
+  DtoTenantDto,
+  PagedResultDtoOfTenantDto,
 } from '@shared/service-proxies/service-proxies';
 import { CreateTenantDialogComponent } from './create-tenant/create-tenant-dialog.component';
 import { EditTenantDialogComponent } from './edit-tenant/edit-tenant-dialog.component';
@@ -23,8 +23,8 @@ class PagedTenantsRequestDto extends PagedRequestDto {
   templateUrl: './tenants.component.html',
   animations: [appModuleAnimation()]
 })
-export class TenantsComponent extends PagedListingComponentBase<TenantDto> {
-  tenants: TenantDto[] = [];
+export class TenantsComponent extends PagedListingComponentBase<DtoTenantDto> {
+  tenants: DtoTenantDto[] = [];
   keyword = '';
   isActive: boolean | null;
   advancedFiltersVisible = false;
@@ -57,13 +57,13 @@ export class TenantsComponent extends PagedListingComponentBase<TenantDto> {
           finishedCallback();
         })
       )
-      .subscribe((result: TenantDtoPagedResultDto) => {
+      .subscribe((result: PagedResultDtoOfTenantDto) => {
         this.tenants = result.items;
         this.showPaging(result, pageNumber);
       });
   }
 
-  delete(tenant: TenantDto): void {
+  delete(tenant: DtoTenantDto): void {
     abp.message.confirm(
       this.l('TenantDeleteWarningMessage', tenant.name),
       undefined,
@@ -87,7 +87,7 @@ export class TenantsComponent extends PagedListingComponentBase<TenantDto> {
     this.showCreateOrEditTenantDialog();
   }
 
-  editTenant(tenant: TenantDto): void {
+  editTenant(tenant: DtoTenantDto): void {
     this.showCreateOrEditTenantDialog(tenant.id);
   }
 

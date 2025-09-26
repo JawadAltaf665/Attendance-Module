@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AppConsts } from '@shared/AppConsts';
+import { environment } from '../../environments/environment';
 
 export interface ClockEventDto {
     employeeId: number;
@@ -52,7 +53,13 @@ export class AttendanceService {
         private http: HttpClient,
         @Optional() @Inject('BASE_URL') baseUrl?: string
     ) {
-        this.baseUrl = baseUrl || AppConsts.remoteServiceBaseUrl || 'https://localhost:44311';
+        // During development, route through Angular proxy to avoid CORS
+        // Proxy is configured in proxy.conf.json for /api -> https://localhost:44311
+        // In production, use environment.apis.default.url
+        const root = environment.production
+            ? (environment.apis && environment.apis.default && environment.apis.default.url) || ''
+            : '';
+        this.baseUrl = baseUrl || root;
         this.attendanceApiUrl = `${this.baseUrl}/api/services/app/Attendance`;
     }
 

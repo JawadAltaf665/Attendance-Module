@@ -4,8 +4,8 @@ import { AppComponentBase } from '@shared/app-component-base';
 import { AccountServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppTenantAvailabilityState } from '@shared/AppEnums';
 import {
-  IsTenantAvailableInput,
-  IsTenantAvailableOutput
+  DtoIsTenantAvailableInput,
+  DtoIsTenantAvailableOutput
 } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -31,12 +31,12 @@ export class TenantChangeDialogComponent extends AppComponentBase {
       return;
     }
 
-    const input = new IsTenantAvailableInput();
+    const input = new DtoIsTenantAvailableInput();
     input.tenancyName = this.tenancyName;
 
     this.saving = true;
     this._accountService.isTenantAvailable(input).subscribe(
-      (result: IsTenantAvailableOutput) => {
+      (result: DtoIsTenantAvailableOutput) => {
         switch (result.state) {
           case AppTenantAvailabilityState.Available:
             abp.multiTenancy.setTenantIdCookie(result.tenantId);

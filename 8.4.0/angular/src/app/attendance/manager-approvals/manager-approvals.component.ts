@@ -11,6 +11,7 @@ interface LeaveDetailDto {
     id: number;
     employeeId: number;
     employeeName: string;
+    employeeEmail: string;
     leaveType: string;
     startDate: Date;
     endDate: Date;
@@ -45,6 +46,7 @@ export class ManagerApprovalsComponent implements OnInit, OnDestroy {
 
     // Filter form
     filterForm: FormGroup;
+    showFilters = false;
 
     // Data
     pendingLeaves: LeaveDetailDto[] = [];
@@ -85,6 +87,11 @@ export class ManagerApprovalsComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.destroy$.next();
         this.destroy$.complete();
+    }
+
+    // Toggle filter visibility
+    toggleFilters() {
+        this.showFilters = !this.showFilters;
     }
 
     private initializeForm() {
@@ -233,57 +240,73 @@ export class ManagerApprovalsComponent implements OnInit, OnDestroy {
     approveSingle(item: LeaveDetailDto) {
         if (this.isProcessing) return;
 
-        this.isProcessing = true;
+        abp.message.confirm(
+            "Are you sure you want to approve this leave request?",
+            "Confirm Approval",
+            (isConfirmed) => {
+                if (isConfirmed) {
+                    this.isProcessing = true;
 
-        const request = {
-            approverId: this.appSession.userId || 1,
-            comment: ''
-        };
+                    const request = {
+                        approverId: this.appSession.userId || 1,
+                        comment: ''
+                    };
 
-        const url = `${this.baseUrl}/api/services/app/Leave/ApproveLeave?id=${item.id}`;
+                    const url = `${this.baseUrl}/api/services/app/Leave/ApproveLeave?id=${item.id}`;
 
-        this.http.post<any>(url, request, this.getHttpOptions())
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-                next: () => {
-                    abp.message.success('Leave request approved successfully');
-                    this.loadPendingItems();
-                    this.isProcessing = false;
-                },
-                error: (error) => {
-                    console.error('Error approving leave:', error);
-                    abp.message.error('Failed to approve leave request');
-                    this.isProcessing = false;
+                    this.http.post<any>(url, request, this.getHttpOptions())
+                        .pipe(takeUntil(this.destroy$))
+                        .subscribe({
+                            next: () => {
+                                abp.message.success('Leave request approved successfully');
+                                this.loadPendingItems();
+                                this.isProcessing = false;
+                            },
+                            error: (error) => {
+                                console.error('Error approving leave:', error);
+                                abp.message.error('Failed to approve leave request');
+                                this.isProcessing = false;
+                            }
+                        });
                 }
-            });
+            }
+        );
     }
 
     rejectSingle(item: LeaveDetailDto) {
         if (this.isProcessing) return;
 
-        this.isProcessing = true;
+        abp.message.confirm(
+            "Are you sure you want to reject this leave request?",
+            "Confirm Rejection",
+            (isConfirmed) => {
+                if (isConfirmed) {
+                    this.isProcessing = true;
 
-        const request = {
-            approverId: this.appSession.userId || 1,
-            comment: ''
-        };
+                    const request = {
+                        approverId: this.appSession.userId || 1,
+                        comment: ''
+                    };
 
-        const url = `${this.baseUrl}/api/services/app/Leave/RejectLeave?id=${item.id}`;
+                    const url = `${this.baseUrl}/api/services/app/Leave/RejectLeave?id=${item.id}`;
 
-        this.http.post<any>(url, request, this.getHttpOptions())
-            .pipe(takeUntil(this.destroy$))
-            .subscribe({
-                next: () => {
-                    abp.message.success('Leave request rejected successfully');
-                    this.loadPendingItems();
-                    this.isProcessing = false;
-                },
-                error: (error) => {
-                    console.error('Error rejecting leave:', error);
-                    abp.message.error('Failed to reject leave request');
-                    this.isProcessing = false;
+                    this.http.post<any>(url, request, this.getHttpOptions())
+                        .pipe(takeUntil(this.destroy$))
+                        .subscribe({
+                            next: () => {
+                                abp.message.success('Leave request rejected successfully');
+                                this.loadPendingItems();
+                                this.isProcessing = false;
+                            },
+                            error: (error) => {
+                                console.error('Error rejecting leave:', error);
+                                abp.message.error('Failed to reject leave request');
+                                this.isProcessing = false;
+                            }
+                        });
                 }
-            });
+            }
+        );
     }
 
     // View details

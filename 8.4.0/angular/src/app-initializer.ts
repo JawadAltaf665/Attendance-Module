@@ -6,7 +6,7 @@ import { filter as _filter, merge as _merge } from 'lodash-es';
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/session/app-session.service';
 import { environment } from './environments/environment';
-import { AccountServiceProxy, IsTenantAvailableInput, IsTenantAvailableOutput, TenantAvailabilityState } from '@shared/service-proxies/service-proxies';
+import { AccountServiceProxy, DtoIsTenantAvailableInput, DtoIsTenantAvailableOutput, DtoTenantAvailabilityState } from '@shared/service-proxies/service-proxies';
 import { SubdomainTenantResolver } from '@shared/multi-tenancy/tenant-resolvers/subdomain-tenant-resolver';
 
 @Injectable({
@@ -179,11 +179,11 @@ export class AppInitializer {
 
   private ConfigureTenantIdCookie(tenancyName: string, callback: () => void) {
     let accountServiceProxy: AccountServiceProxy = this._injector.get(AccountServiceProxy);
-    let input = new IsTenantAvailableInput();
+    let input = new DtoIsTenantAvailableInput();
     input.tenancyName = tenancyName;
 
-    accountServiceProxy.isTenantAvailable(input).subscribe((result: IsTenantAvailableOutput) => {
-      if (result.state === TenantAvailabilityState._1) { // Available
+    accountServiceProxy.isTenantAvailable(input).subscribe((result: DtoIsTenantAvailableOutput) => {
+      if (result.state === DtoTenantAvailabilityState._1) { // Available
         abp.multiTenancy.setTenantIdCookie(result.tenantId);
       }
 

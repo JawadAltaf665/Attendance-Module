@@ -8,8 +8,8 @@ import {
 } from '@shared/paged-listing-component-base';
 import {
   RoleServiceProxy,
-  RoleDto,
-  RoleDtoPagedResultDto
+  DtoRoleDto,
+  PagedResultDtoOfRoleDto
 } from '@shared/service-proxies/service-proxies';
 import { CreateRoleDialogComponent } from './create-role/create-role-dialog.component';
 import { EditRoleDialogComponent } from './edit-role/edit-role-dialog.component';
@@ -22,8 +22,8 @@ class PagedRolesRequestDto extends PagedRequestDto {
   templateUrl: './roles.component.html',
   animations: [appModuleAnimation()]
 })
-export class RolesComponent extends PagedListingComponentBase<RoleDto> {
-  roles: RoleDto[] = [];
+export class RolesComponent extends PagedListingComponentBase<DtoRoleDto> {
+  roles: DtoRoleDto[] = [];
   keyword = '';
 
   constructor(
@@ -48,13 +48,13 @@ export class RolesComponent extends PagedListingComponentBase<RoleDto> {
           finishedCallback();
         })
       )
-      .subscribe((result: RoleDtoPagedResultDto) => {
+      .subscribe((result: PagedResultDtoOfRoleDto) => {
         this.roles = result.items;
         this.showPaging(result, pageNumber);
       });
   }
 
-  delete(role: RoleDto): void {
+  delete(role: DtoRoleDto): void {
     abp.message.confirm(
       this.l('RoleDeleteWarningMessage', role.displayName),
       undefined,
@@ -78,7 +78,7 @@ export class RolesComponent extends PagedListingComponentBase<RoleDto> {
     this.showCreateOrEditRoleDialog();
   }
 
-  editRole(role: RoleDto): void {
+  editRole(role: DtoRoleDto): void {
     this.showCreateOrEditRoleDialog(role.id);
   }
 

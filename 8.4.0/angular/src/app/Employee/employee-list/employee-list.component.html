@@ -1,0 +1,316 @@
+<div [@routerTransition]>
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-6">
+                    <h1>{{ "Employees" | localize }}</h1>
+                </div>
+                <div class="col-6 text-right">
+                    <a href="javascript:;" class="btn bg-blue" (click)="createEmployee()">
+                        <i class="fa fa-plus-square"></i>
+                        {{ "Create" | localize }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="content px-2">
+        <div class="container-fluid">
+            <!-- Filters -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white border-bottom">
+                    <div class="row align-items-center">
+                        <!-- Title -->
+                        <div class="col">
+                            <h6 class="mb-0 text-primary">
+                                <i class="fas fa-filter me-2"></i>Filters
+                            </h6>
+                        </div>
+
+                        <!-- Toggle Button -->
+                        <div class="col-auto">
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-danger rounded-pill"
+                                    (click)="toggleFilters()">
+                                <i class="fas" [ngClass]="advancedFiltersVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                {{ advancedFiltersVisible ? ('Hide Advance Filter' | localize) : ('Show Advance Filter' | localize) }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Body -->
+                <div class="card-body" *ngIf="advancedFiltersVisible">
+                    <div class="row">
+                        <!-- General Search -->
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label fw-bold small">{{ "Search" | localize }}</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <input type="text"
+                                       class="form-control"
+                                       placeholder="Search by name, email, or username..."
+                                       [(ngModel)]="keyword"
+                                       (input)="onFilterChange()" />
+                            </div>
+                            <small class="text-muted">Search across first name, last name, email, and username</small>
+                        </div>
+
+                        <!-- Email Filter -->
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label fw-bold small">Email Filter</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-envelope"></i>
+                                </span>
+                                <input type="text"
+                                       class="form-control"
+                                       placeholder="Filter by email..."
+                                       [(ngModel)]="emailFilter"
+                                       (input)="onFilterChange()" />
+                            </div>
+                        </div>
+
+                        <!-- Active Status -->
+                        <div class="col-md-2 mb-3">
+                            <label class="form-label fw-bold small">{{ "IsActive" | localize }}</label>
+                            <select class="form-control" [(ngModel)]="isActive" (change)="onFilterChange()">
+                                <option [ngValue]="undefined">{{ "All" | localize }}</option>
+                                <option [ngValue]="true">{{ "Active" | localize }}</option>
+                                <option [ngValue]="false">{{ "Inactive" | localize }}</option>
+                            </select>
+                        </div>
+
+                        <!-- Sort Options -->
+                        <div class="col-md-2 mb-3">
+                            <label class="form-label fw-bold small">Sort By</label>
+                            <select class="form-control" [(ngModel)]="sortBy" (change)="onFilterChange()">
+                                <option value="firstName">First Name</option>
+                                <option value="lastName">Last Name</option>
+                                <option value="email">Email</option>
+                                <option value="isActive">Status</option>
+                                <option value="creationTime">Created Date</option>
+                            </select>
+                        </div>
+
+                        <!-- Sort Direction -->
+                        <div class="col-md-1 mb-3">
+                            <label class="form-label fw-bold small">Order</label>
+                            <button class="btn btn-outline-secondary w-100" 
+                                    (click)="sortDirection = sortDirection === 'asc' ? 'desc' : 'asc'; onFilterChange()"
+                                    [title]="sortDirection === 'asc' ? 'Ascending' : 'Descending'">
+                                <i class="fas" [ngClass]="sortDirection === 'asc' ? 'fa-sort-alpha-down' : 'fa-sort-alpha-up'"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="btn-group" role="group">
+                                <button class="btn btn-outline-secondary" (click)="refreshData()">
+                                    <i class="fas fa-sync-alt me-2"></i>
+                                    {{ "Refresh" | localize }}
+                                </button>
+                                <button class="btn btn-outline-warning" (click)="clearFilters()">
+                                    <i class="fas fa-times me-2"></i>
+                                    Clear Filters
+                                </button>
+                            </div>
+                            
+                            <!-- Filter Summary -->
+                            <div class="mt-2" *ngIf="keyword || emailFilter || isActive !== undefined">
+                                <small class="text-muted">
+                                    <i class="fas fa-filter me-1"></i>
+                                    Active filters:
+                                    <span *ngIf="keyword" class="badge bg-primary ms-1">Search: "{{keyword}}"</span>
+                                    <span *ngIf="emailFilter" class="badge bg-info ms-1">Email: "{{emailFilter}}"</span>
+                                    <span *ngIf="isActive === true" class="badge bg-success ms-1">Active Only</span>
+                                    <span *ngIf="isActive === false" class="badge bg-danger ms-1">Inactive Only</span>
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Employee Table -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-white py-3">
+                    <h6 class="mb-0 text-primary">
+                        <i class="fas fa-users me-2"></i>Employees
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="sortable" (click)="setSortBy('firstName')" style="cursor: pointer;">
+                                        {{ "FirstName" | localize }}
+                                        <i class="fas ms-1" 
+                                           [ngClass]="sortBy === 'firstName' ? (sortDirection === 'asc' ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort'"
+                                           [class.text-primary]="sortBy === 'firstName'"></i>
+                                    </th>
+                                    <th class="sortable" (click)="setSortBy('lastName')" style="cursor: pointer;">
+                                        {{ "LastName" | localize }}
+                                        <i class="fas ms-1" 
+                                           [ngClass]="sortBy === 'lastName' ? (sortDirection === 'asc' ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort'"
+                                           [class.text-primary]="sortBy === 'lastName'"></i>
+                                    </th>
+                                    <th class="sortable" (click)="setSortBy('email')" style="cursor: pointer;">
+                                        {{ "Email" | localize }}
+                                        <i class="fas ms-1" 
+                                           [ngClass]="sortBy === 'email' ? (sortDirection === 'asc' ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort'"
+                                           [class.text-primary]="sortBy === 'email'"></i>
+                                    </th>
+                                    <th class="sortable" (click)="setSortBy('isActive')" style="cursor: pointer;">
+                                        {{ "IsActive" | localize }}
+                                        <i class="fas ms-1" 
+                                           [ngClass]="sortBy === 'isActive' ? (sortDirection === 'asc' ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort'"
+                                           [class.text-primary]="sortBy === 'isActive'"></i>
+                                    </th>
+                                    <th>{{ "Actions" | localize }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Loading -->
+                                <tr *ngIf="isLoading">
+                                    <td colspan="5" class="text-center py-5">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                        <p class="mt-3 mb-0 text-muted">Loading employees...</p>
+                                    </td>
+                                </tr>
+
+                                <!-- Empty State -->
+                                <tr *ngIf="!isLoading && employees.length === 0">
+                                    <td colspan="5" class="text-center py-5">
+                                        <i class="fas fa-user-slash fa-3x text-muted mb-3"></i>
+                                        <h5 class="text-muted">No employees found</h5>
+                                        <p class="text-muted mb-3">You haven't added any employees yet</p>
+                                        <button class="btn btn-primary" (click)="createEmployee()">
+                                            <i class="fas fa-plus me-2"></i>
+                                            Add First Employee
+                                        </button>
+                                    </td>
+                                </tr>
+
+                                <!-- Data Rows -->
+                                <tr *ngFor="let employee of getPaginatedEmployees()">
+                                    <td>{{ employee.firstName }}</td>
+                                    <td>{{ employee.lastName }}</td>
+                                    <td>{{ employee.email }}</td>
+                                    <td>
+                                        <span class="badge"
+                                              [class.bg-success]="employee.isActive"
+                                              [class.bg-danger]="!employee.isActive">
+                                            {{ employee.isActive ? 'Active' : 'InActive' }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <button class="btn btn-outline-info"
+                                                    (click)="editEmployee(employee)"
+                                                    title="Edit Employee">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-outline-danger"
+                                                    (click)="deactivateEmployee(employee)"
+                                                    title="Deactivate Employee"
+                                                    *ngIf="employee.isActive">
+                                                <i class="fas fa-ban"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Results Summary -->
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <div class="text-muted small">
+                            <span *ngIf="totalItems > 0">
+                                Showing <strong>{{ (currentPage - 1) * pageSize + 1 }}</strong> to
+                                <strong>{{ Math.min(currentPage * pageSize, totalItems) }}</strong> of
+                                <strong>{{ totalItems }}</strong> 
+                                {{ totalItems === 1 ? 'employee' : 'employees' }}
+                                <span *ngIf="totalItems !== employees.length" class="text-info">
+                                    (filtered from {{ employees.length }} total)
+                                </span>
+                            </span>
+                            <span *ngIf="totalItems === 0" class="text-muted">
+                                No employees found
+                                <span *ngIf="keyword || emailFilter || isActive !== undefined">
+                                    matching current filters
+                                </span>
+                            </span>
+                        </div>
+                        
+                        <!-- Page Size Selector -->
+                        <div class="d-flex align-items-center" *ngIf="totalItems > 0">
+                            <label class="form-label small me-2 mb-0">Show:</label>
+                            <select class="form-control form-select-sm" [(ngModel)]="pageSize" (change)="currentPage = 1; applyFilters()" style="width: auto;">
+                                <option [value]="5">5</option>
+                                <option [value]="10">10</option>
+                                <option [value]="25">25</option>
+                                <option [value]="50">50</option>
+                                <option [value]="100">100</option>
+                            </select>
+                            <span class="small ms-2">per page</span>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="d-flex justify-content-center mt-3" *ngIf="totalPages > 1">
+                        <nav>
+                            <ul class="pagination mb-0">
+                                <!-- First Page -->
+                                <li class="page-item" [class.disabled]="currentPage === 1">
+                                    <a class="page-link" (click)="onPageChange(1)" style="cursor: pointer;" title="First Page">
+                                        <i class="fas fa-angle-double-left"></i>
+                                    </a>
+                                </li>
+                                
+                                <!-- Previous Page -->
+                                <li class="page-item" [class.disabled]="currentPage === 1">
+                                    <a class="page-link" (click)="onPageChange(currentPage - 1)" style="cursor: pointer;" title="Previous Page">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                                
+                                <!-- Page Numbers -->
+                                <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index"
+                                    [class.active]="currentPage === i + 1"
+                                    [class.d-none]="totalPages > 7 && Math.abs(currentPage - (i + 1)) > 2 && i !== 0 && i !== totalPages - 1">
+                                    <a class="page-link" (click)="onPageChange(i + 1)" style="cursor: pointer;">
+                                        {{ i + 1 }}
+                                    </a>
+                                </li>
+                                
+                                <!-- Next Page -->
+                                <li class="page-item" [class.disabled]="currentPage === totalPages">
+                                    <a class="page-link" (click)="onPageChange(currentPage + 1)" style="cursor: pointer;" title="Next Page">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                                
+                                <!-- Last Page -->
+                                <li class="page-item" [class.disabled]="currentPage === totalPages">
+                                    <a class="page-link" (click)="onPageChange(totalPages)" style="cursor: pointer;" title="Last Page">
+                                        <i class="fas fa-angle-double-right"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

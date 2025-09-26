@@ -1,30 +1,30 @@
 import { AbpMultiTenancyService } from 'abp-ng2-module';
 import { Injectable } from '@angular/core';
 import {
-    ApplicationInfoDto,
-    GetCurrentLoginInformationsOutput,
+    DtoApplicationInfoDto,
+    DtoGetCurrentLoginInformationsOutput,
     SessionServiceProxy,
-    TenantLoginInfoDto,
-    UserLoginInfoDto
+    DtoTenantLoginInfoDto,
+    DtoUserLoginInfoDto
 } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class AppSessionService {
 
-    private _user: UserLoginInfoDto;
-    private _tenant: TenantLoginInfoDto;
-    private _application: ApplicationInfoDto;
+    private _user: DtoUserLoginInfoDto;
+    private _tenant: DtoTenantLoginInfoDto;
+    private _application: DtoApplicationInfoDto;
 
     constructor(
         private _sessionService: SessionServiceProxy,
         private _abpMultiTenancyService: AbpMultiTenancyService) {
     }
 
-    get application(): ApplicationInfoDto {
+    get application(): DtoApplicationInfoDto {
         return this._application;
     }
 
-    get user(): UserLoginInfoDto {
+    get user(): DtoUserLoginInfoDto {
         return this._user;
     }
 
@@ -32,7 +32,7 @@ export class AppSessionService {
         return this.user ? this.user.id : null;
     }
 
-    get tenant(): TenantLoginInfoDto {
+    get tenant(): DtoTenantLoginInfoDto {
         return this._tenant;
     }
 
@@ -51,7 +51,7 @@ export class AppSessionService {
 
     init(): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
-            this._sessionService.getCurrentLoginInformations().toPromise().then((result: GetCurrentLoginInformationsOutput) => {
+            this._sessionService.getCurrentLoginInformations().toPromise().then((result: DtoGetCurrentLoginInformationsOutput) => {
                 this._application = result.application;
                 this._user = result.user;
                 this._tenant = result.tenant;

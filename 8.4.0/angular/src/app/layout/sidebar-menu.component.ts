@@ -19,7 +19,7 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
     menuItemsMap: { [key: number]: MenuItem } = {};
     activatedMenuItems: MenuItem[] = [];
     routerEvents: BehaviorSubject<RouterEvent> = new BehaviorSubject(undefined);
-    homeRoute = '/app/about';
+    homeRoute = '/app/home';
 
     constructor(injector: Injector, private router: Router) {
         super(injector);
@@ -43,8 +43,9 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
 
     getMenuItems(): MenuItem[] {
         return [
-            new MenuItem(this.l('About'), '/app/about', 'fas fa-info-circle'),
+            //new MenuItem(this.l('About'), '/app/about', 'fas fa-info-circle'),
             new MenuItem(this.l('HomePage'), '/app/home', 'fas fa-home'),
+            // Attendance Management
             new MenuItem(
                 this.l('Attendance'),
                 '',
@@ -62,54 +63,66 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
                         '/app/attendance/history',
                         'fas fa-history',
                         'Pages.Attendance.ClockInOut'
-                    ),
+                    )
+                ]
+            ),
+            // Leave Management
+            new MenuItem(
+                this.l('Leave Management'),
+                '',
+                'fas fa-calendar-times',
+                'Pages.Leaves',
+                [
                     new MenuItem(
-                        this.l('Leave Request'),
-                        '/app/attendance/leave-request',
+                        this.l('Request Leave'),
+                        '/app/leave/request',
                         'fas fa-calendar-plus',
-                        'Pages.Attendance.ClockInOut'
+                        'Pages.Leaves.Request'
                     ),
                     new MenuItem(
-                        this.l('My Leaves'),
-                        '/app/attendance/leave-list',
+                        this.l('My Requests'),
+                        '/app/leave/my-requests',
                         'fas fa-calendar-check',
-                        'Pages.Attendance.ClockInOut'
+                        'Pages.Leaves.View'
                     ),
                     new MenuItem(
-                        this.l('Manager Approvals'),
-                        '/app/attendance/approvals',
+                        this.l('Leave Approvals'),
+                        '/app/leave/approvals',
                         'fas fa-tasks',
                         'Pages.Leaves.Approve'
-                    ),
-                    //new MenuItem(
-                    //    this.l('Roster'),
-                    //    '/app/attendance/roster',
-                    //    'fas fa-calendar-alt',
-                    //    'Pages.Rosters.View'
-                    //),
+                    )
+                ]
+            ),
+            // Roster & Shift Management
+            new MenuItem(
+                this.l('Roster & Shifts'),
+                '',
+                'fas fa-calendar-alt',
+                'Pages.Rosters',
+                [
                     new MenuItem(
-                        this.l('Assign Rosters'),
-                        '/app/attendance/roster',
-                        'fas fa-user-plus',
-                        'Pages.Rosters.Assign'
-                    ),
-                    new MenuItem(
-                        this.l('Shift Swap Request'),
-                        '/app/attendance/shift-swap',
-                        'fas fa-exchange-alt',
-                        'Pages.Attendance.ClockInOut'
-                    ),
-                    new MenuItem(
-                        this.l('Swap Approvals'),
-                        '/app/attendance/swap-approvals',
-                        'fas fa-exchange-alt',
-                        'Pages.Rosters.SwapApprove'
+                        this.l('View Schedule'),
+                        '/app/roster/schedule',
+                        'fas fa-calendar-week',
+                        'Pages.Rosters.View'
                     ),
                     new MenuItem(
                         this.l('Shift Management'),
-                        '/app/attendance/admin/shifts',
+                        '/app/roster/shifts',
                         'fas fa-business-time',
                         'Pages.Shifts.View'
+                    ),
+                    new MenuItem(
+                        this.l('Shift Swap Request'),
+                        '/app/roster/shift-swap',
+                        'fas fa-exchange-alt',
+                        'Pages.Rosters.SwapRequest'
+                    ),
+                    new MenuItem(
+                        this.l('Swap Approvals'),
+                        '/app/roster/swap-approvals',
+                        'fas fa-check-double',
+                        'Pages.Rosters.SwapApprove'
                     )
                 ]
             ),
@@ -126,62 +139,68 @@ export class SidebarMenuComponent extends AppComponentBase implements OnInit {
                 'Pages.Tenants'
             ),
             new MenuItem(
+                this.l('Employees'),
+                '/app/employees',
+                'fas fa-user-tie',   
+                'Pages.Employees'  
+            ),
+            new MenuItem(
                 this.l('Users'),
                 '/app/users',
                 'fas fa-users',
                 'Pages.Users'
             ),
-            new MenuItem(this.l('MultiLevelMenu'), '', 'fas fa-circle', '', [
-                new MenuItem('ASP.NET Boilerplate', '', 'fas fa-dot-circle', '', [
-                    new MenuItem(
-                        'Home',
-                        'https://aspnetboilerplate.com?ref=abptmpl',
-                        'far fa-circle'
-                    ),
-                    new MenuItem(
-                        'Templates',
-                        'https://aspnetboilerplate.com/Templates?ref=abptmpl',
-                        'far fa-circle'
-                    ),
-                    new MenuItem(
-                        'Samples',
-                        'https://aspnetboilerplate.com/Samples?ref=abptmpl',
-                        'far fa-circle'
-                    ),
-                    new MenuItem(
-                        'Documents',
-                        'https://aspnetboilerplate.com/Pages/Documents?ref=abptmpl',
-                        'far fa-circle'
-                    ),
-                ]),
-                new MenuItem('ASP.NET Zero', '', 'fas fa-dot-circle', '', [
-                    new MenuItem(
-                        'Home',
-                        'https://aspnetzero.com?ref=abptmpl',
-                        'far fa-circle'
-                    ),
-                    new MenuItem(
-                        'Features',
-                        'https://aspnetzero.com/Features?ref=abptmpl',
-                        'far fa-circle'
-                    ),
-                    new MenuItem(
-                        'Pricing',
-                        'https://aspnetzero.com/Pricing?ref=abptmpl#pricing',
-                        'far fa-circle'
-                    ),
-                    new MenuItem(
-                        'Faq',
-                        'https://aspnetzero.com/Faq?ref=abptmpl',
-                        'far fa-circle'
-                    ),
-                    new MenuItem(
-                        'Documents',
-                        'https://aspnetzero.com/Documents?ref=abptmpl',
-                        'far fa-circle'
-                    )
-                ])
-            ])
+        //    new MenuItem(this.l('MultiLevelMenu'), '', 'fas fa-circle', '', [
+        //        new MenuItem('ASP.NET Boilerplate', '', 'fas fa-dot-circle', '', [
+        //            new MenuItem(
+        //                'Home',
+        //                'https://aspnetboilerplate.com?ref=abptmpl',
+        //                'far fa-circle'
+        //            ),
+        //            new MenuItem(
+        //                'Templates',
+        //                'https://aspnetboilerplate.com/Templates?ref=abptmpl',
+        //                'far fa-circle'
+        //            ),
+        //            new MenuItem(
+        //                'Samples',
+        //                'https://aspnetboilerplate.com/Samples?ref=abptmpl',
+        //                'far fa-circle'
+        //            ),
+        //            new MenuItem(
+        //                'Documents',
+        //                'https://aspnetboilerplate.com/Pages/Documents?ref=abptmpl',
+        //                'far fa-circle'
+        //            ),
+        //        ]),
+        //        new MenuItem('ASP.NET Zero', '', 'fas fa-dot-circle', '', [
+        //            new MenuItem(
+        //                'Home',
+        //                'https://aspnetzero.com?ref=abptmpl',
+        //                'far fa-circle'
+        //            ),
+        //            new MenuItem(
+        //                'Features',
+        //                'https://aspnetzero.com/Features?ref=abptmpl',
+        //                'far fa-circle'
+        //            ),
+        //            new MenuItem(
+        //                'Pricing',
+        //                'https://aspnetzero.com/Pricing?ref=abptmpl#pricing',
+        //                'far fa-circle'
+        //            ),
+        //            new MenuItem(
+        //                'Faq',
+        //                'https://aspnetzero.com/Faq?ref=abptmpl',
+        //                'far fa-circle'
+        //            ),
+        //            new MenuItem(
+        //                'Documents',
+        //                'https://aspnetzero.com/Documents?ref=abptmpl',
+        //                'far fa-circle'
+        //            )
+        //        ])
+        //    ])
         ];
     }
 

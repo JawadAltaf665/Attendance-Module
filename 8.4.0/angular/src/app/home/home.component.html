@@ -1,296 +1,469 @@
-﻿<div [@routerTransition]>
+<div [@routerTransition]>
   <section class="content-header">
     <div class="container-fluid">
       <div class="row">
-        <div class="col-12">
-          <h1>{{ "HomePage" | localize }}</h1>
+        <div class="col-sm-6">
+          <h1>
+            <i class="fas fa-tachometer-alt mr-2"></i>
+            {{ isAdmin ? 'Admin Dashboard' : (isEmployee ? 'My Dashboard' : 'Dashboard') }}
+          </h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item active">Dashboard</li>
+          </ol>
         </div>
       </div>
     </div>
   </section>
+
   <section class="content px-2">
     <div class="container-fluid">
-      <div class="row">
+      
+      <!-- Loading State -->
+      <div *ngIf="loading" class="row">
+        <div class="col-12">
+          <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2">Loading dashboard data...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Welcome Message -->
+      <!--<div *ngIf="!loading" class="row mb-3">
         <div class="col-12">
           <div class="alert alert-info alert-dismissible">
-            <h6><i class="icon fa fa-info"></i> This is a sample Dashboard which doesn't show any server side data.
-              However, you can develop your own dashboard inspired by this one and its source code.</h6>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <h5><i class="icon fas fa-info"></i> Welcome to Attendance Management System!</h5>
+            <p class="mb-0">
+              {{ isAdmin ? 'Monitor and manage your organization\'s attendance, leaves, and schedules from this dashboard.' : 
+                 (isEmployee ? 'Track your attendance, view your schedule, and manage your leave requests.' : 
+                  'Access your personalized dashboard based on your role and permissions.') }}
+            </p>
           </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="col-lg-3 col-6">
-          <div class="small-box bg-success">
-            <div class="inner">
-              <h3>8.2k+</h3>
-              <p>Stargazers</p>
+      </div>-->
+
+      <!-- ADMIN DASHBOARD -->
+      <div *ngIf="!loading && isAdmin && adminData">
+        
+        <!-- Admin Statistics Cards -->
+        <div class="row">
+          <div class="col-lg-3 col-6">
+            <div class="small-box bg-info">
+              <div class="inner">
+                <h3>{{ adminData.stats?.totalEmployees || 0 }}</h3>
+                <p>Total Employees</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <a routerLink="/app/employees" class="small-box-footer">
+                More info <i class="fas fa-arrow-circle-right"></i>
+              </a>
             </div>
-            <div class="icon">
-              <i class="fas fa-star"></i>
+          </div>
+          
+          <div class="col-lg-3 col-6">
+            <div class="small-box bg-success">
+              <div class="inner">
+                <h3>{{ adminData.stats?.presentToday || 0 }}</h3>
+                <p>Present Today</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-user-check"></i>
+              </div>
+              <a routerLink="/app/attendance/history" class="small-box-footer">
+                More info <i class="fas fa-arrow-circle-right"></i>
+              </a>
             </div>
-            <a href="https://github.com/aspnetboilerplate/aspnetboilerplate/stargazers"
-              class="small-box-footer"
-              target="_blank">
-              More info
-              <i class="fas fa-arrow-circle-right"></i>
-            </a>
+          </div>
+          
+          <div class="col-lg-3 col-6">
+            <div class="small-box bg-warning">
+              <div class="inner">
+                <h3>{{ adminData.stats?.pendingLeaveRequests || 0 }}</h3>
+                <p>Pending Leaves</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-calendar-times"></i>
+              </div>
+              <a routerLink="/app/leave/approvals" class="small-box-footer">
+                More info <i class="fas fa-arrow-circle-right"></i>
+              </a>
+            </div>
+          </div>
+          
+          <div class="col-lg-3 col-6">
+            <div class="small-box bg-danger">
+              <div class="inner">
+                <h3>{{ adminData.stats?.pendingSwapRequests || 0 }}</h3>
+                <p>Pending Swaps</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-exchange-alt"></i>
+              </div>
+              <a routerLink="/app/roster/swap-approvals" class="small-box-footer">
+                More info <i class="fas fa-arrow-circle-right"></i>
+              </a>
+            </div>
           </div>
         </div>
-        <div class="col-lg-3 col-6">
-          <div class="small-box bg-info">
-            <div class="inner">
-              <h3>140+</h3>
-              <p>Contributors</p>
-            </div>
-            <div class="icon">
-              <i class="fas fa-users"></i>
-            </div>
-            <a href="https://github.com/aspnetboilerplate/aspnetboilerplate/graphs/contributors"
-              class="small-box-footer"
-              target="_blank">
-              More info
-              <i class="fas fa-arrow-circle-right"></i>
-            </a>
-          </div>
-        </div>
-        <div class="col-lg-3 col-6">
-          <div class="small-box bg-warning">
-            <div class="inner">
-              <h3>1.6k+</h3>
-              <p>Used / Dependents</p>
-            </div>
-            <div class="icon">
-              <i class="fas fa-tools"></i>
-            </div>
-            <a href="https://github.com/aspnetboilerplate/aspnetboilerplate/network/dependents"
-              class="small-box-footer"
-              target="_blank">
-              More info
-              <i class="fas fa-arrow-circle-right"></i>
-            </a>
-          </div>
-        </div>
-        <div class="col-lg-3 col-6">
-          <div class="small-box bg-primary">
-            <div class="inner">
-              <h3>3.1k+</h3>
-              <p>Forks</p>
-            </div>
-            <div class="icon">
-              <i class="fas fa-code"></i>
-            </div>
-            <a href="https://github.com/aspnetboilerplate/aspnetboilerplate/network/members"
-              class="small-box-footer"
-              target="_blank">
-              More info
-              <i class="fas fa-arrow-circle-right"></i>
-            </a>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12 col-sm-6 col-md-3">
-          <div class="info-box">
-            <span class="info-box-icon bg-primary elevation-1">
-              <i class="fas fa-plus-circle"></i>
-            </span>
-            <div class="info-box-content">
-              <span class="info-box-text">Commits</span>
-              <span class="info-box-number">
-                6,350+
+
+        <!-- Admin Info Boxes -->
+        <div class="row">
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="info-box">
+              <span class="info-box-icon bg-primary elevation-1">
+                <i class="fas fa-user-tie"></i>
               </span>
+              <div class="info-box-content">
+                <span class="info-box-text">Active Employees</span>
+                <span class="info-box-number">{{ adminData.stats?.activeEmployees || 0 }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-success elevation-1">
+                <i class="fas fa-check-circle"></i>
+              </span>
+              <div class="info-box-content">
+                <span class="info-box-text">Approved Leaves</span>
+                <span class="info-box-number">{{ adminData.stats?.approvedLeaveRequests || 0 }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-info elevation-1">
+                <i class="fas fa-business-time"></i>
+              </span>
+              <div class="info-box-content">
+                <span class="info-box-text">Total Shifts</span>
+                <span class="info-box-number">{{ adminData.stats?.totalShifts || 0 }}</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-12 col-sm-6 col-md-3">
+            <div class="info-box mb-3">
+              <span class="info-box-icon bg-warning elevation-1">
+                <i class="fas fa-calendar-alt"></i>
+              </span>
+              <div class="info-box-content">
+                <span class="info-box-text">Total Rosters</span>
+                <span class="info-box-number">{{ adminData.stats?.totalRosters || 0 }}</span>
+              </div>
             </div>
           </div>
         </div>
-        <div class="col-12 col-sm-6 col-md-3">
-          <div class="info-box mb-3">
-            <span class="info-box-icon bg-warning elevation-1">
-              <i class="fas fa-exclamation-triangle"></i>
-            </span>
-            <div class="info-box-content">
-              <span class="info-box-text">Issues</span>
-              <span class="info-box-number">
-                170+
-              </span>
+
+        <!-- Admin Tables -->
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-clock mr-2"></i>Recent Attendance
+                </h3>
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" (click)="refreshDashboard()">
+                    <i class="fas fa-sync"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover text-nowrap">
+                  <thead class="bg-light">
+                    <tr>
+                      <th>Employee</th>
+                      <th>Event</th>
+                      <th>Time</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let attendance of adminData.recentAttendance">
+                      <td>{{ attendance.employeeName || 'Unknown' }}</td>
+                      <td>
+                        <span [class]="getStatusBadgeClass(attendance.eventType)">
+                          {{ attendance.eventType }}
+                        </span>
+                      </td>
+                      <td>{{ formatDate(attendance.eventTime) }}</td>
+                    </tr>
+                    <tr *ngIf="!adminData.recentAttendance || adminData.recentAttendance.length === 0">
+                      <td colspan="3" class="text-center text-muted">No recent attendance data</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="clearfix hidden-md-up"></div>
-        <div class="col-12 col-sm-6 col-md-3">
-          <div class="info-box mb-3">
-            <span class="info-box-icon bg-info elevation-1">
-              <i class="fas fa-tag"></i>
-            </span>
-            <div class="info-box-content">
-              <span class="info-box-text">Releases</span>
-              <span class="info-box-number">
-                200+
-              </span>
-            </div>
-          </div>
-        </div>
-        <div class="col-12 col-sm-6 col-md-3">
-          <div class="info-box mb-3">
-            <span class="info-box-icon bg-success elevation-1">
-              <i class="fas fa-eye"></i>
-            </span>
-            <div class="info-box-content">
-              <span class="info-box-text">Watching by</span>
-              <span class="info-box-number">
-                810+
-              </span>
+          
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-calendar-times mr-2"></i>Pending Leave Requests
+                </h3>
+              </div>
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover text-nowrap">
+                  <thead class="bg-light">
+                    <tr>
+                      <th>Employee</th>
+                      <th>Type</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let leave of adminData.pendingLeaveRequests">
+                      <td>{{ leave.employeeName || 'Unknown' }}</td>
+                      <td>{{ leave.leaveType || 'Leave' }}</td>
+                      <td>{{ formatDate(leave.startDate) }}</td>
+                    </tr>
+                    <tr *ngIf="!adminData.pendingLeaveRequests || adminData.pendingLeaveRequests.length === 0">
+                      <td colspan="3" class="text-center text-muted">No pending leave requests</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="card">
-            <div class="card-header">
-              <h3 class="card-title">Open Issues</h3>
+
+      <!-- EMPLOYEE DASHBOARD -->
+      <div *ngIf="!loading && isEmployee && !isAdmin && employeeData">
+        
+        <!-- Employee Welcome Card -->
+        <div class="row mb-3">
+          <div class="col-12">
+            <div class="card bg-gradient-primary">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-8">
+                    <h4 class="text-white">
+                      <i class="fas fa-user-circle mr-2"></i>
+                      Welcome, {{ employeeData.employeeInfo?.firstName }} {{ employeeData.employeeInfo?.lastName }}!
+                    </h4>
+                    <p class="text-white mb-0">
+                      Employee ID: {{ employeeData.employeeInfo?.employeeCode || 'N/A' }} | 
+                      Department: {{ employeeData.employeeInfo?.department || 'N/A' }}
+                    </p>
+                  </div>
+                  <div class="col-md-4 text-right">
+                    <div class="text-white">
+                      <h5>{{ formatDate(getCurrentDate()) }}</h5>
+                      <p class="mb-0">Today</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="card-body table-responsive p-0">
-              <table class="table table-hover text-nowrap">
-                <thead class="bg-light">
-                  <tr>
-                    <th>Id</th>
-                    <th class="w-25">Title</th>
-                    <th class="w-25">Labels</th>
-                    <th>Date</th>
-                    <th>Opened by</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <a href="https://github.com/aspnetboilerplate/aspnetboilerplate/issues/5452"
-                        target="_blank">
-                        5452
-                      </a>
-                    </td>
-                    <td>Angular UI migration to AdminLTE 3</td>
-                    <td>
-                      <span class="badge badge-secondary mx-1">
-                        module-zero-core-template
-                      </span>
-                      <span class="badge badge-primary mx-1">
-                        feature
-                      </span>
-                    </td>
-                    <td>11 days ago</td>
-                    <td>iyilm4z</td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <a href="https://github.com/aspnetboilerplate/aspnetboilerplate/issues/5391"
-                        target="_blank">
-                        5391
-                      </a>
-                    </td>
-                    <td>
-                      AbpCacheBase should lock the same object for sync and
-                      async
-                    </td>
-                    <td>
-                      <span class="badge badge-danger mx-1">
-                        bug
-                      </span>
-                      <span class="badge badge-success mx-1">
-                        pull request candidate
-                      </span>
-                    </td>
-                    <td>26 days ago</td>
-                    <td>acjh</td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <a href="https://github.com/aspnetboilerplate/aspnetboilerplate/issues/5390"
-                        target="_blank">
-                        5390
-                      </a>
-                    </td>
-                    <td>AbpCache sliding/absolute expire time</td>
-                    <td>
-                      <span class="badge badge-warning mx-1">
-                        breaking-change
-                      </span>
-                      <span class="badge badge-info mx-1">enhancement</span>
-                    </td>
-                    <td>27 days ago</td>
-                    <td>ryancyq</td>
-                  </tr>
-                </tbody>
-              </table>
+          </div>
+        </div>
+
+        <!-- Employee Statistics -->
+        <div class="row">
+          <div class="col-lg-3 col-6">
+            <div class="small-box bg-success">
+              <div class="inner">
+                <h3>{{ getAttendancePercentage() }}%</h3>
+                <p>Attendance Rate</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <a routerLink="/app/attendance/history" class="small-box-footer">
+                View History <i class="fas fa-arrow-circle-right"></i>
+              </a>
+            </div>
+          </div>
+          
+          <div class="col-lg-3 col-6">
+            <div class="small-box bg-info">
+              <div class="inner">
+                <h3>{{ employeeData.attendanceSummary?.thisMonth?.presentDays || 0 }}</h3>
+                <p>Present Days</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-user-check"></i>
+              </div>
+              <a routerLink="/app/attendance/clock-in-out" class="small-box-footer">
+                Clock In/Out <i class="fas fa-arrow-circle-right"></i>
+              </a>
+            </div>
+          </div>
+          
+          <div class="col-lg-3 col-6">
+            <div class="small-box bg-warning">
+              <div class="inner">
+                <h3>{{ employeeData.recentLeaveRequests?.length || 0 }}</h3>
+                <p>Leave Requests</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-calendar-alt"></i>
+              </div>
+              <a routerLink="/app/leave/my-requests" class="small-box-footer">
+                Request Leave <i class="fas fa-arrow-circle-right"></i>
+              </a>
+            </div>
+          </div>
+          
+          <div class="col-lg-3 col-6">
+            <div class="small-box bg-primary">
+              <div class="inner">
+                <h3>{{ employeeData.upcomingRoster?.length || 0 }}</h3>
+                <p>Upcoming Shifts</p>
+              </div>
+              <div class="icon">
+                <i class="fas fa-business-time"></i>
+              </div>
+              <a routerLink="/app/roster/schedule" class="small-box-footer">
+                View Roster <i class="fas fa-arrow-circle-right"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Employee Details -->
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-clock mr-2"></i>Today's Attendance
+                </h3>
+              </div>
+              <div class="card-body">
+                <div *ngIf="!employeeData.todayAttendance || employeeData.todayAttendance.length === 0" class="text-center text-muted py-3">
+                  <i class="fas fa-clock fa-2x mb-2"></i>
+                  <p>No attendance records for today</p>
+                  <a routerLink="/app/attendance/clock-in-out" class="btn btn-primary btn-sm">
+                    <i class="fas fa-play"></i> Clock In Now
+                  </a>
+                </div>
+                <div *ngFor="let attendance of employeeData.todayAttendance" class="d-flex justify-content-between align-items-center mb-2">
+                  <div>
+                    <span [class]="getStatusBadgeClass(attendance.eventType)">
+                      {{ attendance.eventType }}
+                    </span>
+                  </div>
+                  <div class="text-muted">
+                      {{ attendance.eventTime | date:'dd-MM-yyyy | HH:mm' }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-calendar-week mr-2"></i>Upcoming Roster
+                </h3>
+              </div>
+              <div class="card-body">
+                <div *ngIf="!employeeData.upcomingRoster || employeeData.upcomingRoster.length === 0" class="text-center text-muted py-3">
+                  <i class="fas fa-calendar-times fa-2x mb-2"></i>
+                  <p>No upcoming shifts scheduled</p>
+                </div>
+                <div *ngFor="let roster of employeeData.upcomingRoster" class="d-flex justify-content-between align-items-center mb-2">
+                  <div>
+                    <strong>{{ roster.shift?.name || 'Shift' }}</strong>
+                    <br>
+                    <small class="text-muted">
+                      {{ formatTime(roster.shift?.startTime) }} - {{ formatTime(roster.shift?.endTime) }}
+                    </small>
+                  </div>
+                  <div class="text-right">
+                    <div class="badge bg-info">{{ formatDate(roster.rosterDate) }}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Leave Balance & Requests -->
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-balance-scale mr-2"></i>Leave Balance
+                </h3>
+              </div>
+              <div class="card-body">
+                <div *ngIf="!employeeData.leaveBalance || employeeData.leaveBalance.length === 0" class="text-center text-muted py-3">
+                  <i class="fas fa-calendar-check fa-2x mb-2"></i>
+                  <p>No leave balance information available</p>
+                </div>
+                <div *ngFor="let balance of employeeData.leaveBalance" class="d-flex justify-content-between align-items-center mb-2">
+                  <div>
+                    <strong>{{ balance.leaveType || 'Leave Type' }}</strong>
+                  </div>
+                  <div>
+                    <span class="badge bg-success">{{ balance.balance || 0 }} days</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">
+                  <i class="fas fa-list mr-2"></i>Recent Leave Requests
+                </h3>
+              </div>
+              <div class="card-body">
+                <div *ngIf="!employeeData.recentLeaveRequests || employeeData.recentLeaveRequests.length === 0" class="text-center text-muted py-3">
+                  <i class="fas fa-calendar-plus fa-2x mb-2"></i>
+                  <p>No recent leave requests</p>
+                  <a routerLink="/app/attendance/leave-request" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus"></i> Request Leave
+                  </a>
+                </div>
+                <div *ngFor="let request of employeeData.recentLeaveRequests" class="d-flex justify-content-between align-items-center mb-2">
+                  <div>
+                    <strong>{{ request.leaveType || 'Leave' }}</strong>
+                    <br>
+                    <small class="text-muted">{{ formatDate(request.startDate) }}</small>
+                  </div>
+                  <div>
+                    <span [class]="getStatusBadgeClass(request.status)">
+                      {{ request.status }}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-12">
-          <div class="card">
-            <div class="card-header">
-              <h3 class="card-title">Closed Pull Requests</h3>
-            </div>
-            <div class="card-body table-responsive p-0">
-              <table class="table table-hover text-nowrap">
-                <thead class="bg-light">
-                  <tr>
-                    <th>Id</th>
-                    <th class="w-25">Title</th>
-                    <th class="w-25">Milestone</th>
-                    <th>Date</th>
-                    <th>Made by</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <a href="https://github.com/aspnetboilerplate/aspnetboilerplate/pull/5430"
-                        target="_blank">
-                        5430
-                      </a>
-                    </td>
-                    <td>
-                      Added Dynamic-Parameter-System doc to documentation menu
-                    </td>
-                    <td>v5.6</td>
-                    <td>18 days ago</td>
-                    <td>maliming</td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <a href="https://github.com/aspnetboilerplate/aspnetboilerplate/pull/5362"
-                        target="_blank">
-                        5362
-                      </a>
-                    </td>
-                    <td>
-                      Dynamic Parameter Module
-                    </td>
-                    <td>v5.4</td>
-                    <td>25 days ago</td>
-                    <td>demirmusa</td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <a href="https://github.com/aspnetboilerplate/aspnetboilerplate/pull/4924"
-                        target="_blank">
-                        4924
-                      </a>
-                    </td>
-                    <td>
-                      ASP.NET Core 3.0 Upgrade
-                    </td>
-                    <td>v5.0</td>
-                    <td>Oct 15</td>
-                    <td>ismcagdas</td>
-                  </tr>
-                </tbody>
-              </table>
+
+      <!-- DEFAULT VIEW (No specific role) -->
+      <div *ngIf="!loading && !isAdmin && !isEmployee">
+        <div class="row">
+          <div class="col-12">
+            <div class="alert alert-warning">
+              <h5><i class="icon fas fa-exclamation-triangle"></i> Access Required</h5>
+              <p>You don't have sufficient permissions to view the dashboard. Please contact your administrator to assign appropriate roles and permissions.</p>
             </div>
           </div>
         </div>
       </div>
+
     </div>
   </section>
 </div>

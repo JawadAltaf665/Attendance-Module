@@ -135,17 +135,18 @@
       </div>
 
       <!-- Monthly Day Selection -->
-      <div class="mb-3" *ngIf="formData.recurrenceType === 'monthly'">
-        <label for="monthlyDay" class="form-label">Day of Month</label>
-        <select
-          class="form-select"
-          id="monthlyDay"
-          [(ngModel)]="formData.monthlyDay"
-          name="monthlyDay">
-          <option *ngFor="let day of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]" [value]="day">
-            Day {{ day }}
-          </option>
-        </select>
+      <div class="card">
+          <div class="mb-3 m-3" *ngIf="formData.recurrenceType === 'monthly'">
+              <label for="monthlyDay" class="form-label">Day of Month</label>
+              <select class="form-control"
+                      id="monthlyDay"
+                      [(ngModel)]="formData.monthlyDay"
+                      name="monthlyDay">
+                  <option *ngFor="let day of [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31]" [value]="day">
+                      Day {{ day }}
+                  </option>
+              </select>
+          </div>
       </div>
 
       <!-- Form Actions -->

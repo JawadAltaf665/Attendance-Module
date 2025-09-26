@@ -7,7 +7,7 @@ import {
 import { AppComponentBase } from '@shared/app-component-base';
 import {
   UserServiceProxy,
-  ChangeUserLanguageDto
+  DtoChangeUserLanguageDto
 } from '@shared/service-proxies/service-proxies';
 import { filter as _filter } from 'lodash-es';
 
@@ -34,7 +34,7 @@ export class HeaderLanguageMenuComponent extends AppComponentBase
   }
 
   changeLanguage(languageName: string): void {
-    const input = new ChangeUserLanguageDto();
+    const input = new DtoChangeUserLanguageDto();
     input.languageName = languageName;
 
     this._userService.changeLanguage(input).subscribe(() => {

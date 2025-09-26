@@ -5,10 +5,37 @@ import { takeUntil } from 'rxjs/operators';
 import { AttendanceApiService } from '../../services/attendance-api.service';
 import { LeaveRequest, LeaveBalanceDto } from '../../models/index';
 
+export interface LeaveDetailDto {
+    id: number;
+
+    // Employee Information
+    employeeId: number;
+    employeeName: string;
+    employeeEmail?: string;   // you had it but commented out in HTML
+
+    // Leave Details
+    leaveType: string;
+    startDate: Date;
+    endDate: Date;
+    totalDays: number;
+    halfDay?: boolean;        // optional because not always shown
+    status: string;
+
+    // Extra Info
+    reason: string;
+    attachmentUrl?: string;   // for uploaded file
+    approverName?: string;    // who approved/rejected
+    creationTime: Date;       // when request was created
+
+    // UI helpers
+    selected?: boolean;       // for checkbox/bulk selection
+}
+
 @Component({
     selector: 'app-leave-list',
     templateUrl: './leave-list.component.html'
 })
+
 export class LeaveListComponent implements OnInit, OnDestroy {
     private destroy$ = new Subject<void>();
 
@@ -24,6 +51,8 @@ export class LeaveListComponent implements OnInit, OnDestroy {
 
     // Filtered data
     filteredRequests: LeaveRequest[] = [];
+    selectedMyLeave: LeaveDetailDto | null = null;
+    showMyLeaveModal = false;
 
     // Statistics
     statistics = {
@@ -33,6 +62,8 @@ export class LeaveListComponent implements OnInit, OnDestroy {
         rejected: 0,
         totalDaysUsed: 0
     };
+    showLeaveBalances = true;
+    showFilters = false;
 
     // Pagination
     currentPage = 1;
@@ -56,6 +87,14 @@ export class LeaveListComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
+    }
+
+    // Toggle Events
+    toggleLeaveBalances(): void {
+        this.showLeaveBalances = !this.showLeaveBalances;
+    }
+    toggleFilters(): void {
+        this.showFilters = !this.showFilters;
     }
 
     private loadLeaveRequests(): void {
@@ -160,9 +199,28 @@ export class LeaveListComponent implements OnInit, OnDestroy {
         this.router.navigate(['/app/attendance/leave-request']);
     }
 
-    onViewDetails(request: LeaveRequest): void {
+    onViewDetails(item: LeaveDetailDto): void {
         // Show details in a modal or navigate to detail page
-        abp.message.info(`Leave Request #${request.id}`, 'Request Details');
+        this.selectedMyLeave = item;   // uses employee’s own leave list
+        this.showMyLeaveModal = true;
+    }
+
+    closeMyLeaveModal() {
+        this.showMyLeaveModal = false;   // or whatever boolean you’re using to toggle modal
+        this.selectedMyLeave = null;
+    }
+
+    getLeaveTypeBadgeClass(leaveType: string): string {
+        switch (leaveType) {
+            case 'Sick':
+                return 'badge bg-warning';
+            case 'Casual':
+                return 'badge bg-info';
+            case 'Annual':
+                return 'badge bg-success';
+            default:
+                return 'badge bg-secondary';
+        }
     }
 
     onCancelRequest(request: LeaveRequest): void {

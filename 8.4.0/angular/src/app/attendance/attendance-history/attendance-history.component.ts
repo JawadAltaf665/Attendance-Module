@@ -37,6 +37,7 @@ export class AttendanceHistoryComponent implements OnInit, OnDestroy {
     // Loading states
     isLoading = false;
     isExporting = false;
+    showAdvancedFilters = false;
     
     // Summary data
     totalHoursWorked = 0;
@@ -61,6 +62,11 @@ export class AttendanceHistoryComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.destroy$.next();
         this.destroy$.complete();
+    }
+
+    // Toggle advanced filters
+    toggleAdvancedFilters() {
+        this.showAdvancedFilters = !this.showAdvancedFilters;
     }
 
     private initializeForm() {

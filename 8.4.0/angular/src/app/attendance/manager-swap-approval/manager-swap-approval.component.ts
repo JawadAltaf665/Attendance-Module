@@ -105,7 +105,51 @@ export class ManagerSwapApprovalComponent extends AppComponentBase implements On
           this.loadPendingRequests();
         },
         (error) => {
-          abp.notify.error(`Failed to ${this.actionType} swap request`);
+          console.error(`Failed to ${this.actionType} swap request:`, error);
+          
+          // Extract detailed error message
+          let errorMessage = `Failed to ${this.actionType} swap request`;
+          if (error?.error?.error?.message) {
+            errorMessage = error.error.error.message;
+          } else if (error?.error?.message) {
+            errorMessage = error.error.message;
+          } else if (error?.message) {
+            errorMessage = error.message;
+          } else if (error?.status) {
+            switch (error.status) {
+              case 400:
+                errorMessage = `Bad request: Invalid data provided for ${this.actionType} action`;
+                break;
+              case 401:
+                errorMessage = 'Unauthorized: You do not have permission to perform this action';
+                break;
+              case 403:
+                errorMessage = 'Forbidden: Access denied for this operation';
+                break;
+              case 404:
+                errorMessage = 'Not found: The swap request no longer exists';
+                break;
+              case 500:
+                errorMessage = 'Server error: Please try again later or contact support';
+                break;
+              default:
+                errorMessage = `HTTP ${error.status}: ${this.actionType} operation failed`;
+            }
+          }
+          
+          abp.notify.error(errorMessage);
+          
+          // Log full error for debugging
+          console.error('Full error details:', {
+            status: error?.status,
+            statusText: error?.statusText,
+            error: error?.error,
+            message: error?.message,
+            url: error?.url,
+            requestId: this.selectedRequest?.id,
+            actionType: this.actionType,
+            comments: this.actionComments
+          });
         }
       );
   }

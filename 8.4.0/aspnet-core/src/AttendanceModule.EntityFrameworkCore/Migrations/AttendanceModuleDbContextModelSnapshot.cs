@@ -1457,9 +1457,6 @@ namespace AttendanceModule.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("EmployeeNumber")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
@@ -1481,10 +1478,12 @@ namespace AttendanceModule.Migrations
                     b.Property<string>("Timezone")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Employees");
                 });
@@ -1643,6 +1642,15 @@ namespace AttendanceModule.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("ActionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ApproverComments")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ApproverId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
 
@@ -1654,6 +1662,12 @@ namespace AttendanceModule.Migrations
 
                     b.Property<long?>("LastModifierUserId")
                         .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("ProposedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RequesterId")
                         .HasColumnType("int");
@@ -1674,6 +1688,14 @@ namespace AttendanceModule.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApproverId");
+
+                    b.HasIndex("RequesterId");
+
+                    b.HasIndex("ShiftId");
+
+                    b.HasIndex("TargetEmployeeId");
 
                     b.ToTable("ShiftSwapRequests");
                 });
@@ -2132,6 +2154,17 @@ namespace AttendanceModule.Migrations
                     b.Navigation("Employee");
                 });
 
+            modelBuilder.Entity("AttendanceModule.AttendanceModuleEntities.Employee", b =>
+                {
+                    b.HasOne("AttendanceModule.Authorization.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("AttendanceModule.AttendanceModuleEntities.LeaveRequest", b =>
                 {
                     b.HasOne("AttendanceModule.AttendanceModuleEntities.Employee", "Approver")
@@ -2167,6 +2200,40 @@ namespace AttendanceModule.Migrations
                     b.Navigation("Employee");
 
                     b.Navigation("Shift");
+                });
+
+            modelBuilder.Entity("AttendanceModule.AttendanceModuleEntities.ShiftSwapRequest", b =>
+                {
+                    b.HasOne("AttendanceModule.AttendanceModuleEntities.Employee", "Approver")
+                        .WithMany()
+                        .HasForeignKey("ApproverId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("AttendanceModule.AttendanceModuleEntities.Employee", "Requester")
+                        .WithMany()
+                        .HasForeignKey("RequesterId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("AttendanceModule.AttendanceModuleEntities.Shift", "Shift")
+                        .WithMany()
+                        .HasForeignKey("ShiftId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("AttendanceModule.AttendanceModuleEntities.Employee", "TargetEmployee")
+                        .WithMany()
+                        .HasForeignKey("TargetEmployeeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Approver");
+
+                    b.Navigation("Requester");
+
+                    b.Navigation("Shift");
+
+                    b.Navigation("TargetEmployee");
                 });
 
             modelBuilder.Entity("AttendanceModule.Authorization.Roles.Role", b =>

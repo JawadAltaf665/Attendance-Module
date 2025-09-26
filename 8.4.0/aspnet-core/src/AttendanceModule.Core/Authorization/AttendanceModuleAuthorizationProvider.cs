@@ -1,4 +1,4 @@
-﻿using Abp.Authorization;
+using Abp.Authorization;
 using Abp.Localization;
 using Abp.MultiTenancy;
 
@@ -9,7 +9,11 @@ namespace AttendanceModule.Authorization
         public override void SetPermissions(IPermissionDefinitionContext context)
         {
             // Employees
-            context.CreatePermission(EmployeePermissions.Pages_Employees, L("Employees"));
+            var employees = context.CreatePermission(EmployeePermissions.Pages_Employees, L("Employees"));
+            employees.CreateChildPermission(EmployeePermissions.Pages_Employees_View, L("ViewEmployees"));
+            employees.CreateChildPermission(EmployeePermissions.Pages_Employees_Create, L("CreateEmployee"));
+            employees.CreateChildPermission(EmployeePermissions.Pages_Employees_Edit, L("EditEmployee"));
+            employees.CreateChildPermission(EmployeePermissions.Pages_Employees_Delete, L("DeleteEmployee"));
 
             // Attendance
             var attendance = context.CreatePermission(AttendencePermissions.Pages_Attendance, L("Attendance"));

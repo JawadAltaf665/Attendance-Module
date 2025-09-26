@@ -9,6 +9,7 @@ namespace AttendanceModule.Employee.Dtos
 {
     public class GetEmployeeListInputDTO: PagedAndSortedResultRequestDto
     {
-        public string keyword { get; set; }
+        public string Keyword { get; set; }
+        public bool? IsActive { get; set; }
     }
 }

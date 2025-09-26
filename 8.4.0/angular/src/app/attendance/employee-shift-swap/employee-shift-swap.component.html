@@ -245,9 +245,9 @@
               <option
                 *ngFor="let employee of employees"
                 [value]="employee.id"
-                [disabled]="employee.id === appSession.userId">
+                [disabled]="employee.userId === appSession.userId">
                 {{ employee.firstName }} {{ employee.lastName }}
-                {{ employee.id === appSession.userId ? ' (You)' : '' }}
+                {{ employee.userId === appSession.userId ? ' (You)' : '' }}
               </option>
             </select>
             <div *ngIf="loadingEmployees" class="text-muted">

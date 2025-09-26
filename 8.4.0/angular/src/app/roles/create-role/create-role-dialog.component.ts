@@ -9,10 +9,10 @@ import { BsModalRef } from 'ngx-bootstrap/modal';
 import { AppComponentBase } from '@shared/app-component-base';
 import {
   RoleServiceProxy,
-  RoleDto,
-  PermissionDto,
-  CreateRoleDto,
-  PermissionDtoListResultDto
+  DtoRoleDto,
+  DtoPermissionDto,
+  DtoCreateRoleDto,
+  ListResultDtoOfPermissionDto
 } from '@shared/service-proxies/service-proxies';
 import { forEach as _forEach, map as _map } from 'lodash-es';
 
@@ -22,8 +22,8 @@ import { forEach as _forEach, map as _map } from 'lodash-es';
 export class CreateRoleDialogComponent extends AppComponentBase
   implements OnInit {
   saving = false;
-  role = new RoleDto();
-  permissions: PermissionDto[] = [];
+  role = new DtoRoleDto();
+  permissions: DtoPermissionDto[] = [];
   checkedPermissionsMap: { [key: string]: boolean } = {};
   defaultPermissionCheckedStatus = true;
 
@@ -40,7 +40,7 @@ export class CreateRoleDialogComponent extends AppComponentBase
   ngOnInit(): void {
     this._roleService
       .getAllPermissions()
-      .subscribe((result: PermissionDtoListResultDto) => {
+      .subscribe((result: ListResultDtoOfPermissionDto) => {
         this.permissions = result.items;
         this.setInitialPermissionsStatus();
       });
@@ -60,7 +60,7 @@ export class CreateRoleDialogComponent extends AppComponentBase
     return this.defaultPermissionCheckedStatus;
   }
 
-  onPermissionChange(permission: PermissionDto, $event) {
+  onPermissionChange(permission: DtoPermissionDto, $event) {
     this.checkedPermissionsMap[permission.name] = $event.target.checked;
   }
 
@@ -77,7 +77,7 @@ export class CreateRoleDialogComponent extends AppComponentBase
   save(): void {
     this.saving = true;
 
-    const role = new CreateRoleDto();
+    const role = new DtoCreateRoleDto();
     role.init(this.role);
     role.grantedPermissions = this.getCheckedPermissions();
 

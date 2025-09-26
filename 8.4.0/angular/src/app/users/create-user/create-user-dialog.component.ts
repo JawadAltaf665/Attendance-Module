@@ -10,8 +10,8 @@ import { forEach as _forEach, map as _map } from 'lodash-es';
 import { AppComponentBase } from '@shared/app-component-base';
 import {
   UserServiceProxy,
-  CreateUserDto,
-  RoleDto
+  DtoCreateUserDto,
+  DtoRoleDto
 } from '@shared/service-proxies/service-proxies';
 import { AbpValidationError } from '@shared/components/validation/abp-validation.api';
 
@@ -21,8 +21,8 @@ import { AbpValidationError } from '@shared/components/validation/abp-validation
 export class CreateUserDialogComponent extends AppComponentBase
   implements OnInit {
   saving = false;
-  user = new CreateUserDto();
-  roles: RoleDto[] = [];
+  user = new DtoCreateUserDto();
+  roles: DtoRoleDto[] = [];
   checkedRolesMap: { [key: string]: boolean } = {};
   defaultRoleCheckedStatus = false;
   passwordValidationErrors: Partial<AbpValidationError>[] = [
@@ -72,7 +72,7 @@ export class CreateUserDialogComponent extends AppComponentBase
     return this.defaultRoleCheckedStatus;
   }
 
-  onRoleChange(role: RoleDto, $event) {
+  onRoleChange(role: DtoRoleDto, $event) {
     this.checkedRolesMap[role.normalizedName] = $event.target.checked;
   }
 
